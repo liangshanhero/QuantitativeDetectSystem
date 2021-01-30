@@ -3,7 +3,7 @@
     <dbname value="record"/>
     <version value="4"/>
     <list>
-        <mapping class="com.example.quantitativedetectsystem.domain.Rule"></mapping>
-        <mapping class="com.example.quantitativedetectsystem.domain.Result"></mapping>
+        <mapping class="com.example.quantitativedetect.domain.Rule"></mapping>
+        <mapping class="com.example.quantitativedetect.domain.Result"></mapping>
     </list>
 </litepal>

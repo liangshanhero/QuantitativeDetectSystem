@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.example.quantitativedetectsystem">
+    package="com.example.quantitativedetect">
 
     <dist:module dist:instant="true" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,28 +14,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:name="org.litepal.LitePalApplication">
-        <activity android:name=".Activity.MainActivity">
+        <activity android:name="com.example.quantitativedetect.Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.FunctionMainActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.FunctionMainActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Activity.FunctionSampleActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.FunctionSampleActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Activity.FunctionFittingActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.FunctionFittingActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Activity.FunctionInputDataActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.FunctionInputDataActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Activity.FunctionFormulaActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.FunctionFormulaActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Activity.FunctionViewActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.FunctionViewActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Activity.RecordViewActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.RecordViewActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".Activity.IntroductionActivity"
+        <activity android:name="com.example.quantitativedetect.Activity.IntroductionActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
