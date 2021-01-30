@@ -53,10 +53,10 @@ public class FunctionFormulaActivity extends Activity {
         length = intent.getIntExtra("length",0);
         function = intent.getStringExtra("function");
         //  TODO firstPicArchive没有传递过来，为空，暂时自定义一个archive对象，
-        Archive tempFirstPicArchive = new Archive(1);
-        Archive tempSecondPicArchive = new Archive(2);
-        firstPicArchives.add(tempFirstPicArchive);
-        secondPicArchives.add(tempSecondPicArchive);
+//        Archive tempFirstPicArchive = new Archive(1);
+//        Archive tempSecondPicArchive = new Archive(2);
+//        firstPicArchives.add(tempFirstPicArchive);
+//        secondPicArchives.add(tempSecondPicArchive);
 
 
         if(function.equals("Formula")){
@@ -101,8 +101,24 @@ public class FunctionFormulaActivity extends Activity {
     public void fitRule(){
         for(int i = 0; i < firstPicArchives.size(); i++){
 
-            float[] concrations = new float[firstPicArchives.get(i).length()];
-            float[] grays = new float[firstPicArchives.get(i).length()];
+//                2021-01-31 firstPicArchives.size()对应的是featureLineList.size()，
+//                即一个archive，就是一种物质在不同的试纸（mark）上的灰度值的集合
+            /*example：
+         fL->featureLine
+         -------------------------------------------------
+         |        |    mark1   |   mark2    |   mark3    |
+         -------------------------------------------------
+         |archive1|     fL     |     fL     |     fL     |
+         -------------------------------------------------
+         |archive2|     fL     |     fL     |     fL     |
+         -------------------------------------------------
+         |archive2|     fL     |     fL     |     fL     |
+         -------------------------------------------------
+             */
+            float[] concrations = new float[firstPicArchives.size()];
+            float[] grays = new float[firstPicArchives.size()];
+//            float[] concrations = new float[firstPicArchives.get(i).length()];
+//            float[] grays = new float[firstPicArchives.get(i).length()];
             if(ONE_TWO == TWO){
                 for(int j = 0; j < firstPicArchives.get(i).length(); j++){
                     Line stripe1 = firstPicArchives.get(i).getLine(j);
@@ -115,13 +131,23 @@ public class FunctionFormulaActivity extends Activity {
                 ruleList.add(rule);
             }
             else{
-                for(int j = 0; j < firstPicArchives.get(i).length(); j++){
+
+
+//                for(int j = 0; j < firstPicArchives.get(i).length(); j++){
+//                    Line stripe1 = firstPicArchives.get(i).getLine(j);
+//                    grays[j] = stripe1.getGray();
+//                    concrations[j] = stripe1.getConcentration();
+//                }
+                for(int j = 0; j < firstPicArchives.get(i).getLines().size(); j++){
                     Line stripe1 = firstPicArchives.get(i).getLine(j);
                     grays[j] = stripe1.getGray();
                     concrations[j] = stripe1.getConcentration();
                 }
 
-                Rule rule = FunctionService.fit(concrations,grays);
+                firstPicArchives.get(i);
+                Archive archive = firstPicArchives.get(i);
+                int lengthTest = archive.length();
+                Rule rule = FunctionService.fit(concrations, grays);
                 rule.setBias(firstPicArchives.get(i).getGray0());
                 ruleList.add(rule);
             }

@@ -303,7 +303,8 @@ public class FunctionSampleActivity extends MainActivity {
     public void analyse(){
         Mark mark = null;
 
-
+//        TODO 注意！！！markView获取到的灰度值有偏移，猜测是markView随bitmap压缩到的对应大小（240*240）后，
+//         以压缩的大小和位置在原始bitmap（1080*？（width*height））上获取了灰度值
         for(int i = 0;i < markViews.size();i++){
             MarkView markView = getMark(markViews.get(i));//应该再MarkView中建立该方法
             mark = PictureService.analyse(bitmap, markView);
@@ -355,6 +356,7 @@ public class FunctionSampleActivity extends MainActivity {
 //    照片中选取了mark后，获取mark的灰度
     public void next(View view){
         sortMark();
+        //TODO mark中的featureLineList为空
         if(function.equals(FUNCTION_FIRST_SAMPLE))
 //            if(markViews.size() < 3){
 //                Toast.makeText(this,"样本数量不足以建立标曲，请重试",Toast.LENGTH_SHORT).show();

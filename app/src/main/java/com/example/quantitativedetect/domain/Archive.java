@@ -6,9 +6,10 @@ import java.util.List;
 //TODO 好像是特征Line对象的转换，将concentration和gray进行bias转换，
 public class Archive implements Serializable {
     private int[] points;
-    private float conc0 = 1;
+//    private float conc0 = 1;
     private float gray0 = 1;//
-    private int ID;
+    private int ID;//ID: index of featureLine
+//    lines表示本archive中包含的mark中的特征行列表
     private List<Line> lines = new ArrayList<>();
 
     public Archive(int ID){
@@ -17,6 +18,14 @@ public class Archive implements Serializable {
 
     public int getID() {
         return ID;
+    }
+
+    public List<Line> getLines() {
+        return lines;
+    }
+
+    public void setLines(List<Line> lines) {
+        this.lines = lines;
     }
 
     public int length(){
@@ -44,17 +53,17 @@ public class Archive implements Serializable {
         return conc;
     }
 
-    public float getConc0() {
-        return conc0;
-    }
+//    public float getConc0() {
+//        return conc0;
+//    }
 
     public float getGray0() {
         return gray0;
     }
 
-    public void setConc0(float conc0) {
-        this.conc0 = conc0;
-    }
+//    public void setConc0(float conc0) {
+//        this.conc0 = conc0;
+//    }
 
     public void setGray0(float gray0) {
         this.gray0 = gray0;

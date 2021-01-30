@@ -5,29 +5,60 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.example.quantitativedetect.domain.Mark;
+
 
 public class AbbreviationCurve extends BaseCoordinate {
-    private int[] points;
-    private int[] features;
+    private int[] points;//所以的点的灰度值
+    private int[] featureIndex;//特征点在points这个数组里面的位置
     //第一个特征的点？？？？？
     private float CL = 1;
     private float zoom = 1;
     private int flag = 0;
-    public AbbreviationCurve(Context context,int width,int[] points,float zoom,int[] features,int flag){
+//    public AbbreviationCurve(Context context,int width,int[] points,float zoom,int[] features,int flag){
+//        super(context);
+//        super.init(width,width/2,40);
+//        this.points = points;
+//        this.zoom = zoom*(width/2-2*pad);//width/3为View的高度，而width/3-2*pad才是Y轴的长度
+//        this.features = features;
+//        //this.CL = points[features[0]];
+//        this.flag = flag;
+//        if(flag == 0){
+//            this.zoom = zoom*(width/3-2*pad);
+//            super.init(width,width/3,40);
+//        }
+//    }
+
+    public AbbreviationCurve(Context context, int width, Mark mark, float zoom, int flag){
         super(context);
         super.init(width,width/2,40);
-        this.points = points;
+        points = new int[mark.getLineList().size()];
+        featureIndex = new int[mark.getFeatureLineList().size()];
+        for (int i=0; i<mark.getLineList().size();i++){
+            points[i]=mark.getLineList().get(i).getGray();
+        }
         this.zoom = zoom*(width/2-2*pad);//width/3为View的高度，而width/3-2*pad才是Y轴的长度
-        this.features = features;
-        //this.CL = points[features[0]];
+        for (int i=0; i<mark.getFeatureLineList().size();i++){
+            featureIndex[i]=mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
+        }
+//        this.points = points;
+//        this.features = features;
+        //TODO CL是偏移量，但不知道具体含义，CL值增大能使得缩略图（AbbreviationCurve）位置降低
+        // （或者说是使整个Y轴的范围（0~maxValue）更大，导致曲线的上下边界被压缩至可见，即使曲线的振幅变小？）
+        this.CL = points[featureIndex[0]]+100;
         this.flag = flag;
         if(flag == 0){
             this.zoom = zoom*(width/3-2*pad);
             super.init(width,width/3,40);
         }
     }
-    public void setFeatures(int[] features){
-        this.features = features;
+
+
+
+
+
+    public void setFeatureIndex(int[] featureIndex){
+        this.featureIndex = featureIndex;
         invalidate();
     }
     public void setWid(int wid){
@@ -75,12 +106,12 @@ public class AbbreviationCurve extends BaseCoordinate {
         }
         paint.setColor(Color.RED);
         paint.setStrokeWidth(9);
-        for(int i = 0;i < features.length;i++){
+        for(int i = 0; i < featureIndex.length; i++){
             paint.setColor(Color.RED);
             if(i == 0)
                 paint.setColor(Color.GREEN);
-            float x = (float)features[i]/points.length * (wid - 2*pad) + pad;
-            float y = hei - pad - (float)points[features[i]]/CL * zoom;
+            float x = (float) featureIndex[i]/points.length * (wid - 2*pad) + pad;
+            float y = hei - pad - (float)points[featureIndex[i]]/CL * zoom;
             canvas.drawPoint(x,y,paint);
         }
     }
@@ -102,9 +133,9 @@ public class AbbreviationCurve extends BaseCoordinate {
             }
             paint.setColor(Color.RED);
             paint.setStrokeWidth(4);
-            for(int i = 1;i < features.length;i++){
-                float x = (float)features[i]/points.length * (wid - 2*pad) + pad;
-                float y = hei - pad - (float)points[features[i]]/CL * zoom;
+            for(int i = 1; i < featureIndex.length; i++){
+                float x = (float) featureIndex[i]/points.length * (wid - 2*pad) + pad;
+                float y = hei - pad - (float)points[featureIndex[i]]/CL * zoom;
                 canvas.drawPoint(x,y,paint);
             }
         }

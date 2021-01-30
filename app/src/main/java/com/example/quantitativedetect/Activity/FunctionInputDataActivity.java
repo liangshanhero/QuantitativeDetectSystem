@@ -53,9 +53,10 @@ public class FunctionInputDataActivity extends Activity {
         relativeLayout = findViewById(R.id.relative_AC);
 //        TODO 2021-0130
 //        abbreviationCurve = new AbbreviationCurve(this,MainActivity.getScreenWidth(), mark.getDotrowAvgGrays(),(float)1, mark.getFeatureIndexOnDotrowIndex(),1);
-        int[] dotrowAvgGrays = new int[0];
-        int[] featureIndexOnDotrowIndex = new int[0];
-        abbreviationCurve = new AbbreviationCurve(this,MainActivity.getScreenWidth(), dotrowAvgGrays, (float)1, featureIndexOnDotrowIndex,1);
+//        mark.getLineList()
+//        int[] dotrowAvgGrays = new int[0];
+//        int[] featureIndexOnDotrowIndex = new int[0];
+        abbreviationCurve = new AbbreviationCurve(this,MainActivity.getScreenWidth(), mark, (float)1, 1);
         abbreviationCurve.setFlag(1);
         relativeLayout.addView(abbreviationCurve);
         if(function.equals("data"))
@@ -106,8 +107,9 @@ public class FunctionInputDataActivity extends Activity {
     private void initSTE(){
         for(int i = 0;i < length;i++){
 //          TODO 2020-0130，取值方法待解决，暂时使用固定值代替
+            String value = String.format("%.2f",(float) mark.getFeatureLineList().get(i+1).getGray()/mark.getLineWidthPixelQuantity());
 //          String value = String.format("%.2f",(float) mark.getDotrowAvgGrays()[mark.getFeatureIndexOnDotrowIndex()[i+1]]/ mark.getLineWidthPixelQuantity());
-            String value = "1234123412341234.1234123412341243";
+//            String value = "1234123412341234.1234123412341243";
             STE ste = new STE(this,value);
             CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -123,6 +125,7 @@ public class FunctionInputDataActivity extends Activity {
     public void onChanged(int flag){
         //TODO ****************************************************************
         // List<Line> feature = (List<Line>) mark.getFeatureLineList().clone();
+
         int[] feature = new int[0];
         if(flag == 0){
             for(int i = 0;i < tssList.size();i++){
@@ -140,7 +143,7 @@ public class FunctionInputDataActivity extends Activity {
                 }
             }
         }
-        abbreviationCurve.setFeatures(feature);
+        abbreviationCurve.setFeatureIndex(feature);
     }
 
     public void selectFunction(int index,int position){

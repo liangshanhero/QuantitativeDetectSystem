@@ -19,6 +19,7 @@ import com.example.quantitativedetect.view.TVS;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.quantitativedetect.service.PictureService.getFeatures;
 import static com.example.quantitativedetect.view.TVS.TVS_ID;
 
 //Bn/B0仅仅对灰度进行操作，暂未对浓度值进行同样操作
@@ -41,9 +42,9 @@ public class FunctionFittingActivity extends MainActivity {
     }
     private void init(){
         Intent intent = getIntent();
-        int length = intent.getIntExtra("length",0);
+        int markViewQuantity = intent.getIntExtra("length",0);
         linearLayout = findViewById(R.id.linear_fitting);
-        for(int i = 0;i < length;i++){
+        for(int i = 0;i < markViewQuantity;i++){
             String str = "points" + String.valueOf(i);
 
             Mark mark = (Mark) intent.getSerializableExtra(str);
@@ -53,7 +54,7 @@ public class FunctionFittingActivity extends MainActivity {
         initListener2();
         for(int i = 0; i< firstPicMarkList.size(); i++){
             Mark mark = firstPicMarkList.get(i);
-
+            mark = getFeatures(mark);
             mark.setMode(TVS_ID+i);
             TVS tvs1 = createTVS(mark,TVS_ID+i,"strip "+String.valueOf(i+1),listener1);
             tvsList1.add(tvs1);
@@ -66,9 +67,9 @@ public class FunctionFittingActivity extends MainActivity {
 //        TODO 2021-0130 暂时使用固定的值代替
 //        
 //        AbbreviationCurve abbreviationCurve = new AbbreviationCurve(this,getScreenWidth()*4/7, mark.getDotrowAvgGrays(),(float)1,features,0);
-        int[] features = new int[0];
-        int[] dotrowAvgGrays = new int[0];
-        AbbreviationCurve abbreviationCurve = new AbbreviationCurve(this,getScreenWidth()*4/7, dotrowAvgGrays,(float)1,features,0);
+//        int[] features = new int[0];
+//        int[] dotrowAvgGrays = new int[0];
+        AbbreviationCurve abbreviationCurve = new AbbreviationCurve(this,getScreenWidth()*4/7, mark,(float)1,0);
         
 
         
@@ -147,16 +148,21 @@ public class FunctionFittingActivity extends MainActivity {
             for(int i = 0;i < firstPicfeatureLineList.size(); i++){
                 Archive archive1 = new Archive(i);
                 Archive archive2 = new Archive(i);
+
+
+
                 archives1.add(archive1);
                 archives2.add(archive2);
             }
             //为每个标曲输入B0
 //            Mark mark = firstPicMarkList.get(0);
+//            firstPicfeatureLineList
             for(int i = 0;i < firstPicfeatureLineList.size(); i++){
 //                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
                 float g1 = firstPicfeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
                 Archive archive1 = archives1.get(i);
                 archive1.setGray0(g1);
+//                TODO 2021-0131 可以试着将featureLine加入到对应的archive1中（暂时没想好怎么用，但是感觉有用。。。。。。）
             }
             //为标曲输入用于构建的样本值
             for(int i = 1; i < firstPicMarkList.size(); i++){
@@ -170,14 +176,14 @@ public class FunctionFittingActivity extends MainActivity {
 
 //                    mark.getFeatureLineList().get(j).getGray();
                     float g1,c1;
-                    c1 =mark.getFeatureLineList().get(j).getConcentration();
+                    c1 = mark.getFeatureLineList().get(j).getConcentration();
                     g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
 
                     Archive archive1 = archives1.get(j);
 
-                    Line stripe1 = new Line(c1,(int)(g1/archive1.getGray0()));
+                    Line line1 = new Line(c1,(int)(g1/archive1.getGray0()));
                     Log.w("Result",String.valueOf(g1/archive1.getGray0()));
-                    archive1.addLine(stripe1);
+                    archive1.addLine(line1);
                 }
             }
         }
