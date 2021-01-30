@@ -11,8 +11,7 @@ import android.view.ViewGroup;
 public class MarkView extends View {
     RectF rectF;
 
-    private int width;
-    private int height;
+
     private int color = Color.GREEN;
 
     private Paint paint = new Paint();
@@ -33,14 +32,7 @@ public class MarkView extends View {
         super(context);
         setWillNotDraw(false);
     }
-    public void setWidth(int width){
-        this.width = width;
-        invalidate();
-    }
-    public void setHeight(int height){
-        this.height = height;
-        invalidate();
-    }
+
     public void onSelected(){
         this.color = Color.RED;
         invalidate();
@@ -57,9 +49,7 @@ public class MarkView extends View {
     @Override
     public void onDraw(Canvas canvas){
 
-        width = getLayoutParams().width;
-        height = getLayoutParams().height;
-        rectF = new RectF(0,0, width, height);
+        rectF = new RectF(0,0, getLayoutParams().width, getLayoutParams().height);
         paint.setColor(color);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(3);

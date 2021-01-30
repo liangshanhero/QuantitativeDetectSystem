@@ -135,7 +135,7 @@ public class FunctionSampleActivity extends MainActivity {
                     layoutParams.leftMargin = markView.getLeft();
                     layoutParams.topMargin = markView.getTop();
                     markView.setLayoutParams(layoutParams);
-                    markView.setWidth(progress*unit);
+//                    markView.setWidth(progress*unit);
                 }
             }
             @Override
@@ -162,7 +162,7 @@ public class FunctionSampleActivity extends MainActivity {
                     layoutParams.leftMargin = markView.getLeft();
                     layoutParams.topMargin = markView.getTop();
                     markView.setLayoutParams(layoutParams);
-                    markView.setHeight(progress*unit);
+                    //markView.setHeight(progress*unit);
                 }
             }
             @Override
