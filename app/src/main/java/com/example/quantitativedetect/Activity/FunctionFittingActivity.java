@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.Archive;
 import com.example.quantitativedetect.domain.Line;
-import com.example.quantitativedetect.domain.Stripe;
+
 import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.view.AbbreviationCurve;
 import com.example.quantitativedetect.view.TVS;
@@ -135,10 +135,10 @@ public class FunctionFittingActivity extends MainActivity {
                     g2 = secondPicMarkFeatureLine.getGray();
                     Archive archive1 = archives1.get(j);
                     Archive archive2 = archives2.get(j);
-                    Stripe stripe1 = new Stripe(c1,g1/archive1.getGray0());
-                    Stripe stripe2 = new Stripe(c2,g2/archive2.getGray0());
-                    archive1.addFeature(stripe1);
-                    archive2.addFeature(stripe2);
+                    Line line1 = new Line(c1, (int)(g1/archive1.getGray0()));
+                    Line line2 = new Line(c2,(int)(g2/archive2.getGray0()));
+                    archive1.addLine(line1);
+                    archive2.addLine(line2);
                 }
             }
         }
@@ -175,9 +175,9 @@ public class FunctionFittingActivity extends MainActivity {
 
                     Archive archive1 = archives1.get(j);
 
-                    Stripe stripe1 = new Stripe(c1,g1/archive1.getGray0());
+                    Line stripe1 = new Line(c1,(int)(g1/archive1.getGray0()));
                     Log.w("Result",String.valueOf(g1/archive1.getGray0()));
-                    archive1.addFeature(stripe1);
+                    archive1.addLine(stripe1);
                 }
             }
         }

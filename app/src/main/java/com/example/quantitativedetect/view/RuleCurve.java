@@ -51,16 +51,16 @@ public class RuleCurve extends BaseCoordinate {
         for(int i = 0;i < archive1.length();i++){
             paint.setStrokeWidth(10);
 
-            float x1 = (float)(archive1.getFeature(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+            float x1 = (float)(archive1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
 
-            float y1 = hei-pad-archive1.getFeature(i).getGray()*(hei-2*pad);
+            float y1 = hei-pad-archive1.getLine(i).getGray()*(hei-2*pad);
 
             paint.setColor(Color.RED);
             canvas.drawPoint(x1+pad,y1,paint);
 
             if(FunctionFormulaActivity.ONE_TWO == FunctionFormulaActivity.TWO){
-                float x2 = (float)(archive2.getFeature(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
-                float y2 = hei-pad-archive2.getFeature(i).getGray()*(hei-2*pad);
+                float x2 = (float)(archive2.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+                float y2 = hei-pad-archive2.getLine(i).getGray()*(hei-2*pad);
                 paint.setColor(Color.GREEN);
                 canvas.drawPoint(x2+pad,y2,paint);
 

@@ -13,6 +13,14 @@ public class Line implements Serializable, Cloneable{
         return gray;
     }
 
+    public Line(){}
+
+
+    public Line(float concentration, int gray){
+        this.concentration = concentration;
+        this.gray = gray;
+    }
+
     public void setGray(int gray) {
         this.gray = gray;
     }

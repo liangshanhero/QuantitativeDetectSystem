@@ -13,8 +13,9 @@ import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.Archive;
+import com.example.quantitativedetect.domain.Line;
 import com.example.quantitativedetect.domain.Rule;
-import com.example.quantitativedetect.domain.Stripe;
+
 import com.example.quantitativedetect.domain.Result;
 import com.example.quantitativedetect.service.FunctionService;
 import com.example.quantitativedetect.view.RuleCurve;
@@ -104,8 +105,8 @@ public class FunctionFormulaActivity extends Activity {
             float[] grays = new float[firstPicArchives.get(i).length()];
             if(ONE_TWO == TWO){
                 for(int j = 0; j < firstPicArchives.get(i).length(); j++){
-                    Stripe stripe1 = firstPicArchives.get(i).getFeature(j);
-                    Stripe stripe2 = secondPicArchives.get(i).getFeature(j);
+                    Line stripe1 = firstPicArchives.get(i).getLine(j);
+                    Line stripe2 = secondPicArchives.get(i).getLine(j);
                     grays[j] = (stripe1.getGray()+ stripe2.getGray())/2;
                     concrations[j] = (stripe1.getConcentration()+ stripe2.getConcentration())/2;
                 }
@@ -115,7 +116,7 @@ public class FunctionFormulaActivity extends Activity {
             }
             else{
                 for(int j = 0; j < firstPicArchives.get(i).length(); j++){
-                    Stripe stripe1 = firstPicArchives.get(i).getFeature(j);
+                    Line stripe1 = firstPicArchives.get(i).getLine(j);
                     grays[j] = stripe1.getGray();
                     concrations[j] = stripe1.getConcentration();
                 }
