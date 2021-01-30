@@ -1,78 +1,30 @@
 package com.example.quantitativedetectsystem.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 //原始名称：VirginPoints,表示的是试纸条。
 public class Mark implements Serializable {
     public static final int FLAG_INPUTTED = 1,FLAG_NOT_INPUT = 0;
     private int mode;//原来是ID，表示胶体金或者荧光啥的？？？
 
-    private int[] dotrowAvgGrays;//试制区域中点所对应行的平均灰度的数组，所有行的灰度
-    private int[] featureIndex;//再指定试制区域中检测出的峰值点的编号数组
-    private int[] featureIndexOnDotrowIndex;//峰值点再points中的位置
-    private float[] featureIndexConcentrations;
+    private List<Line> lineList;//所有的行对象列表
 
-    private int flag = 0;
+    private List<Line> featureLineList;//所有的特征行对象列表
 
-    private int CLine;
+    private int flag =0;
 
-    public Mark(int[] dotrowAvgGrays, int[] featureIndexOnDotrowIndex){
-        this.dotrowAvgGrays = dotrowAvgGrays;
-        this.featureIndexOnDotrowIndex = featureIndexOnDotrowIndex;
-        this.setCLine(featureIndexOnDotrowIndex[0]);
-    }
-    public Mark(int[] dotrowAvgGrays){
-        this.dotrowAvgGrays = dotrowAvgGrays;
+
+
+
+    private int lineWidthPixelQuantity;//line的宽度，每行有几个点。
+
+    public int getLineWidthPixelQuantity() {
+        return lineWidthPixelQuantity;
     }
 
-    public void setIaC(int[] IDs,float[] conc){
-        this.featureIndex = IDs;
-        this.featureIndexConcentrations = conc;
-    }
-
-    public int[] getFeatureIndex() {
-        return featureIndex;
-    }
-
-    public float[] getFeatureIndexConcentrations() {
-        return featureIndexConcentrations;
-    }
-
-    public int getCLine() {
-        return CLine;
-    }
-
-    public void setCLine(int CLine) {
-        this.CLine = CLine;
-    }
-
-    public int[] getFeatureIndexOnDotrowIndex() {
-        return featureIndexOnDotrowIndex;
-    }
-
-    public int[] getDotrowAvgGrays() {
-        return dotrowAvgGrays;
-    }
-
-    public void setFeatureIndexOnDotrowIndex(int[] featureIndexOnDotrowIndex) {
-        this.featureIndexOnDotrowIndex = featureIndexOnDotrowIndex;
-        this.setCLine(dotrowAvgGrays[featureIndexOnDotrowIndex[0]]);
-    }
-
-    public void setDotrowAvgGrays(int[] dotrowAvgGrays) {
-        this.dotrowAvgGrays = dotrowAvgGrays;
-    }
-
-    public float getTrC(int index){
-        return ((float) dotrowAvgGrays[featureIndexOnDotrowIndex[index+1]])/((float)CLine);
-    }
-
-    public void setFlag(int flag) {
-        this.flag = flag;
-    }
-
-    public int getFlag() {
-        return flag;
+    public void setLineWidthPixelQuantity(int lineWidthPixelQuantity) {
+        this.lineWidthPixelQuantity = lineWidthPixelQuantity;
     }
 
     public int getMode() {
@@ -81,5 +33,36 @@ public class Mark implements Serializable {
 
     public void setMode(int mode) {
         this.mode = mode;
+    }
+
+    public List<Line> getLineList() {
+        return lineList;
+    }
+
+    public void setLineList(List<Line> lineList) {
+        this.lineList = lineList;
+    }
+
+    public List<Line> getFeatureLineList() {
+        return featureLineList;
+    }
+
+    public void setFeatureLineList(List<Line> featureLineList) {
+        this.featureLineList = featureLineList;
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
+    }
+
+//  2021-0130  不知道是什么字段，暂时放在这里，弄清楚后去除
+    private float trc;
+    public float getTrC(int i) {
+        float obj = 0;
+        return obj;
     }
 }

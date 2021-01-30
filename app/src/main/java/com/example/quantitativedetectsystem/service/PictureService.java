@@ -9,6 +9,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.example.quantitativedetectsystem.Activity.FunctionSampleActivity;
+import com.example.quantitativedetectsystem.domain.Line;
+import com.example.quantitativedetectsystem.domain.Mark;
 import com.example.quantitativedetectsystem.view.MarkView;
 
 
@@ -64,25 +66,38 @@ public class PictureService {
     }
 
     //分析数据
-    public static int[] analyse(Bitmap bitmap, MarkView mark){
-        int[] pixels = new int[mark.getWidth()];
-        int[] result = new int[mark.getHeight()];
-        for (int i = (int) mark.getY(), index = 0; i < mark.getY()+mark.getHeight(); i++, index++){
-            bitmap.getPixels(pixels,0,mark.getWidth(), (int) mark.getX(),i,mark.getWidth(),1);
-            int length = 1, AGray = 0;
-            for (int j = 0;j < pixels.length;j++){
-                double Gray;
+    public static Mark analyse(Bitmap bitmap, MarkView markView){
+        Mark mark =new Mark();
+        int width = markView.getWidth();
+        int height = markView.getHeight();
+        int lines = width/mark.getLineWidthPixelQuantity();
+
+        int[] pixels = new int[width];
+
+        for(int i=(int) markView.getY(); i<markView.getY()+ height;i++){
+            Line line = new Line();
+            int length = 1, lineAvegGray = 0;
+            bitmap.getPixels(pixels,0,markView.getWidth(), (int) markView.getX(),i,markView.getWidth(),1);
+
+
+            for (int j=0;j<pixels.length;j++){
+                double tmpGray;
                 if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE)
-                     Gray = Color.red(pixels[j]);
+                    tmpGray = Color.red(pixels[j]);
                 else{
-                    Gray = (255-Color.green(pixels[j]))/2+(255-Color.blue(pixels[j]))/2;
+                    tmpGray = (255-Color.green(pixels[j]))/2+(255-Color.blue(pixels[j]))/2;
                 }
-                AGray += (Gray - AGray) / length++ ;
+                lineAvegGray += (tmpGray - lineAvegGray) / length++ ;
             }
-            result[index] = AGray;
+
+            line.setGray(lineAvegGray);
+            mark.getLineList().add(line);
         }
-        return result;
+        return mark;
     }
+
+
+
 
     public static int findIndex(int max,int[] result){
         for(int i = 0;i < result.length;i++)

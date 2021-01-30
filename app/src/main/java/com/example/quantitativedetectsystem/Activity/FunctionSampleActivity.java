@@ -278,48 +278,51 @@ public class FunctionSampleActivity extends MainActivity {
 
 //    获取灰度
     public void analyse(){
+        Mark mark = null;
 
-        //mark的灰度，为什么是2维向量呢？？？？？？
-        int[][] points = new int[markViews.size()][1];
-//        获取图片灰度值
+
         for(int i = 0;i < markViews.size();i++){
-            MarkView mark = getMark(markViews.get(i));//应该再MarkView中建立该方法
-            points[i] = PictureService.analyse(bitmap, mark);
+            MarkView markView = getMark(markViews.get(i));//应该再MarkView中建立该方法
+            mark = PictureService.analyse(bitmap, markView);
         }
 //        跳转到fit界面
         Intent intent = new Intent(this,FunctionFittingActivity.class);
         intent.putExtra("length",markViews.size());
         for (int i = 0;i < markViews.size();i++){
             String str = "points" + String.valueOf(i);
-            intent.putExtra(str,points[i]);
+            intent.putExtra(str, mark);
         }
         startActivity(intent);
     }
 
     public void secondSample(){
-        int[][] points = new int[markViews.size()][1];
+        Mark mark =null;
+
         for(int i = 0;i < markViews.size();i++){
-            MarkView mark = getMark(markViews.get(i));
-            points[i] = PictureService.analyse(bitmap, mark);
+            MarkView markView = getMark(markViews.get(i));
+            mark = PictureService.analyse(bitmap, markView);
         }
         Intent intent = new Intent();
         intent.putExtra("length",markViews.size());
         for (int i = 0;i < markViews.size();i++){
             String str = "points" + String.valueOf(i);
-            intent.putExtra(str,points[i]);
+            intent.putExtra(str, mark);
         }
         setResult(RESULT_OK,intent);
         this.finish();
     }
 
     public void detect(){
-        int[] points = PictureService.analyse(bitmap, getMark(markViews.get(0)));
-        Mark virginPoint = new Mark(points);
-        virginPoint.setFeatureIndexOnDotrowIndex(getFeatures(points));
+
+        Mark mark = PictureService.analyse(bitmap, getMark(markViews.get(0)));
+
+
+/*TODO 2021-0129 mark的特征需要封装，*/
+        //mark.setFeatureIndexOnDotrowIndex(getFeatures(points));
         Intent intent = new Intent(this,FunctionInputDataActivity.class);
         intent.putExtra("function","check");
         intent.putExtra("length",5);
-        intent.putExtra("VirginPoint",virginPoint);
+        intent.putExtra("VirginPoint",mark);
         startActivity(intent);
         this.finish();
     }
