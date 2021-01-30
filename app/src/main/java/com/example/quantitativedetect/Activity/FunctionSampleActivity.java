@@ -177,6 +177,9 @@ public class FunctionSampleActivity extends MainActivity {
     }
     //采样框在图片中的坐标及宽高
     public MarkView getMark(MarkView markView){
+
+
+//      2021-0130图片压缩，MarkView也要压缩！！！压缩Mark图片
         float rateX = markView.getX()/imageWidth;
         int x = (int)(bitmap.getWidth()*rateX);
         float rateWidth = (float) markView.getWidth()/imageWidth;
@@ -185,7 +188,16 @@ public class FunctionSampleActivity extends MainActivity {
         int y = (int)(bitmap.getHeight()*rateY);
         float rateHeight = (float)markView.getHeight()/imageHeight;
         int height = (int)(bitmap.getHeight()*rateHeight);
-        return new MarkView(this,width,height);
+
+
+        ViewGroup.LayoutParams layoutParams = markView.getLayoutParams();
+        markView.setX(x);
+        markView.setY(y);
+        layoutParams.width = width;
+        layoutParams.height = height;
+        markView.setLayoutParams(layoutParams);
+
+        return markView;
     }
     public void onSelected(int ID){
         MarkView markView = relativeLayout.findViewById(ID);

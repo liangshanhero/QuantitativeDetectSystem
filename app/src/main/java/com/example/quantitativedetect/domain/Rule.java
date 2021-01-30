@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class Rule extends DataSupport implements Serializable {
 
     private double slope=0,offset=0;//斜率，偏移
-    private double B0 = 1;//
+    private double bias = 1;//
     private String name;
     public Rule(){
 
@@ -43,11 +43,11 @@ public class Rule extends DataSupport implements Serializable {
         return name;
     }
 
-    public void setB0(double b0) {
-        B0 = b0;
+    public void setBias(double bias) {
+        this.bias = bias;
     }
 
-    public double getB0() {
-        return B0;
+    public double getBias() {
+        return bias;
     }
 }

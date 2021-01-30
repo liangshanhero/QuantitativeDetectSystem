@@ -16,18 +16,7 @@ public class MarkView extends View {
 
     private Paint paint = new Paint();
 
-    public MarkView(Context context, int width, int height){
-        this(context);
 
-        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
-
-        layoutParams.height = height;
-        layoutParams.width = width;
-
-        this.setLayoutParams(layoutParams);
-
-        setWillNotDraw(false);
-    }
     public MarkView(Context context){
         super(context);
         setWillNotDraw(false);

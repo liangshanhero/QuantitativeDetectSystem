@@ -1,6 +1,7 @@
 package com.example.quantitativedetect.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 //原始名称：VirginPoints,表示的是试纸条。
@@ -8,9 +9,9 @@ public class Mark implements Serializable {
     public static final int FLAG_INPUTTED = 1,FLAG_NOT_INPUT = 0;
     private int mode;//原来是ID，表示胶体金或者荧光啥的？？？
 
-    private List<Line> lineList;//所有的行对象列表
+    private List<Line> lineList = new ArrayList<>();//所有的行对象列表
 
-    private List<Line> featureLineList;//所有的特征行对象列表
+    private List<Line> featureLineList = new ArrayList<>();//所有的特征行对象列表
 
     private int flag =0;
 

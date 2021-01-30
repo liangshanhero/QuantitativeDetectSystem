@@ -46,7 +46,7 @@ public class FunctionFittingActivity extends MainActivity {
         for(int i = 0;i < length;i++){
             String str = "points" + String.valueOf(i);
 
-            Mark mark = intent.getParcelableExtra(str);
+            Mark mark = (Mark) intent.getSerializableExtra(str);
             firstPicMarkList.add(mark);
         }
         initListener1();
@@ -143,17 +143,18 @@ public class FunctionFittingActivity extends MainActivity {
             }
         }
         else {
-            List<Line> featureLineList = firstPicMarkList.get(0).getFeatureLineList();
-            for(int i = 0;i < featureLineList.size(); i++){
+            List<Line> firstPicfeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
+            for(int i = 0;i < firstPicfeatureLineList.size(); i++){
                 Archive archive1 = new Archive(i);
                 Archive archive2 = new Archive(i);
                 archives1.add(archive1);
                 archives2.add(archive2);
             }
             //为每个标曲输入B0
-            Mark mark = firstPicMarkList.get(0);
-            for(int i = 0;i < featureLineList.size(); i++){
-                float g1 = featureLineList.get(i).getGray();//对应位置的灰度/C的值
+//            Mark mark = firstPicMarkList.get(0);
+            for(int i = 0;i < firstPicfeatureLineList.size(); i++){
+//                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
+                float g1 = firstPicfeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
                 Archive archive1 = archives1.get(i);
                 archive1.setGray0(g1);
             }
@@ -162,15 +163,18 @@ public class FunctionFittingActivity extends MainActivity {
                 if(!tvsList1.get(i).getaSwitch().isChecked())
                     continue;
 
-                Mark mark1 = firstPicMarkList.get(i);
+//                依次拿取每个mark,
+                Mark mark = firstPicMarkList.get(i);
 
-                for(int j = 0;j < featureLineList.size(); j++){
+                for(int j = 0;j < firstPicfeatureLineList.size(); j++){
 
-                    mark1.getFeatureLineList().get(j).getGray();
+//                    mark.getFeatureLineList().get(j).getGray();
                     float g1,c1;
-                    c1 =mark1.getFeatureLineList().get(j).getConcentration();
-                    g1 = mark1.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
+                    c1 =mark.getFeatureLineList().get(j).getConcentration();
+                    g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
+
                     Archive archive1 = archives1.get(j);
+
                     Stripe stripe1 = new Stripe(c1,g1/archive1.getGray0());
                     Log.w("Result",String.valueOf(g1/archive1.getGray0()));
                     archive1.addFeature(stripe1);
@@ -255,13 +259,14 @@ public class FunctionFittingActivity extends MainActivity {
     }
 
 //    首先计算拟合，并跳转到结果界面FunctionFormulaActivity
-    public void fitting(View view){
+    public void onFitting(View view){
         if(!createArchive())
             return;
         Intent intent = new Intent(this,FunctionFormulaActivity.class);
         intent.putExtra("length",archives1.size());
         intent.putExtra("function","Formula");
         for(int i = 0;i < archives1.size();i++){
+
             Archive archive1 = archives1.get(i);
             Archive archive2 = archives2.get(i);
             String str1 = "Archive"+"1"+String.valueOf(i);
@@ -269,6 +274,8 @@ public class FunctionFittingActivity extends MainActivity {
             intent.putExtra(str1,archive1);
             intent.putExtra(str2,archive2);
         }
+
+
         if(secondPicMarkList.size() <= 0)
             FunctionFormulaActivity.setOneTwo(FunctionFormulaActivity.ONE);
         else

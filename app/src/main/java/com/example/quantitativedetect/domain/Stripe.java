@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class Stripe implements Serializable {
     private float concentration;
     private float gray;
-    private int x;
+//    private int x;
 
     public Stripe(float concentration, float gray){
         this.concentration = concentration;
@@ -25,7 +25,7 @@ public class Stripe implements Serializable {
         return gray;
     }
 
-    public int getX() {
-        return x;
-    }
+//    public int getX() {
+//        return x;
+//    }
 }

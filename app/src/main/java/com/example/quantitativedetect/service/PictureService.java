@@ -70,8 +70,14 @@ public class PictureService {
     //分析数据
     public static Mark analyse(Bitmap bitmap, MarkView markView){
         Mark mark =new Mark();
-        int width = markView.getWidth();
-        int height = markView.getHeight();
+
+//        int width = markView.getWidth();
+//        int height = markView.getHeight();
+        int width = markView.getLayoutParams().width;//.getWidth();
+        int height = markView.getLayoutParams().height;//.getHeight();
+
+        int x = (int)markView.getX();
+
         int lines = width/mark.getLineWidthPixelQuantity();
 
         int[] pixels = new int[width];
@@ -79,7 +85,7 @@ public class PictureService {
         for(int i=(int) markView.getY(); i<markView.getY()+ height;i++){
             Line line = new Line();
             int length = 1, lineAvegGray = 0;
-            bitmap.getPixels(pixels,0,markView.getWidth(), (int) markView.getX(),i,markView.getWidth(),1);
+            bitmap.getPixels(pixels,0, width, x ,i, width,1);
 
 
             for (int j=0;j<pixels.length;j++){
@@ -176,7 +182,7 @@ public class PictureService {
 //            return feature;
 
             for(int j = 0;j < features.length-1;j++) {
-                mark.getLineList().get(j + 1).setFeaturte(true);
+//                mark.getLineList().get(j + 1).setFeaturte(true);
                 mark.getFeatureLineList().add(mark.getLineList().get(features[j + 1]));
             }
 
@@ -202,7 +208,7 @@ public class PictureService {
                 }
             }
             for(int j = 0;j < features.length;j++) {
-                mark.getLineList().get(j).setFeaturte(true);
+
                 mark.getFeatureLineList().add(mark.getLineList().get(features[j]));
             }
             return mark;

@@ -38,7 +38,7 @@ public class FunctionViewActivity extends Activity {
         char c = '+';
         if(rule.getOffset() < 0)
             c = '-';
-        String str = "Concentration = "+String.format("%.2f", rule.getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(rule.getOffset()))+"\n"+"B0 = "+String.format("%.2f", rule.getB0());
+        String str = "Concentration = "+String.format("%.2f", rule.getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(rule.getOffset()))+"\n"+"B0 = "+String.format("%.2f", rule.getBias());
         textView.setText(str);
     }
 

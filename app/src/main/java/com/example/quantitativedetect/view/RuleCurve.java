@@ -72,9 +72,9 @@ public class RuleCurve extends BaseCoordinate {
         }
     }
 
-    public void setPoint(float conc, float grey, Rule rule){
+    public void setPoint(float conc, float gray, Rule rule){
         this.conc = conc;
-        this.gray = grey/(float) rule.getB0();
+        this.gray = gray/(float) rule.getBias();
         this.rule = rule;
         if(rule.getSlope() > 0){
             max = FunctionService.calConc(rule,1);

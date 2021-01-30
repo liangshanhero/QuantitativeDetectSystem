@@ -57,7 +57,7 @@
                     android:layout_gravity="center"
                     android:layout_margin="30dp"
                     android:layout_weight="1"
-                    android:onClick="fitting" />
+                    android:onClick="onFitting" />
             </LinearLayout>
         </LinearLayout>
 

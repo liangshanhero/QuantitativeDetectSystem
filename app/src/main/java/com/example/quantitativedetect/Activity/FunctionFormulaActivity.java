@@ -29,14 +29,15 @@ public class FunctionFormulaActivity extends Activity {
     public static int ONE_TWO = 2;
     public static final int ONE = 1;
     public static final int TWO = 2;
-    private List<Archive> archives1 = new ArrayList<>();
-    private List<Archive> archives2 = new ArrayList<>();
+    private List<Archive> firstPicArchives = new ArrayList<>();
+    private List<Archive> secondPicArchives = new ArrayList<>();
     private List<Result> resultList = new ArrayList<>();
     private TextView textView;
     private RelativeLayout relativeLayout;
     private String function;
     private float[] strips;
-    private int length,now = 0;
+    private int length;
+    private int now = 0;
     private RuleCurve ruleCurve;
     private List<Rule> ruleList = new ArrayList<>();
     private String name;
@@ -50,17 +51,33 @@ public class FunctionFormulaActivity extends Activity {
         Intent intent = getIntent();
         length = intent.getIntExtra("length",0);
         function = intent.getStringExtra("function");
+        //  TODO firstPicArchive没有传递过来，为空，暂时自定义一个archive对象，
+        Archive tempFirstPicArchive = new Archive(1);
+        Archive tempSecondPicArchive = new Archive(2);
+        firstPicArchives.add(tempFirstPicArchive);
+        secondPicArchives.add(tempSecondPicArchive);
+
+
         if(function.equals("Formula")){
+
             for(int i = 0;i < length;i++){
                 String str = "Archive";
-                Archive archive1 = (Archive) intent.getSerializableExtra(str+"1"+String.valueOf(i));
-                Archive archive2 = (Archive) intent.getSerializableExtra(str+"2"+String.valueOf(i));
-                archives1.add(archive1);
-                archives2.add(archive2);
+                Archive firstPicArchive = (Archive) intent.getSerializableExtra(str+"1"+String.valueOf(i));
+                Archive secondPicArchive = (Archive) intent.getSerializableExtra(str+"2"+String.valueOf(i));
+
+
+                firstPicArchives.add(firstPicArchive);
+                secondPicArchives.add(secondPicArchive);
             }
-            fitFormula();
+            fitRule();
+//  TODO 规则从哪里来？？？
+            Rule temRule = new Rule();
+            ruleList.add(temRule);
+//            ruleList.get(0);
             ruleCurve = new RuleCurve(this, ruleList.get(0),MainActivity.getScreenWidth());
-            ruleCurve.setArchive(archives1.get(now),archives2.get(now), ruleList.get(now));
+
+
+            ruleCurve.setArchive(firstPicArchives.get(now), secondPicArchives.get(now), ruleList.get(now));
         }
         else if(function.equals("Result")){
             strips = intent.getFloatArrayExtra("strips");
@@ -78,29 +95,33 @@ public class FunctionFormulaActivity extends Activity {
         textView.setText(equation(0));
         relativeLayout.addView(ruleCurve);
     }
-    public void fitFormula(){
-        for(int i = 0;i < archives1.size();i++){
-            float[] conc = new float[archives1.get(i).length()];
-            float[] grey = new float[archives1.get(i).length()];
+
+//    拟合规则
+    public void fitRule(){
+        for(int i = 0; i < firstPicArchives.size(); i++){
+
+            float[] concrations = new float[firstPicArchives.get(i).length()];
+            float[] grays = new float[firstPicArchives.get(i).length()];
             if(ONE_TWO == TWO){
-                for(int j = 0;j < archives1.get(i).length();j++){
-                    Stripe stripe1 = archives1.get(i).getFeature(j);
-                    Stripe stripe2 = archives2.get(i).getFeature(j);
-                    grey[j] = (stripe1.getGray()+ stripe2.getGray())/2;
-                    conc[j] = (stripe1.getConcentration()+ stripe2.getConcentration())/2;
+                for(int j = 0; j < firstPicArchives.get(i).length(); j++){
+                    Stripe stripe1 = firstPicArchives.get(i).getFeature(j);
+                    Stripe stripe2 = secondPicArchives.get(i).getFeature(j);
+                    grays[j] = (stripe1.getGray()+ stripe2.getGray())/2;
+                    concrations[j] = (stripe1.getConcentration()+ stripe2.getConcentration())/2;
                 }
-                Rule rule = FunctionService.fitFunction(conc,grey);
-                rule.setB0((archives1.get(i).getGray0()+archives2.get(i).getGray0())/2);
+                Rule rule = FunctionService.fit(concrations,grays);
+                rule.setBias((firstPicArchives.get(i).getGray0()+ secondPicArchives.get(i).getGray0())/2);
                 ruleList.add(rule);
             }
             else{
-                for(int j = 0;j < archives1.get(i).length();j++){
-                    Stripe stripe1 = archives1.get(i).getFeature(j);
-                    grey[j] = stripe1.getGray();
-                    conc[j] = stripe1.getConcentration();
+                for(int j = 0; j < firstPicArchives.get(i).length(); j++){
+                    Stripe stripe1 = firstPicArchives.get(i).getFeature(j);
+                    grays[j] = stripe1.getGray();
+                    concrations[j] = stripe1.getConcentration();
                 }
-                Rule rule = FunctionService.fitFunction(conc,grey);
-                rule.setB0(archives1.get(i).getGray0());
+
+                Rule rule = FunctionService.fit(concrations,grays);
+                rule.setBias(firstPicArchives.get(i).getGray0());
                 ruleList.add(rule);
             }
         }
@@ -108,7 +129,7 @@ public class FunctionFormulaActivity extends Activity {
 
     public void computing(){
         for(int i = 0;i < strips.length;i++){
-            double grey = strips[i]/ ruleList.get(i).getB0();
+            double grey = strips[i]/ ruleList.get(i).getBias();
             double conc = FunctionService.calConc(ruleList.get(i),grey);
             Result result = new Result();
             result.setConcentration(conc);
@@ -122,7 +143,7 @@ public class FunctionFormulaActivity extends Activity {
             char c = '+';
             if(ruleList.get(index).getOffset() < 0)
                 c = '-';
-            str = "Concentration = "+String.format("%.2f", ruleList.get(index).getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(ruleList.get(index).getOffset()))+"\n"+"B0 = "+String.format("%.2f", ruleList.get(index).getB0());
+            str = "Concentration = "+String.format("%.2f", ruleList.get(index).getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(ruleList.get(index).getOffset()))+"\n"+"B0 = "+String.format("%.2f", ruleList.get(index).getBias());
         }
         else if(function.equals("Result")){
             str = "Concentration = "+String.format("%.2f",resultList.get(index).getConcentration())+" "+UNIT;
@@ -138,7 +159,7 @@ public class FunctionFormulaActivity extends Activity {
         }
         now++;
         if(function.equals("Formula")){
-            ruleCurve.setArchive(archives1.get(now),archives2.get(now), ruleList.get(now));
+            ruleCurve.setArchive(firstPicArchives.get(now), secondPicArchives.get(now), ruleList.get(now));
         }
         else if(function.equals("Result")){
             ruleCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], ruleList.get(now));
@@ -154,7 +175,7 @@ public class FunctionFormulaActivity extends Activity {
         }
         now--;
         if(function.equals("Formula")){
-            ruleCurve.setArchive(archives1.get(now),archives2.get(now), ruleList.get(now));
+            ruleCurve.setArchive(firstPicArchives.get(now), secondPicArchives.get(now), ruleList.get(now));
         }
         else if(function.equals("Result")){
             ruleCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], ruleList.get(now));

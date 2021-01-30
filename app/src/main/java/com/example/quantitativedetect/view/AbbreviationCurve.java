@@ -9,6 +9,7 @@ import android.graphics.Paint;
 public class AbbreviationCurve extends BaseCoordinate {
     private int[] points;
     private int[] features;
+    //第一个特征的点？？？？？
     private float CL = 1;
     private float zoom = 1;
     private int flag = 0;
@@ -18,7 +19,7 @@ public class AbbreviationCurve extends BaseCoordinate {
         this.points = points;
         this.zoom = zoom*(width/2-2*pad);//width/3为View的高度，而width/3-2*pad才是Y轴的长度
         this.features = features;
-        this.CL = points[features[0]];
+        //this.CL = points[features[0]];
         this.flag = flag;
         if(flag == 0){
             this.zoom = zoom*(width/3-2*pad);
