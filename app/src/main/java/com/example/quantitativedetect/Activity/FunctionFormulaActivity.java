@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
-import com.example.quantitativedetect.domain.Archive;
+import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.domain.Line;
 import com.example.quantitativedetect.domain.Rule;
 
@@ -30,8 +30,8 @@ public class FunctionFormulaActivity extends Activity {
     public static int ONE_TWO = 2;
     public static final int ONE = 1;
     public static final int TWO = 2;
-    private List<Archive> firstPicArchives = new ArrayList<>();
-    private List<Archive> secondPicArchives = new ArrayList<>();
+    private List<Stripe> firstPicStripes = new ArrayList<>();
+    private List<Stripe> secondPicStripes = new ArrayList<>();
     private List<Result> resultList = new ArrayList<>();
     private TextView textView;
     private RelativeLayout relativeLayout;
@@ -63,12 +63,12 @@ public class FunctionFormulaActivity extends Activity {
 
             for(int i = 0;i < length;i++){
                 String str = "Archive";
-                Archive firstPicArchive = (Archive) intent.getSerializableExtra(str+"1"+String.valueOf(i));
-                Archive secondPicArchive = (Archive) intent.getSerializableExtra(str+"2"+String.valueOf(i));
+                Stripe firstPicStripe = (Stripe) intent.getSerializableExtra(str+"1"+String.valueOf(i));
+                Stripe secondPicStripe = (Stripe) intent.getSerializableExtra(str+"2"+String.valueOf(i));
 
 
-                firstPicArchives.add(firstPicArchive);
-                secondPicArchives.add(secondPicArchive);
+                firstPicStripes.add(firstPicStripe);
+                secondPicStripes.add(secondPicStripe);
             }
             fitRule();
 //  TODO 规则从哪里来？？？
@@ -78,7 +78,7 @@ public class FunctionFormulaActivity extends Activity {
             ruleCurve = new RuleCurve(this, ruleList.get(0),MainActivity.getScreenWidth());
 
 
-            ruleCurve.setArchive(firstPicArchives.get(now), secondPicArchives.get(now), ruleList.get(now));
+            ruleCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), ruleList.get(now));
         }
         else if(function.equals("Result")){
             strips = intent.getFloatArrayExtra("strips");
@@ -99,7 +99,7 @@ public class FunctionFormulaActivity extends Activity {
 
 //    拟合规则
     public void fitRule(){
-        for(int i = 0; i < firstPicArchives.size(); i++){
+        for(int i = 0; i < firstPicStripes.size(); i++){
 
 //                2021-01-31 firstPicArchives.size()对应的是featureLineList.size()，
 //                即一个archive，就是一种物质在不同的试纸（mark）上的灰度值的集合
@@ -115,19 +115,19 @@ public class FunctionFormulaActivity extends Activity {
          |archive2|     fL     |     fL     |     fL     |
          -------------------------------------------------
              */
-            float[] concrations = new float[firstPicArchives.size()];
-            float[] grays = new float[firstPicArchives.size()];
+            float[] concrations = new float[firstPicStripes.size()];
+            float[] grays = new float[firstPicStripes.size()];
 //            float[] concrations = new float[firstPicArchives.get(i).length()];
 //            float[] grays = new float[firstPicArchives.get(i).length()];
             if(ONE_TWO == TWO){
-                for(int j = 0; j < firstPicArchives.get(i).length(); j++){
-                    Line stripe1 = firstPicArchives.get(i).getLine(j);
-                    Line stripe2 = secondPicArchives.get(i).getLine(j);
-                    grays[j] = (stripe1.getGray()+ stripe2.getGray())/2;
-                    concrations[j] = (stripe1.getConcentration()+ stripe2.getConcentration())/2;
+                for(int j = 0; j < firstPicStripes.get(i).length(); j++){
+                    Line firstPicLine = firstPicStripes.get(i).getLine(j);
+                    Line secondPicLine = secondPicStripes.get(i).getLine(j);
+                    grays[j] = (firstPicLine.getGray()+ secondPicLine.getGray())/2;
+                    concrations[j] = (firstPicLine.getConcentration()+ secondPicLine.getConcentration())/2;
                 }
                 Rule rule = FunctionService.fit(concrations,grays);
-                rule.setBias((firstPicArchives.get(i).getGray0()+ secondPicArchives.get(i).getGray0())/2);
+                rule.setBias((firstPicStripes.get(i).getGray0()+ secondPicStripes.get(i).getGray0())/2);
                 ruleList.add(rule);
             }
             else{
@@ -138,17 +138,17 @@ public class FunctionFormulaActivity extends Activity {
 //                    grays[j] = stripe1.getGray();
 //                    concrations[j] = stripe1.getConcentration();
 //                }
-                for(int j = 0; j < firstPicArchives.get(i).getLines().size(); j++){
-                    Line stripe1 = firstPicArchives.get(i).getLine(j);
-                    grays[j] = stripe1.getGray();
-                    concrations[j] = stripe1.getConcentration();
+                for(int j = 0; j < firstPicStripes.get(i).getLines().size(); j++){
+                    Line line = firstPicStripes.get(i).getLine(j);
+                    grays[j] = line.getGray();
+                    concrations[j] = line.getConcentration();
                 }
 
-                firstPicArchives.get(i);
-                Archive archive = firstPicArchives.get(i);
-                int lengthTest = archive.length();
+                firstPicStripes.get(i);
+                Stripe stripe = firstPicStripes.get(i);
+                int lengthTest = stripe.length();
                 Rule rule = FunctionService.fit(concrations, grays);
-                rule.setBias(firstPicArchives.get(i).getGray0());
+                rule.setBias(firstPicStripes.get(i).getGray0());
                 ruleList.add(rule);
             }
         }
@@ -186,7 +186,7 @@ public class FunctionFormulaActivity extends Activity {
         }
         now++;
         if(function.equals("Formula")){
-            ruleCurve.setArchive(firstPicArchives.get(now), secondPicArchives.get(now), ruleList.get(now));
+            ruleCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), ruleList.get(now));
         }
         else if(function.equals("Result")){
             ruleCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], ruleList.get(now));
@@ -202,7 +202,7 @@ public class FunctionFormulaActivity extends Activity {
         }
         now--;
         if(function.equals("Formula")){
-            ruleCurve.setArchive(firstPicArchives.get(now), secondPicArchives.get(now), ruleList.get(now));
+            ruleCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), ruleList.get(now));
         }
         else if(function.equals("Result")){
             ruleCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], ruleList.get(now));

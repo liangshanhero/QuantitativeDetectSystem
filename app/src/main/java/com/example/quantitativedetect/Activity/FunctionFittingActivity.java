@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
-import com.example.quantitativedetect.domain.Archive;
+import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.domain.Line;
 
 import com.example.quantitativedetect.domain.Mark;
@@ -28,8 +28,8 @@ public class FunctionFittingActivity extends MainActivity {
     private List<Mark> secondPicMarkList = new ArrayList<>();
     private List<TVS> tvsList1 = new ArrayList<>();
     private List<TVS> tvsList2 = new ArrayList<>();
-    private List<Archive> archives1 = new ArrayList<>();
-    private List<Archive> archives2 = new ArrayList<>();
+    private List<Stripe> firstPicStripes = new ArrayList<>();
+    private List<Stripe> secondPicStripes = new ArrayList<>();
     private LinearLayout linearLayout;
     private View.OnClickListener listener1,listener2;
     private int length = 5;
@@ -85,8 +85,8 @@ public class FunctionFittingActivity extends MainActivity {
     }
 
     public boolean createArchive(){
-        archives1.clear();
-        archives2.clear();
+        firstPicStripes.clear();
+        secondPicStripes.clear();
         if(secondPicMarkList.size() > 0){
             if(!isSame(0)){
                 Toast.makeText(this,"请正确输入所有样本的浓度值（数量不对称）",Toast.LENGTH_SHORT).show();
@@ -97,10 +97,10 @@ public class FunctionFittingActivity extends MainActivity {
             List<Line> firstPicMarkFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();//.getFeatureIndex();
             List<Line> secondPicMarkFeatureLineList = secondPicMarkList.get(0).getFeatureLineList();
             for(int i = 0;i < firstPicMarkFeatureLineList.size();i++){
-                Archive archive1 = new Archive(i);
-                Archive archive2 = new Archive(i);
-                archives1.add(archive1);
-                archives2.add(archive2);
+                Stripe stripe1 = new Stripe(i);
+                Stripe stripe2 = new Stripe(i);
+                firstPicStripes.add(stripe1);
+                secondPicStripes.add(stripe2);
             }
             //为每个标曲输入B0
             for(int i = 0;i < firstPicMarkFeatureLineList.size();i++){
@@ -110,10 +110,10 @@ public class FunctionFittingActivity extends MainActivity {
                 float g1,g2;
                 g1 = firstPicMarkFeatureLineList.get(i).getGray();//对应位置的灰度/C的值
                 g2 = secondPicMarkFeatureLineList.get(i).getGray();
-                Archive archive1 = archives1.get(i);
-                Archive archive2 = archives2.get(i);
-                archive1.setGray0(g1);
-                archive2.setGray0(g2);
+                Stripe stripe1 = firstPicStripes.get(i);
+                Stripe stripe2 = secondPicStripes.get(i);
+                stripe1.setGray0(g1);
+                stripe2.setGray0(g2);
             }
             //为标曲输入用于构建的样本值
             for(int i = 1; i < firstPicMarkList.size(); i++){
@@ -134,25 +134,25 @@ public class FunctionFittingActivity extends MainActivity {
 
                     g1 = firstPicMarkFeatureLine.getGray();
                     g2 = secondPicMarkFeatureLine.getGray();
-                    Archive archive1 = archives1.get(j);
-                    Archive archive2 = archives2.get(j);
-                    Line line1 = new Line(c1, (int)(g1/archive1.getGray0()));
-                    Line line2 = new Line(c2,(int)(g2/archive2.getGray0()));
-                    archive1.addLine(line1);
-                    archive2.addLine(line2);
+                    Stripe stripe1 = firstPicStripes.get(j);
+                    Stripe stripe2 = secondPicStripes.get(j);
+                    Line line1 = new Line(c1, (int)(g1/ stripe1.getGray0()));
+                    Line line2 = new Line(c2,(int)(g2/ stripe2.getGray0()));
+                    stripe1.addLine(line1);
+                    stripe2.addLine(line2);
                 }
             }
         }
         else {
             List<Line> firstPicfeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
             for(int i = 0;i < firstPicfeatureLineList.size(); i++){
-                Archive archive1 = new Archive(i);
-                Archive archive2 = new Archive(i);
+                Stripe stripe1 = new Stripe(i);
+                Stripe stripe2 = new Stripe(i);
 
 
 
-                archives1.add(archive1);
-                archives2.add(archive2);
+                firstPicStripes.add(stripe1);
+                secondPicStripes.add(stripe2);
             }
             //为每个标曲输入B0
 //            Mark mark = firstPicMarkList.get(0);
@@ -160,8 +160,8 @@ public class FunctionFittingActivity extends MainActivity {
             for(int i = 0;i < firstPicfeatureLineList.size(); i++){
 //                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
                 float g1 = firstPicfeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
-                Archive archive1 = archives1.get(i);
-                archive1.setGray0(g1);
+                Stripe stripe1 = firstPicStripes.get(i);
+                stripe1.setGray0(g1);
 //                TODO 2021-0131 可以试着将featureLine加入到对应的archive1中（暂时没想好怎么用，但是感觉有用。。。。。。）
             }
             //为标曲输入用于构建的样本值
@@ -179,11 +179,11 @@ public class FunctionFittingActivity extends MainActivity {
                     c1 = mark.getFeatureLineList().get(j).getConcentration();
                     g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
 
-                    Archive archive1 = archives1.get(j);
+                    Stripe stripe1 = firstPicStripes.get(j);
 
-                    Line line1 = new Line(c1,(int)(g1/archive1.getGray0()));
-                    Log.w("Result",String.valueOf(g1/archive1.getGray0()));
-                    archive1.addLine(line1);
+                    Line line1 = new Line(c1,(int)(g1/ stripe1.getGray0()));
+                    Log.w("Result",String.valueOf(g1/ stripe1.getGray0()));
+                    stripe1.addLine(line1);
                 }
             }
         }
@@ -269,16 +269,16 @@ public class FunctionFittingActivity extends MainActivity {
         if(!createArchive())
             return;
         Intent intent = new Intent(this,FunctionFormulaActivity.class);
-        intent.putExtra("length",archives1.size());
+        intent.putExtra("length", firstPicStripes.size());
         intent.putExtra("function","Formula");
-        for(int i = 0;i < archives1.size();i++){
+        for(int i = 0; i < firstPicStripes.size(); i++){
 
-            Archive archive1 = archives1.get(i);
-            Archive archive2 = archives2.get(i);
+            Stripe stripe1 = firstPicStripes.get(i);
+            Stripe stripe2 = secondPicStripes.get(i);
             String str1 = "Archive"+"1"+String.valueOf(i);
             String str2 = "Archive"+"2"+String.valueOf(i);
-            intent.putExtra(str1,archive1);
-            intent.putExtra(str2,archive2);
+            intent.putExtra(str1, stripe1);
+            intent.putExtra(str2, stripe2);
         }
 
 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 //TODO 好像是特征Line对象的转换，将concentration和gray进行bias转换，
-public class Archive implements Serializable {
+public class Stripe implements Serializable {
     private int[] points;
 //    private float conc0 = 1;
     private float gray0 = 1;//
@@ -12,7 +12,7 @@ public class Archive implements Serializable {
 //    lines表示本archive中包含的mark中的特征行列表
     private List<Line> lines = new ArrayList<>();
 
-    public Archive(int ID){
+    public Stripe(int ID){
         this.ID = ID;
     }
 

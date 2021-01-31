@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.example.quantitativedetect.Activity.FunctionFormulaActivity;
-import com.example.quantitativedetect.domain.Archive;
+import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.domain.Rule;
 import com.example.quantitativedetect.service.FunctionService;
 
@@ -14,7 +14,7 @@ public class RuleCurve extends BaseCoordinate {
     private Rule rule;
     private int flag = 1;
     private float conc, gray;
-    private Archive archive1,archive2;
+    private Stripe stripe1, stripe2;
     double max,min;
     public RuleCurve(Context context, Rule rule, int width){
         super(context);
@@ -29,9 +29,9 @@ public class RuleCurve extends BaseCoordinate {
             min = FunctionService.calConc(rule,1);
         }
     }
-    public void setArchive(Archive archive1, Archive archive2, Rule rule){
-        this.archive1 = archive1;
-        this.archive2 = archive2;
+    public void setArchive(Stripe stripe1, Stripe stripe2, Rule rule){
+        this.stripe1 = stripe1;
+        this.stripe2 = stripe2;
         this.rule = rule;
         if(rule.getSlope() > 0){
             max = FunctionService.calConc(rule,1);
@@ -48,19 +48,19 @@ public class RuleCurve extends BaseCoordinate {
     public void formula(Canvas canvas){
         Paint paint = new Paint();
         //画点
-        for(int i = 0;i < archive1.length();i++){
+        for(int i = 0; i < stripe1.length(); i++){
             paint.setStrokeWidth(10);
 
-            float x1 = (float)(archive1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+            float x1 = (float)(stripe1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
 
-            float y1 = hei-pad-archive1.getLine(i).getGray()*(hei-2*pad);
+            float y1 = hei-pad- stripe1.getLine(i).getGray()*(hei-2*pad);
 
             paint.setColor(Color.RED);
             canvas.drawPoint(x1+pad,y1,paint);
 
             if(FunctionFormulaActivity.ONE_TWO == FunctionFormulaActivity.TWO){
-                float x2 = (float)(archive2.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
-                float y2 = hei-pad-archive2.getLine(i).getGray()*(hei-2*pad);
+                float x2 = (float)(stripe2.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+                float y2 = hei-pad- stripe2.getLine(i).getGray()*(hei-2*pad);
                 paint.setColor(Color.GREEN);
                 canvas.drawPoint(x2+pad,y2,paint);
 
