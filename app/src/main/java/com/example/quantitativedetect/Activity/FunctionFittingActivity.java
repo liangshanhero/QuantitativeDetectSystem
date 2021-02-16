@@ -87,13 +87,11 @@ public class FunctionFittingActivity extends MainActivity {
     public boolean createArchive(){
         firstPicStripes.clear();
         secondPicStripes.clear();
-        if(secondPicMarkList.size() > 0){
+        if(secondPicMarkList.size() > 0){//有第二张图的情况,暂时不处理
             if(!isSame(0)){
                 Toast.makeText(this,"请正确输入所有样本的浓度值（数量不对称）",Toast.LENGTH_SHORT).show();
                 return false;
             }
-
-
             List<Line> firstPicMarkFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();//.getFeatureIndex();
             List<Line> secondPicMarkFeatureLineList = secondPicMarkList.get(0).getFeatureLineList();
             for(int i = 0;i < firstPicMarkFeatureLineList.size();i++){
@@ -144,35 +142,36 @@ public class FunctionFittingActivity extends MainActivity {
             }
         }
         else {
-            List<Line> firstPicfeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
-            for(int i = 0;i < firstPicfeatureLineList.size(); i++){
+            List<Line> firstPicFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
+            for(int i = 0;i < firstPicFeatureLineList.size(); i++){
                 Stripe stripe1 = new Stripe(i);
                 Stripe stripe2 = new Stripe(i);
-
-
 
                 firstPicStripes.add(stripe1);
                 secondPicStripes.add(stripe2);
             }
             //为每个标曲输入B0
 //            Mark mark = firstPicMarkList.get(0);
-//            firstPicfeatureLineList
-            for(int i = 0;i < firstPicfeatureLineList.size(); i++){
+//            firstPicFeatureLineList
+            for(int i = 0;i < firstPicFeatureLineList.size(); i++){
 //                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
-                float g1 = firstPicfeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
+                float g1 = firstPicFeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
                 Stripe stripe1 = firstPicStripes.get(i);
                 stripe1.setGray0(g1);
 //                TODO 2021-0131 可以试着将featureLine加入到对应的archive1中（暂时没想好怎么用，但是感觉有用。。。。。。）
             }
             //为标曲输入用于构建的样本值
-            for(int i = 1; i < firstPicMarkList.size(); i++){
-                if(!tvsList1.get(i).getaSwitch().isChecked())
+//            TODO　2021-0209 firstPicMarkList.size()=1,i=1时无法进入循环,且size为1,后面的取值操作使用i会有越界错误
+//             故将循环初始值改为i=0,修改以后后续完成情况良好,且特征line已加入firstPicStripes中
+            for(int i = 0; i < firstPicMarkList.size(); i++){
+                if(!tvsList1.get(i).getaSwitch().isChecked()){
                     continue;
+                }
 
-//                依次拿取每个mark,
+//                依次拿取每个mark,越界报错,将Mark mark = firstPicMarkList.get(i);改为:
                 Mark mark = firstPicMarkList.get(i);
 
-                for(int j = 0;j < firstPicfeatureLineList.size(); j++){
+                for(int j = 0;j < firstPicFeatureLineList.size(); j++){
 
 //                    mark.getFeatureLineList().get(j).getGray();
                     float g1,c1;
@@ -277,6 +276,7 @@ public class FunctionFittingActivity extends MainActivity {
             Stripe stripe2 = secondPicStripes.get(i);
             String str1 = "Archive"+"1"+String.valueOf(i);
             String str2 = "Archive"+"2"+String.valueOf(i);
+//TODO            stripe中的line为null,找到如何降line即特征点放入到stripe中,否则在FunctionFormulaActivity中无法获取到数据
             intent.putExtra(str1, stripe1);
             intent.putExtra(str2, stripe2);
         }

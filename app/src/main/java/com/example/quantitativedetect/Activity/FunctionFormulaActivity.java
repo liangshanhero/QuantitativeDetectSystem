@@ -65,18 +65,17 @@ public class FunctionFormulaActivity extends Activity {
                 String str = "Archive";
                 Stripe firstPicStripe = (Stripe) intent.getSerializableExtra(str+"1"+String.valueOf(i));
                 Stripe secondPicStripe = (Stripe) intent.getSerializableExtra(str+"2"+String.valueOf(i));
-
-
                 firstPicStripes.add(firstPicStripe);
                 secondPicStripes.add(secondPicStripe);
             }
             fitRule();
 //  TODO 规则从哪里来？？？
-            Rule temRule = new Rule();
-            ruleList.add(temRule);
+//  TODO 2020-0209,根据前端传来的数据构建Rule,而不是使用空的Rule(temRule)代替
+
+//            Rule temRule = new Rule();
+//            ruleList.add(temRule);
 //            ruleList.get(0);
             ruleCurve = new RuleCurve(this, ruleList.get(0),MainActivity.getScreenWidth());
-
 
             ruleCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), ruleList.get(now));
         }
@@ -131,14 +130,13 @@ public class FunctionFormulaActivity extends Activity {
                 ruleList.add(rule);
             }
             else{
-
-
 //                for(int j = 0; j < firstPicArchives.get(i).length(); j++){
 //                    Line stripe1 = firstPicArchives.get(i).getLine(j);
 //                    grays[j] = stripe1.getGray();
 //                    concrations[j] = stripe1.getConcentration();
 //                }
                 for(int j = 0; j < firstPicStripes.get(i).getLines().size(); j++){
+                    //TODO 找到firstPicStripes是在什么地方初始化并定义的
                     Line line = firstPicStripes.get(i).getLine(j);
                     grays[j] = line.getGray();
                     concrations[j] = line.getConcentration();
