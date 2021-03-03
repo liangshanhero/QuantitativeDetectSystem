@@ -97,7 +97,7 @@ public class PictureService {
                 }
                 lineAvegGray += (tmpGray - lineAvegGray) / length++ ;
             }
-
+//TODO      2021-0222 featureLineList中的所有featureLine都是同一条Line,故gray都是一样的...待查
             line.setGray(lineAvegGray);
             mark.getLineList().add(line);
         }

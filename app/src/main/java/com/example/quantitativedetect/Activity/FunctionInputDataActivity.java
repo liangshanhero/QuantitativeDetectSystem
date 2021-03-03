@@ -31,6 +31,7 @@ public class FunctionInputDataActivity extends Activity {
     private Mark mark;
     private List<STE> steList = new ArrayList<>();
     private List<TSS> tssList = new ArrayList<>();
+//    private int[] functions = new int[]{1,2,3,4,5};
     private int[] functions = new int[]{0,0,0,0,0};
     private String function;
     private int length;
@@ -73,6 +74,7 @@ public class FunctionInputDataActivity extends Activity {
         }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,R.layout.list_function,list);
         for(int i = 0;i < length;i++){
+//            TODO getTrc已注释,trc值暂为0,需要修改
             String name = "B"+String.valueOf(i)+" = T"+String.valueOf(i)+"/C = "+String.format("%.2f", mark.getTrC(i));
             Spinner spinner = new Spinner(this);
             spinner.setId(SPINNER_ID+i);
@@ -107,6 +109,7 @@ public class FunctionInputDataActivity extends Activity {
     private void initSTE(){
         for(int i = 0;i < length;i++){
 //          TODO 2020-0130，取值方法待解决，暂时使用固定值代替
+//          mark.getLineWidthPixelQuantity()=5(似乎一直不变),mark.getFeatureLineList().get(i+1).getGray()=44/64(会变)
             String value = String.format("%.2f",(float) mark.getFeatureLineList().get(i+1).getGray()/mark.getLineWidthPixelQuantity());
 //          String value = String.format("%.2f",(float) mark.getDotrowAvgGrays()[mark.getFeatureIndexOnDotrowIndex()[i+1]]/ mark.getLineWidthPixelQuantity());
 //            String value = "1234123412341234.1234123412341243";
@@ -159,23 +162,28 @@ public class FunctionInputDataActivity extends Activity {
         int[] IDs = new int[n];
         float[] conc = new float[n];
         int index = 0;
+//        TODO concsTemp临时变量,这样就不用填浓度数据了,测试完成后删除
+        int[] concsTemp ={2,4,6,8,10};
         for(int i = 0;i < length;i++){
             STE ste = steList.get(i);
             if(ste.getaSwitch().isChecked()){
-                if(TextUtils.isEmpty(ste.getEditText().getText())){
-                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String str = String.valueOf(ste.getEditText().getText());
-                float cc = Float.parseFloat(str);
+                //        TODO 测试完成后取消代码注释,
+//                if(TextUtils.isEmpty(ste.getEditText().getText())){
+//                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                String str = String.valueOf(ste.getEditText().getText());
+//                float cc = Float.parseFloat(str);
                 IDs[index] = i;
-                conc[index++] = cc;
+//                conc[index++] = cc;
+                conc[index++] = concsTemp[i];
             }
         }
 
         mark.setFlag(Mark.FLAG_INPUTTED);
         Intent intent = new Intent();
         intent.putExtra("ID", mark.getMode());
+//        IDs:在指定试制区域中检测出的峰值点的编号索引数组(featureIndex[])
         intent.putExtra("ids",IDs);
         intent.putExtra("conc",conc);
         intent.putExtra("FLAG", Mark.FLAG_INPUTTED);
@@ -197,6 +205,7 @@ public class FunctionInputDataActivity extends Activity {
         for(int i = 0;i < length;i++){
             TSS tss = tssList.get(i);
             if(tss.getaSwitch().isChecked()){
+                //TODO 2021-0218 getTrc已注释,trc值暂为0,需要修改
                 strips[index] = mark.getTrC(i);
                 String str = "Function"+String.valueOf(index++);
                 intent.putExtra(str, ruleList.get(functions[i]));
@@ -208,7 +217,7 @@ public class FunctionInputDataActivity extends Activity {
         startActivity(intent);
     }
 
-    public void next(View view){
+    public void concentrationsConfirm(View view){
         if(function.equals("data"))
             input();
         else if(function.equals("check"))

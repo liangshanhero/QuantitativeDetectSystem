@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class TSS {
+    // 2021-0218 function="check"模式中有用,其余部分暂时没用,猜测TSS:Text Spinner Switch
     private Switch aSwitch;
     private TextView textView;
     private Spinner spinner;

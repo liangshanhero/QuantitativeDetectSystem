@@ -66,4 +66,8 @@ public class Mark implements Serializable {
         float obj = 0;
         return obj;
     }
+//    原始getTrC,需要修改加以利用
+//    public float getTrC(int index){
+//        return ((float) dotrowAvgGrays[featureIndexOnDotrowIndex[index+1]])/((float)CLine);
+//    }
 }

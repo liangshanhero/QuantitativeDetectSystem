@@ -9,6 +9,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class TVS extends View {
+    // 2021-0218 猜测TVS:TextView Switch
     public static final int BASE_ID = 171;
     private LinearLayout linearLayout;
     private TextView textView;

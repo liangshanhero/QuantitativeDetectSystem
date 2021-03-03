@@ -98,6 +98,8 @@ public class FunctionFormulaActivity extends Activity {
 
 //    拟合规则
     public void fitRule(){
+//        float[] concrations = new float[firstPicStripes.size()];
+//        float[] grays = new float[firstPicStripes.size()];
         for(int i = 0; i < firstPicStripes.size(); i++){
 
 //                2021-01-31 firstPicArchives.size()对应的是featureLineList.size()，
@@ -114,6 +116,7 @@ public class FunctionFormulaActivity extends Activity {
          |archive2|     fL     |     fL     |     fL     |
          -------------------------------------------------
              */
+            // 2021-02-18 concrations似乎应该定义在循环外,否则无法多次赋值,但定义在循环外后后续的fit将不正常
             float[] concrations = new float[firstPicStripes.size()];
             float[] grays = new float[firstPicStripes.size()];
 //            float[] concrations = new float[firstPicArchives.get(i).length()];
@@ -135,8 +138,11 @@ public class FunctionFormulaActivity extends Activity {
 //                    grays[j] = stripe1.getGray();
 //                    concrations[j] = stripe1.getConcentration();
 //                }
+//                for(int j = 0; j < firstPicStripes.size(); j++){
+//                firstPicStripes中仅存放了一条line,因此定义长度为6的concrations和grays仅在第1个可能有值传入.
                 for(int j = 0; j < firstPicStripes.get(i).getLines().size(); j++){
-                    //TODO 找到firstPicStripes是在什么地方初始化并定义的
+                    //TODO 2021-02-18 firstPicStripes.get(i).getLine(j)得到的line中gray似乎都为44(页面中的B0也为44),
+                    // concentration似乎都为0,即没有获取到前端输入的数据
                     Line line = firstPicStripes.get(i).getLine(j);
                     grays[j] = line.getGray();
                     concrations[j] = line.getConcentration();

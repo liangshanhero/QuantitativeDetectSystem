@@ -11,6 +11,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 public class STE  {
+    // 2021-0218 function="data"时调用(默认)
+    // 含义:input界面的"灰度值-浓度值-开关"布局
+    // PS:灰度值为相对灰度值=mark.getFeatureLineList().get(i+1).getGray()/mark.getLineWidthPixelQuantity()
     private Switch aSwitch;
     private TextView textView;
     private EditText editText;

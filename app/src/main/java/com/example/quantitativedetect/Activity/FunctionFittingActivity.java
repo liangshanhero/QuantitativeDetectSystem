@@ -84,7 +84,7 @@ public class FunctionFittingActivity extends MainActivity {
         return tvs;
     }
 
-    public boolean createArchive(){
+    public boolean createStripes(){
         firstPicStripes.clear();
         secondPicStripes.clear();
         if(secondPicMarkList.size() > 0){//有第二张图的情况,暂时不处理
@@ -146,7 +146,7 @@ public class FunctionFittingActivity extends MainActivity {
             for(int i = 0;i < firstPicFeatureLineList.size(); i++){
                 Stripe stripe1 = new Stripe(i);
                 Stripe stripe2 = new Stripe(i);
-
+//            gray0默认值为1
                 firstPicStripes.add(stripe1);
                 secondPicStripes.add(stripe2);
             }
@@ -155,7 +155,8 @@ public class FunctionFittingActivity extends MainActivity {
 //            firstPicFeatureLineList
             for(int i = 0;i < firstPicFeatureLineList.size(); i++){
 //                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
-                float g1 = firstPicFeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
+//                float g1 = firstPicFeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
+                float g1 = firstPicFeatureLineList.get(i).getGray()/(float)firstPicMarkList.get(0).getLineWidthPixelQuantity();
                 Stripe stripe1 = firstPicStripes.get(i);
                 stripe1.setGray0(g1);
 //                TODO 2021-0131 可以试着将featureLine加入到对应的archive1中（暂时没想好怎么用，但是感觉有用。。。。。。）
@@ -176,8 +177,8 @@ public class FunctionFittingActivity extends MainActivity {
 //                    mark.getFeatureLineList().get(j).getGray();
                     float g1,c1;
                     c1 = mark.getFeatureLineList().get(j).getConcentration();
-                    g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
-
+//                    g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
+                    g1 = mark.getFeatureLineList().get(j).getGray()/(float)mark.getLineWidthPixelQuantity();
                     Stripe stripe1 = firstPicStripes.get(j);
 
                     Line line1 = new Line(c1,(int)(g1/ stripe1.getGray0()));
@@ -265,7 +266,7 @@ public class FunctionFittingActivity extends MainActivity {
 
 //    首先计算拟合，并跳转到结果界面FunctionFormulaActivity
     public void onFitting(View view){
-        if(!createArchive())
+        if(!createStripes())
             return;
         Intent intent = new Intent(this,FunctionFormulaActivity.class);
         intent.putExtra("length", firstPicStripes.size());

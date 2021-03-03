@@ -53,7 +53,7 @@ public class FunctionSampleActivity extends MainActivity {
     private int markId = 999;     //给每一个标识圈添加一个Id
     private MoveOnTouchListener moveOnTouchListener;
     private ArrayList<MarkView> markViews = new ArrayList<MarkView>();
-    private SeekBar seekBarW, seekBarH;
+    private SeekBar seekBarWidth, seekBarHeight;
     private int selectingID = 0;
     private Button takePicture;
     private int imageWidth;
@@ -107,6 +107,7 @@ public class FunctionSampleActivity extends MainActivity {
         });
     }
     public void mountBitmap(){
+        //压缩的似乎仅仅是显示的图片
         //压缩拍摄到的图片以便在屏幕上显示
         bitmap = getSmallBitmap(picturePath,imageWidth,imageHeight);
         this.imageHeight = imageView.getHeight();
@@ -116,11 +117,11 @@ public class FunctionSampleActivity extends MainActivity {
         addMark(300,500,70,350);//测试用特征框
     }
     private void seekBarInit(){
-        seekBarH = findViewById(R.id.seekBar_h);
-        seekBarW = findViewById(R.id.seekBar_w);
-        seekBarW.setProgress(10);
-        seekBarH.setProgress(10);
-        seekBarW.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBarHeight = findViewById(R.id.seekBar_h);
+        seekBarWidth = findViewById(R.id.seekBar_w);
+        seekBarWidth.setProgress(10);
+        seekBarHeight.setProgress(10);
+        seekBarWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private int unit = imageWidth / 150;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -147,7 +148,7 @@ public class FunctionSampleActivity extends MainActivity {
 
             }
         });
-        seekBarH.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBarHeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private int unit = imageHeight / 150;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -302,7 +303,7 @@ public class FunctionSampleActivity extends MainActivity {
 //    获取灰度
     public void analyse(){
         Mark mark = null;
-
+//TODO  2021-0224 featureLineList中每一条都是一样的,解决后再向后
 //        TODO 注意！！！markView获取到的灰度值有偏移，猜测是markView随bitmap压缩到的对应大小（240*240）后，
 //         以压缩的大小和位置在原始bitmap（1080*？（width*height））上获取了灰度值
         for(int i = 0;i < markViews.size();i++){
