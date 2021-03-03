@@ -114,6 +114,9 @@ public class FunctionSampleActivity extends MainActivity {
         MoveOnTouchListener.setImageHeight(imageHeight);
 //        greyInRed(bitmap);
         imageView.setImageBitmap(bitmap);
+//        seekBar与MarkView的宽高对应
+        seekBarWidth.setProgress(10);
+        seekBarHeight.setProgress(40);
         addMark(300,500,70,350);//测试用特征框
     }
     private void seekBarInit(){
@@ -121,6 +124,8 @@ public class FunctionSampleActivity extends MainActivity {
         seekBarWidth = findViewById(R.id.seekBar_w);
         seekBarWidth.setProgress(10);
         seekBarHeight.setProgress(10);
+
+
         seekBarWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private int unit = imageWidth / 150;
             @Override
@@ -192,6 +197,9 @@ public class FunctionSampleActivity extends MainActivity {
 
 
         ViewGroup.LayoutParams layoutParams = markView.getLayoutParams();
+
+//        将MarkView对应在bitmap中的位置进行缩放，便于后续操作，但是这样操作后，按下“next”键时，
+//        显示的markview会缩小、错位，得到的灰度数据似乎是正常的
         markView.setX(x);
         markView.setY(y);
         layoutParams.width = width;
@@ -225,8 +233,6 @@ public class FunctionSampleActivity extends MainActivity {
     public void addMark(int x, int y, int width, int height){
 
         View testView = new View(this);
-
-
 
         MarkView markView = new MarkView(this);
         markView.setId(markId++);

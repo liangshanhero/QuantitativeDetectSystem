@@ -146,11 +146,11 @@ public class PictureService {
 //            for(int i = length,index = 0;i < result.length-length && index < 6;i++){
                 //判断扫描第一次范围的前半部分是否存在极值点
                 if(index == 0){
-                    int mayBeMaxGray = getMax(cut(0,i-1,mark.getLineList()));
+                    int maybeMaxGray = getMax(cut(0,i-1,mark.getLineList()));
 
-                    int maxGrayLineIndex = findIndex(mayBeMaxGray,cut(0,i-1,mark.getLineList()));
+                    int maxGrayLineIndex = findIndex(maybeMaxGray,cut(0,i-1,mark.getLineList()));
 
-                    if(compare(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),mayBeMaxGray)){
+                    if(compare(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),maybeMaxGray)){
                         features[index++] = maxGrayLineIndex;
                         continue;
                     }
