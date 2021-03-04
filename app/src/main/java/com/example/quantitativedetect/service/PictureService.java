@@ -140,24 +140,22 @@ public class PictureService {
         if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
             int[] features = new int[7];
             List<Line> tempFeatureLineList = new ArrayList<>();
-//将整个mark的分为13份
+//          将整个mark的分为13份
             int stepLength = mark.getLineList().size()/13;//result.length/13;
-//            整个循环只有第一次能正常给到features
+//          整个循环只有第一次能正常给到features
             for(int i = stepLength,index = 0;i < mark.getLineList().size()-stepLength && index < 6;index++,i++){
 //            for(int i = length,index = 0;i < result.length-length && index < 6;i++){
-                //判断扫描第一次范围的前半部分是否存在极值点
+//                i和index的作用是？？
                 if(index == 0){
-//                    int maybeMaxGray = getMaxLineGray(cut(0,i-1,mark.getLineList()));
                     Line maybeMaxGrayLine = getMaxLineGray(cut(0,i-1,mark.getLineList()));
-//                    int maxGrayLineIndex = findIndex(maybeMaxGrayLine.getGray(),cut(0,i-1,mark.getLineList()));
                     int maxGrayLineIndex = mark.getLineList().indexOf(maybeMaxGrayLine);
 
-
-                    if(isMaxInList(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),maybeMaxGrayLine.getGray())){
+                    if(!isMaxInList(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),maybeMaxGrayLine.getGray())){
                         features[index++] = maxGrayLineIndex;
                         continue;
                     }
                 }
+
                 if(isMaxInList(cut(i-stepLength,i-1,mark.getLineList()),mark.getLineList().get(i).getGray())&& isMaxInList(cut(i+1,i+stepLength,mark.getLineList()),mark.getLineList().get(i).getGray())){
                     if(index !=0 && i - features[index - 1] < stepLength/3*2)
                         continue;
