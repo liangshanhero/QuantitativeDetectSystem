@@ -142,20 +142,23 @@ public class PictureService {
             List<Line> tempFeatureLineList = new ArrayList<>();
 //将整个mark的分为13份
             int stepLength = mark.getLineList().size()/13;//result.length/13;
+//            整个循环只有第一次能正常给到features
             for(int i = stepLength,index = 0;i < mark.getLineList().size()-stepLength && index < 6;index++,i++){
 //            for(int i = length,index = 0;i < result.length-length && index < 6;i++){
                 //判断扫描第一次范围的前半部分是否存在极值点
                 if(index == 0){
-                    int maybeMaxGray = getMax(cut(0,i-1,mark.getLineList()));
+//                    int maybeMaxGray = getMaxLineGray(cut(0,i-1,mark.getLineList()));
+                    Line maybeMaxGrayLine = getMaxLineGray(cut(0,i-1,mark.getLineList()));
+//                    int maxGrayLineIndex = findIndex(maybeMaxGrayLine.getGray(),cut(0,i-1,mark.getLineList()));
+                    int maxGrayLineIndex = mark.getLineList().indexOf(maybeMaxGrayLine);
 
-                    int maxGrayLineIndex = findIndex(maybeMaxGray,cut(0,i-1,mark.getLineList()));
 
-                    if(compare(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),maybeMaxGray)){
+                    if(isMaxInList(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),maybeMaxGrayLine.getGray())){
                         features[index++] = maxGrayLineIndex;
                         continue;
                     }
                 }
-                if(compare(cut(i-stepLength,i-1,mark.getLineList()),mark.getLineList().get(i).getGray())&& compare(cut(i+1,i+stepLength,mark.getLineList()),mark.getLineList().get(i).getGray())){
+                if(isMaxInList(cut(i-stepLength,i-1,mark.getLineList()),mark.getLineList().get(i).getGray())&& isMaxInList(cut(i+1,i+stepLength,mark.getLineList()),mark.getLineList().get(i).getGray())){
                     if(index !=0 && i - features[index - 1] < stepLength/3*2)
                         continue;
 //                    if(index !=0 && i - mark.getLineList().indexOf(mark.getFeatureLineList().get(index-1)) < length/3*2)
@@ -165,14 +168,16 @@ public class PictureService {
                 }
             }
             //判断最后一次扫描的后半部分是否存在极值点
-            int mayBeMaxGray =getMax(cut(mark.getLineList().size()-stepLength,mark.getLineList().size()-1,mark.getLineList()));
+//            int mayBeMaxGray = getMaxLineGray(cut(mark.getLineList().size()-stepLength,mark.getLineList().size()-1,mark.getLineList()));
+            Line mayBeMaxGrayLine = getMaxLineGray(cut(mark.getLineList().size()-stepLength,mark.getLineList().size()-1,mark.getLineList()));
             int i;
+//          TODO 2021-0304 ？？这一个循环的作用是？
             for(i = mark.getLineList().size() - 1; i > mark.getLineList().size() - stepLength;i--){
-                if (mark.getLineList().get(i).getGray() == mayBeMaxGray)
+                if (mark.getLineList().get(i).getGray() == mayBeMaxGrayLine.getGray())
                     break;
             }
 
-            if(compare(cut(i-stepLength,i-1,mark.getLineList()),mayBeMaxGray)){
+            if(isMaxInList(cut(i-stepLength,i-1,mark.getLineList()),mayBeMaxGrayLine.getGray())){
 //                features[features.length-1] = i;
                 mark.getFeatureLineList().add(mark.getLineList().get(i));
             }
@@ -194,14 +199,15 @@ public class PictureService {
             for(int i = stepLength,index = 0;i < mark.getLineList().size()-stepLength && index < 6;i++){
                 //判断扫描第一次范围的前半部分是否存在极值点
                 if(index == 0){
-                    int mayBeMaxGray =getMax(cut(0,i-1,mark.getLineList()));
-                    int maxGrayLineIndex = findIndex(mayBeMaxGray,cut(0,i-1,mark.getLineList()));
-                    if(compare(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),mayBeMaxGray)){
+//                    int mayBeMaxGray = getMaxLineGray(cut(0,i-1,mark.getLineList()));
+                    Line mayBeMaxGrayLine = getMaxLineGray(cut(0,i-1,mark.getLineList()));
+                    int maxGrayLineIndex = findIndex(mayBeMaxGrayLine.getGray(),cut(0,i-1,mark.getLineList()));
+                    if(isMaxInList(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),mayBeMaxGrayLine.getGray())){
                         features[index++] = maxGrayLineIndex;
                         continue;
                     }
                 }
-                if(compare(cut(i-stepLength,i-1,mark.getLineList()),mark.getLineList().get(i).getGray())&& compare(cut(i+1,i+stepLength,mark.getLineList()),mark.getLineList().get(i).getGray())){
+                if(isMaxInList(cut(i-stepLength,i-1,mark.getLineList()),mark.getLineList().get(i).getGray())&& isMaxInList(cut(i+1,i+stepLength,mark.getLineList()),mark.getLineList().get(i).getGray())){
                     if(index !=0 && i - features[index - 1] < stepLength/3*2)
                         continue;
                     features[index++] = i;
@@ -235,21 +241,25 @@ public class PictureService {
             cutLineList.add(lineList.get(i));
         }
         return cutLineList;
-//            sub[i-start] = result[i];
+////            sub[i-start] = result[i];
 //        return sub;
     }
-    public static boolean compare(List<Line> lineList,int maxGray){
+    public static boolean isMaxInList(List<Line> lineList, int maxGray){
         for(int i = 0;i < lineList.size();i++)
             if(maxGray < lineList.get(i).getGray())
                 return false;
         return true;
     }
-    public static int getMax(List<Line> lineList){
+    public static Line/*int*/ getMaxLineGray(List<Line> lineList){
+        Line maxGrayLine=lineList.get(0);
         int maxGray = 0;
         for(Line line:lineList){
-            if(line.getGray() > maxGray)
+            if(line.getGray() > maxGray){
                 maxGray = line.getGray();
+                maxGrayLine = line;
+            }
         }
-        return maxGray;
+        return maxGrayLine;
+//        return maxGray;
     }
 }
