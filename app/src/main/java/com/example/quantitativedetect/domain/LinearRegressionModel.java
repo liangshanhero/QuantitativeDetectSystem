@@ -5,15 +5,15 @@ import org.litepal.crud.DataSupport;
 import java.io.Serializable;
 
 //原来的名字是Formula，公式
-public class Rule extends DataSupport implements Serializable {
+public class LinearRegressionModel extends DataSupport implements Serializable {
 
     private double slope=0,offset=0;//斜率，偏移
     private double bias = 1;//
     private String name;
-    public Rule(){
+    public LinearRegressionModel(){
 
     }
-    public Rule(double slope, double offset, String name){
+    public LinearRegressionModel(double slope, double offset, String name){
         this.slope = slope;
         this.offset = offset;
         this.name = name;

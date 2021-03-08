@@ -1,32 +1,31 @@
 package com.example.quantitativedetect.view;
 
 import android.content.Context;
-import android.text.InputType;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-
-public class STE  {
-    // 2021-0218 function="data"时调用(默认)
-    // 含义:input界面的"灰度值-浓度值-开关"布局
-    // PS:灰度值为相对灰度值=mark.getFeatureLineList().get(i+1).getGray()/mark.getLineWidthPixelQuantity()
+//原来是TSS
+public class TextSpinnerSwitchView {
+    // 2021-0218 function="check"模式中有用,其余部分暂时没用,猜测TSS:Text Spinner Switch
     private Switch aSwitch;
     private TextView textView;
-    private EditText editText;
+    private Spinner spinner;
     private LinearLayout linearLayout;
     private Context context;
-    private String value;
+    private String name;
 
-    public STE(Context context,String value){
+    public TextSpinnerSwitchView(Context context, Spinner spinner, String name){
         this.context = context;
-        this.value = value;
+        this.name = name;
+        this.spinner = spinner;
         init();
     }
-    private void init(){
+
+    public void init(){
         linearLayout = new LinearLayout(context);
         LinearLayout.LayoutParams layoutParams =new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         linearLayout.setLayoutParams(layoutParams);
@@ -36,43 +35,37 @@ public class STE  {
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams1.gravity = Gravity.CENTER;
         layoutParams1.weight = 1;
-        layoutParams1.leftMargin = 50;
+        layoutParams1.setMargins(50,10,50,10);
         textView.setLayoutParams(layoutParams1);
-        textView.setText(value);
+        textView.setTextSize(10);
+        textView.setText(name);
+
+        LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams3.gravity = Gravity.CENTER;
+        layoutParams3.weight = 2;
+        layoutParams3.setMargins(50,10,50,10);
+        spinner.setLayoutParams(layoutParams3);
 
         aSwitch = new Switch(context);
         LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams2.gravity = Gravity.CENTER;
         layoutParams2.weight = 1;
-        layoutParams2.rightMargin = 50;
+        layoutParams2.setMargins(50,10,50,10);
         aSwitch.setChecked(true);
         aSwitch.setLayoutParams(layoutParams2);
 
-        editText = new EditText(context);
-        LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams3.gravity = Gravity.CENTER;
-        layoutParams3.weight = 3;
-        editText.setLayoutParams(layoutParams3);
-        editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-
         linearLayout.addView(textView);
-        linearLayout.addView(editText);
+        linearLayout.addView(spinner);
         linearLayout.addView(aSwitch);
     }
 
     public Switch getaSwitch() {
         return aSwitch;
     }
-
-    public EditText getEditText() {
-        return editText;
-    }
-
-    public void setListener(CompoundButton.OnCheckedChangeListener listener){
-        aSwitch.setOnCheckedChangeListener(listener);
-    }
-
     public LinearLayout getLinearLayout() {
         return this.linearLayout;
+    }
+    public void setListener(CompoundButton.OnCheckedChangeListener listener){
+        aSwitch.setOnCheckedChangeListener(listener);
     }
 }

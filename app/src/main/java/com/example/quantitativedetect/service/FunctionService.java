@@ -1,11 +1,11 @@
 package com.example.quantitativedetect.service;
 
-import com.example.quantitativedetect.domain.Rule;
+import com.example.quantitativedetect.domain.LinearRegressionModel;
 
 public class FunctionService {
 
 //    拟合灰度和浓度的规则，rule
-    public static Rule fit(float[] concentrations, float[] gray) {
+    public static LinearRegressionModel fit(float[] concentrations, float[] gray) {
         if(concentrations.length < 2||gray.length < 2||concentrations.length != gray.length)
             return null;
         float offset = 0;
@@ -30,17 +30,17 @@ public class FunctionService {
         }
         slope = numerator / denominator;
         offset = Aconc - slope*Agrey;
-        Rule rule = new Rule();
-        rule.setSlope(slope);
-        rule.setOffset(offset);
-        return rule;
+        LinearRegressionModel linearRegressionModel = new LinearRegressionModel();
+        linearRegressionModel.setSlope(slope);
+        linearRegressionModel.setOffset(offset);
+        return linearRegressionModel;
     }
 
-    public static double calConc(Rule rule, double grey){
-        return grey* rule.getSlope() + rule.getOffset();
+    public static double calConc(LinearRegressionModel linearRegressionModel, double grey){
+        return grey* linearRegressionModel.getSlope() + linearRegressionModel.getOffset();
     }
-    public static double calGrey(Rule rule, double conc){
-        return (conc - rule.getOffset())/ rule.getSlope();
+    public static double calGrey(LinearRegressionModel linearRegressionModel, double conc){
+        return (conc - linearRegressionModel.getOffset())/ linearRegressionModel.getSlope();
     }
 
     public static float getAver(float[] array){

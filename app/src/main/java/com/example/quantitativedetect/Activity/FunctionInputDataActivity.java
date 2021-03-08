@@ -12,11 +12,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.example.quantitativedetect.R;
-import com.example.quantitativedetect.domain.Rule;
+import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Mark;
-import com.example.quantitativedetect.view.AbbreviationCurve;
-import com.example.quantitativedetect.view.STE;
-import com.example.quantitativedetect.view.TextSpinnerSwitch;
+import com.example.quantitativedetect.view.GrayCurve;
+import com.example.quantitativedetect.view.GrayConcentrationSwitchView;
+import com.example.quantitativedetect.view.TextSpinnerSwitchView;
 
 import org.litepal.crud.DataSupport;
 
@@ -27,15 +27,15 @@ public class FunctionInputDataActivity extends Activity {
 
     public static int SPINNER_ID = 1086;
     private Mark mark;
-    private List<STE> steList = new ArrayList<>();
-    private List<TextSpinnerSwitch> textSpinnerSwitchList = new ArrayList<>();
+    private List<GrayConcentrationSwitchView> grayConcentrationSwitchViewList = new ArrayList<>();
+    private List<TextSpinnerSwitchView> textSpinnerSwitchViewList = new ArrayList<>();
 //    private int[] functions = new int[]{1,2,3,4,5};
     private int[] functions = new int[]{0,0,0,0,0};
     private String function;
     private int length;
     private LinearLayout linearLayout;
     private RelativeLayout relativeLayout;
-    private AbbreviationCurve abbreviationCurve;
+    private GrayCurve grayCurve;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,9 +55,9 @@ public class FunctionInputDataActivity extends Activity {
 //        mark.getLineList()
 //        int[] dotrowAvgGrays = new int[0];
 //        int[] featureIndexOnDotrowIndex = new int[0];
-        abbreviationCurve = new AbbreviationCurve(this,MainActivity.getScreenWidth(), mark, (float)1, 1);
-        abbreviationCurve.setFlag(1);
-        relativeLayout.addView(abbreviationCurve);
+        grayCurve = new GrayCurve(this,MainActivity.getScreenWidth(), mark, (float)1, 1);
+        grayCurve.setFlag(1);
+        relativeLayout.addView(grayCurve);
         if(function.equals("data"))
             initSTE();
         else if(function.equals("check"))
@@ -65,10 +65,10 @@ public class FunctionInputDataActivity extends Activity {
     }
 
     private void intiTSS(){
-        final List<Rule> ruleList = DataSupport.findAll(Rule.class);
-        String[] list = new String[ruleList.size()];
-        for(int i = 0; i < ruleList.size(); i++){
-            list[i] = ruleList.get(i).getName();
+        final List<LinearRegressionModel> linearRegressionModelList = DataSupport.findAll(LinearRegressionModel.class);
+        String[] list = new String[linearRegressionModelList.size()];
+        for(int i = 0; i < linearRegressionModelList.size(); i++){
+            list[i] = linearRegressionModelList.get(i).getName();
         }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,R.layout.list_function,list);
         for(int i = 0;i < length;i++){
@@ -97,10 +97,10 @@ public class FunctionInputDataActivity extends Activity {
                     onChanged(0);
                 }
             };
-            TextSpinnerSwitch textSpinnerSwitch = new TextSpinnerSwitch(this,spinner,name);
-            textSpinnerSwitch.setListener(listener);
-            textSpinnerSwitchList.add(textSpinnerSwitch);
-            linearLayout.addView(textSpinnerSwitch.getLinearLayout());
+            TextSpinnerSwitchView textSpinnerSwitchView = new TextSpinnerSwitchView(this,spinner,name);
+            textSpinnerSwitchView.setListener(listener);
+            textSpinnerSwitchViewList.add(textSpinnerSwitchView);
+            linearLayout.addView(textSpinnerSwitchView.getLinearLayout());
         }
     }
 
@@ -111,16 +111,16 @@ public class FunctionInputDataActivity extends Activity {
             String value = String.format("%.2f",(float) mark.getFeatureLineList().get(i+1).getGray()/mark.getLineWidthPixelQuantity());
 //          String value = String.format("%.2f",(float) mark.getDotrowAvgGrays()[mark.getFeatureIndexOnDotrowIndex()[i+1]]/ mark.getLineWidthPixelQuantity());
 //            String value = "1234123412341234.1234123412341243";
-            STE ste = new STE(this,value);
+            GrayConcentrationSwitchView grayConcentrationSwitchView = new GrayConcentrationSwitchView(this,value);
             CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     onChanged(1);
                 }
             };
-            ste.setListener(listener);
-            steList.add(ste);
-            linearLayout.addView(ste.getLinearLayout());
+            grayConcentrationSwitchView.setListener(listener);
+            grayConcentrationSwitchViewList.add(grayConcentrationSwitchView);
+            linearLayout.addView(grayConcentrationSwitchView.getLinearLayout());
         }
     }
     public void onChanged(int flag){
@@ -129,22 +129,22 @@ public class FunctionInputDataActivity extends Activity {
 
         int[] feature = new int[0];
         if(flag == 0){
-            for(int i = 0; i < textSpinnerSwitchList.size(); i++){
-                TextSpinnerSwitch textSpinnerSwitch = textSpinnerSwitchList.get(i);
-                if(!textSpinnerSwitch.getaSwitch().isChecked()){
+            for(int i = 0; i < textSpinnerSwitchViewList.size(); i++){
+                TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
+                if(!textSpinnerSwitchView.getaSwitch().isChecked()){
                     feature[i+1] = feature[0];
                 }
             }
         }
         else {
-            for(int i = 0;i < steList.size();i++){
-                STE ste = steList.get(i);
-                if(!ste.getaSwitch().isChecked()){
+            for(int i = 0; i < grayConcentrationSwitchViewList.size(); i++){
+                GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
+                if(!grayConcentrationSwitchView.getValidSwitch().isChecked()){
                     feature[i+1] = feature[0];
                 }
             }
         }
-        abbreviationCurve.setFeatureIndex(feature);
+        grayCurve.setFeatureIndex(feature);
     }
 
     public void selectFunction(int index,int position){
@@ -154,7 +154,7 @@ public class FunctionInputDataActivity extends Activity {
     public void input(){
         int n = 0;
         for(int i = 0;i < length;i++){
-            if(steList.get(i).getaSwitch().isChecked())
+            if(grayConcentrationSwitchViewList.get(i).getValidSwitch().isChecked())
                 n++;
         }
         int[] IDs = new int[n];
@@ -163,8 +163,8 @@ public class FunctionInputDataActivity extends Activity {
 //        TODO concsTemp临时变量,这样就不用填浓度数据了,测试完成后删除
         int[] concsTemp ={2,4,6,8,10};
         for(int i = 0;i < length;i++){
-            STE ste = steList.get(i);
-            if(ste.getaSwitch().isChecked()){
+            GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
+            if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
                 //        TODO 测试完成后取消代码注释,
 //                if(TextUtils.isEmpty(ste.getEditText().getText())){
 //                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
@@ -191,9 +191,9 @@ public class FunctionInputDataActivity extends Activity {
 
     public void check(){
         int n = 0;
-        List<Rule> ruleList = DataSupport.findAll(Rule.class);
+        List<LinearRegressionModel> linearRegressionModelList = DataSupport.findAll(LinearRegressionModel.class);
         for(int i = 0;i < length;i++){
-            if(textSpinnerSwitchList.get(i).getaSwitch().isChecked())
+            if(textSpinnerSwitchViewList.get(i).getaSwitch().isChecked())
                 n++;
         }
 
@@ -201,12 +201,12 @@ public class FunctionInputDataActivity extends Activity {
         Intent intent = new Intent(this,FunctionFormulaActivity.class);
         int index = 0;
         for(int i = 0;i < length;i++){
-            TextSpinnerSwitch textSpinnerSwitch = textSpinnerSwitchList.get(i);
-            if(textSpinnerSwitch.getaSwitch().isChecked()){
+            TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
+            if(textSpinnerSwitchView.getaSwitch().isChecked()){
                 //TODO 2021-0218 getTrc已注释,trc值暂为0,需要修改
                 strips[index] = mark.getTrC(i);
                 String str = "Function"+String.valueOf(index++);
-                intent.putExtra(str, ruleList.get(functions[i]));
+                intent.putExtra(str, linearRegressionModelList.get(functions[i]));
             }
         }
         intent.putExtra("strips",strips);

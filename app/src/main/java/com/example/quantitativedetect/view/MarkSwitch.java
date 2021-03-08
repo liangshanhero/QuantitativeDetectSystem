@@ -8,23 +8,24 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 //原来是TVS
-public class TextViewSwitch extends View {
+//（1）表示是否将对应的Mark用于后面的拟合。（2）点击该视图的曲线，打开输入灰度与浓度界面
+public class MarkSwitch extends View {
     // 2021-0218 猜测TVS:TextView Switch
     public static final int BASE_ID = 171;
     private LinearLayout linearLayout;
     private TextView textView;
-    private View abbreviationCurveView;
-    private Switch aSwitch;
+    private View grayCurve;
+    private Switch validSwitch;
     private String name;
     private Context context;
     private boolean hasInput = false;
     public static final int TVS_ID = 10086;
 
-    public TextViewSwitch(Context context, String name, AbbreviationCurve abbreviationCurveView){
+    public MarkSwitch(Context context, String name, GrayCurve grayCurve){
         super(context);
         this.context = context;
         this.name = name;
-        this.abbreviationCurveView = abbreviationCurveView;
+        this.grayCurve = grayCurve;
         init();
     }
     private void init(){
@@ -44,16 +45,16 @@ public class TextViewSwitch extends View {
         layoutParams2.weight = 4;
 //        AC.setLayoutParams(layoutParams2);
 
-        aSwitch = new Switch(context);
+        validSwitch = new Switch(context);
         LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams3.gravity = Gravity.CENTER;
         layoutParams3.weight = 1;
-        aSwitch.setChecked(true);
-        aSwitch.setLayoutParams(layoutParams3);
+        validSwitch.setChecked(true);
+        validSwitch.setLayoutParams(layoutParams3);
 
         linearLayout.addView(textView);
-        linearLayout.addView(abbreviationCurveView);
-        linearLayout.addView(aSwitch);
+        linearLayout.addView(grayCurve);
+        linearLayout.addView(validSwitch);
     }
     public LinearLayout getLinearLayout(){return this.linearLayout;}
 
@@ -61,8 +62,8 @@ public class TextViewSwitch extends View {
         return name;
     }
 
-    public Switch getaSwitch() {
-        return aSwitch;
+    public Switch getValidSwitch() {
+        return validSwitch;
     }
 
     public TextView getTextView() {
@@ -73,8 +74,8 @@ public class TextViewSwitch extends View {
         return hasInput;
     }
 
-    public View getAbbreviationCurveView() {
-        return abbreviationCurveView;
+    public View getGrayCurve() {
+        return grayCurve;
     }
 
     public void setHasInput(boolean hasInput) {

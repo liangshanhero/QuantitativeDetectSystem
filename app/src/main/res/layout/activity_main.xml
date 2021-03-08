@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/rule"
+            android:id="@+id/linearRegressionModel"
             android:layout_width="210dp"
             android:layout_height="70dp"
             android:layout_gravity="center"

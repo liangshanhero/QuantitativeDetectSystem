@@ -12,13 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
+import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.domain.Line;
-import com.example.quantitativedetect.domain.Rule;
 
 import com.example.quantitativedetect.domain.Result;
 import com.example.quantitativedetect.service.FunctionService;
-import com.example.quantitativedetect.view.RuleCurve;
+import com.example.quantitativedetect.view.LinearRegressionCurve;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,8 +39,8 @@ public class FunctionFormulaActivity extends Activity {
     private float[] strips;
     private int length;
     private int now = 0;
-    private RuleCurve ruleCurve;
-    private List<Rule> ruleList = new ArrayList<>();
+    private LinearRegressionCurve linearRegressionCurve;
+    private List<LinearRegressionModel> linearRegressionModelList = new ArrayList<>();
     private String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,25 +75,25 @@ public class FunctionFormulaActivity extends Activity {
 //            Rule temRule = new Rule();
 //            ruleList.add(temRule);
 //            ruleList.get(0);
-            ruleCurve = new RuleCurve(this, ruleList.get(0),MainActivity.getScreenWidth());
+            linearRegressionCurve = new LinearRegressionCurve(this, linearRegressionModelList.get(0),MainActivity.getScreenWidth());
 
-            ruleCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), ruleList.get(now));
+            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
         }
         else if(function.equals("Result")){
             strips = intent.getFloatArrayExtra("strips");
             for(int i = 0;i < length;i++){
                 String str = "Function"+String.valueOf(i);
-                Rule rule = (Rule) intent.getSerializableExtra(str);
-                ruleList.add(rule);
+                LinearRegressionModel linearRegressionModel = (LinearRegressionModel) intent.getSerializableExtra(str);
+                linearRegressionModelList.add(linearRegressionModel);
             }
             computing();
-            ruleCurve = new RuleCurve(this, ruleList.get(0),MainActivity.getScreenWidth());
-            ruleCurve.setPoint((float) resultList.get(0).getConcentration(),strips[0], ruleList.get(0));
+            linearRegressionCurve = new LinearRegressionCurve(this, linearRegressionModelList.get(0),MainActivity.getScreenWidth());
+            linearRegressionCurve.setPoint((float) resultList.get(0).getConcentration(),strips[0], linearRegressionModelList.get(0));
         }
         textView = findViewById(R.id.textView_formula);
         relativeLayout = findViewById(R.id.relative_formula);
         textView.setText(equation(0));
-        relativeLayout.addView(ruleCurve);
+        relativeLayout.addView(linearRegressionCurve);
     }
 
 //    拟合规则
@@ -128,9 +128,9 @@ public class FunctionFormulaActivity extends Activity {
                     grays[j] = (firstPicLine.getGray()+ secondPicLine.getGray())/2;
                     concrations[j] = (firstPicLine.getConcentration()+ secondPicLine.getConcentration())/2;
                 }
-                Rule rule = FunctionService.fit(concrations,grays);
-                rule.setBias((firstPicStripes.get(i).getGray0()+ secondPicStripes.get(i).getGray0())/2);
-                ruleList.add(rule);
+                LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
+                linearRegressionModel.setBias((firstPicStripes.get(i).getGray0()+ secondPicStripes.get(i).getGray0())/2);
+                linearRegressionModelList.add(linearRegressionModel);
             }
             else{
 //                for(int j = 0; j < firstPicArchives.get(i).length(); j++){
@@ -151,17 +151,17 @@ public class FunctionFormulaActivity extends Activity {
                 firstPicStripes.get(i);
                 Stripe stripe = firstPicStripes.get(i);
                 int lengthTest = stripe.length();
-                Rule rule = FunctionService.fit(concrations, grays);
-                rule.setBias(firstPicStripes.get(i).getGray0());
-                ruleList.add(rule);
+                LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations, grays);
+                linearRegressionModel.setBias(firstPicStripes.get(i).getGray0());
+                linearRegressionModelList.add(linearRegressionModel);
             }
         }
     }
 
     public void computing(){
         for(int i = 0;i < strips.length;i++){
-            double grey = strips[i]/ ruleList.get(i).getBias();
-            double conc = FunctionService.calConc(ruleList.get(i),grey);
+            double grey = strips[i]/ linearRegressionModelList.get(i).getBias();
+            double conc = FunctionService.calConc(linearRegressionModelList.get(i),grey);
             Result result = new Result();
             result.setConcentration(conc);
             resultList.add(result);
@@ -172,9 +172,9 @@ public class FunctionFormulaActivity extends Activity {
         String str = "";
         if(function.equals("Formula")){
             char c = '+';
-            if(ruleList.get(index).getOffset() < 0)
+            if(linearRegressionModelList.get(index).getOffset() < 0)
                 c = '-';
-            str = "Concentration = "+String.format("%.2f", ruleList.get(index).getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(ruleList.get(index).getOffset()))+"\n"+"B0 = "+String.format("%.2f", ruleList.get(index).getBias());
+            str = "Concentration = "+String.format("%.2f", linearRegressionModelList.get(index).getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(linearRegressionModelList.get(index).getOffset()))+"\n"+"B0 = "+String.format("%.2f", linearRegressionModelList.get(index).getBias());
         }
         else if(function.equals("Result")){
             str = "Concentration = "+String.format("%.2f",resultList.get(index).getConcentration())+" "+UNIT;
@@ -190,10 +190,10 @@ public class FunctionFormulaActivity extends Activity {
         }
         now++;
         if(function.equals("Formula")){
-            ruleCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), ruleList.get(now));
+            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
         }
         else if(function.equals("Result")){
-            ruleCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], ruleList.get(now));
+            linearRegressionCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], linearRegressionModelList.get(now));
         }
         textView.setText(equation(now));
     }
@@ -206,10 +206,10 @@ public class FunctionFormulaActivity extends Activity {
         }
         now--;
         if(function.equals("Formula")){
-            ruleCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), ruleList.get(now));
+            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
         }
         else if(function.equals("Result")){
-            ruleCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], ruleList.get(now));
+            linearRegressionCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], linearRegressionModelList.get(now));
         }
         textView.setText(equation(now));
     }
@@ -245,9 +245,9 @@ public class FunctionFormulaActivity extends Activity {
 
     public void save(String name){
         if(function.equals("Formula")){
-            Rule rule = ruleList.get(now);
-            rule.setName(name);
-            rule.save();
+            LinearRegressionModel linearRegressionModel = linearRegressionModelList.get(now);
+            linearRegressionModel.setName(name);
+            linearRegressionModel.save();
         }
         else if(function.equals("Result")){
             Result result = resultList.get(now);

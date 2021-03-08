@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import com.example.quantitativedetect.domain.Mark;
 
 
-public class AbbreviationCurve extends BaseCoordinate {
+public class GrayCurve extends BaseCoordinate {
     private int[] points;//所以的点的灰度值
     private int[] featureIndex;//特征点在points这个数组里面的位置
     //第一个特征的点？？？？？
@@ -29,7 +29,7 @@ public class AbbreviationCurve extends BaseCoordinate {
 //        }
 //    }
 
-    public AbbreviationCurve(Context context, int width, Mark mark, float zoom, int flag){
+    public GrayCurve(Context context, int width, Mark mark, float zoom, int flag){
         super(context);
         super.init(width,width/2,40);
         points = new int[mark.getLineList().size()];

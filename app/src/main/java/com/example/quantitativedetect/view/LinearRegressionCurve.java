@@ -6,40 +6,40 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.example.quantitativedetect.Activity.FunctionFormulaActivity;
+import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Stripe;
-import com.example.quantitativedetect.domain.Rule;
 import com.example.quantitativedetect.service.FunctionService;
 
-public class RuleCurve extends BaseCoordinate {
-    private Rule rule;
+public class LinearRegressionCurve extends BaseCoordinate {
+    private LinearRegressionModel linearRegressionModel;
     private int flag = 1;
     private float conc, gray;
     private Stripe stripe1, stripe2;
     double max,min;
-    public RuleCurve(Context context, Rule rule, int width){
+    public LinearRegressionCurve(Context context, LinearRegressionModel linearRegressionModel, int width){
         super(context);
-        this.rule = rule;
+        this.linearRegressionModel = linearRegressionModel;
         super.init(width,width/2,40);
-        if(rule.getSlope() > 0){
-            max = FunctionService.calConc(rule,1);
-            min = FunctionService.calConc(rule,0);
+        if(linearRegressionModel.getSlope() > 0){
+            max = FunctionService.calConc(linearRegressionModel,1);
+            min = FunctionService.calConc(linearRegressionModel,0);
         }
         else {
-            max = FunctionService.calConc(rule,0);
-            min = FunctionService.calConc(rule,1);
+            max = FunctionService.calConc(linearRegressionModel,0);
+            min = FunctionService.calConc(linearRegressionModel,1);
         }
     }
-    public void setArchive(Stripe stripe1, Stripe stripe2, Rule rule){
+    public void setArchive(Stripe stripe1, Stripe stripe2, LinearRegressionModel linearRegressionModel){
         this.stripe1 = stripe1;
         this.stripe2 = stripe2;
-        this.rule = rule;
-        if(rule.getSlope() > 0){
-            max = FunctionService.calConc(rule,1);
-            min = FunctionService.calConc(rule,0);
+        this.linearRegressionModel = linearRegressionModel;
+        if(linearRegressionModel.getSlope() > 0){
+            max = FunctionService.calConc(linearRegressionModel,1);
+            min = FunctionService.calConc(linearRegressionModel,0);
         }
         else {
-            max = FunctionService.calConc(rule,0);
-            min = FunctionService.calConc(rule,1);
+            max = FunctionService.calConc(linearRegressionModel,0);
+            min = FunctionService.calConc(linearRegressionModel,1);
         }
         this.flag = 2;
         invalidate();
@@ -72,17 +72,17 @@ public class RuleCurve extends BaseCoordinate {
         }
     }
 
-    public void setPoint(float conc, float gray, Rule rule){
+    public void setPoint(float conc, float gray, LinearRegressionModel linearRegressionModel){
         this.conc = conc;
-        this.gray = gray/(float) rule.getBias();
-        this.rule = rule;
-        if(rule.getSlope() > 0){
-            max = FunctionService.calConc(rule,1);
-            min = FunctionService.calConc(rule,0);
+        this.gray = gray/(float) linearRegressionModel.getBias();
+        this.linearRegressionModel = linearRegressionModel;
+        if(linearRegressionModel.getSlope() > 0){
+            max = FunctionService.calConc(linearRegressionModel,1);
+            min = FunctionService.calConc(linearRegressionModel,0);
         }
         else {
-            max = FunctionService.calConc(rule,0);
-            min = FunctionService.calConc(rule,1);
+            max = FunctionService.calConc(linearRegressionModel,0);
+            min = FunctionService.calConc(linearRegressionModel,1);
         }
         this.flag = 3;
         invalidate();
@@ -150,8 +150,8 @@ public class RuleCurve extends BaseCoordinate {
         paint.setColor(Color.rgb(255,165,0));
 
         for(float i = pad;i < hei-pad-1;i++){
-            double conc1 = FunctionService.calConc(rule,(hei-pad-i)/(hei-2*pad));
-            double conc2 = FunctionService.calConc(rule,(hei-pad-i-1)/(hei-2*pad));
+            double conc1 = FunctionService.calConc(linearRegressionModel,(hei-pad-i)/(hei-2*pad));
+            double conc2 = FunctionService.calConc(linearRegressionModel,(hei-pad-i-1)/(hei-2*pad));
             float x1 = (float)(conc1-min)/(float) (max-min)*(wid-2*pad);
             float x2 = (float)(conc2-min)/(float) (max-min)*(wid-2*pad);
             if(x1 < 0)

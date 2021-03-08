@@ -193,6 +193,8 @@ public class PictureService {
 
             return mark;
         }
+
+
         else {
             int[] features = new int[6];
             int stepLength = mark.getLineList().size()/12;

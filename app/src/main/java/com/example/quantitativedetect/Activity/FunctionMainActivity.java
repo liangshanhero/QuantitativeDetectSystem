@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.example.quantitativedetect.R;
-import com.example.quantitativedetect.domain.Rule;
+import com.example.quantitativedetect.domain.LinearRegressionModel;
 
 import org.litepal.crud.DataSupport;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public class FunctionMainActivity extends MainActivity {
 
     private int function;
-    private List<Rule> ruleList = new ArrayList<>();
+    private List<LinearRegressionModel> linearRegressionModelList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,10 +49,10 @@ public class FunctionMainActivity extends MainActivity {
 
 
     private String[] findRecord(){
-        ruleList = DataSupport.findAll(Rule.class);
-        String[] names = new String[ruleList.size()];
-        for(int i = 0; i < ruleList.size(); i++)
-            names[i] = ruleList.get(i).getName();
+        linearRegressionModelList = DataSupport.findAll(LinearRegressionModel.class);
+        String[] names = new String[linearRegressionModelList.size()];
+        for(int i = 0; i < linearRegressionModelList.size(); i++)
+            names[i] = linearRegressionModelList.get(i).getName();
         return names;
     }
 
@@ -91,9 +91,9 @@ public class FunctionMainActivity extends MainActivity {
         dialog.show();
     }
     public void showHistoricalRule(int index){
-        Rule rule = ruleList.get(index);
+        LinearRegressionModel linearRegressionModel = linearRegressionModelList.get(index);
         Intent intent = new Intent(this,FunctionViewActivity.class);
-        intent.putExtra("Function", rule);
+        intent.putExtra("Function", linearRegressionModel);
         startActivity(intent);
     }
 

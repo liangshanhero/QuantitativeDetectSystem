@@ -10,17 +10,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.quantitativedetect.R;
-import com.example.quantitativedetect.domain.Rule;
-import com.example.quantitativedetect.view.RuleCurve;
+import com.example.quantitativedetect.domain.LinearRegressionModel;
+import com.example.quantitativedetect.view.LinearRegressionCurve;
 
 import org.litepal.crud.DataSupport;
 
 public class FunctionViewActivity extends Activity {
 
-    private Rule rule;
+    private LinearRegressionModel linearRegressionModel;
     private TextView textView;
     private RelativeLayout relativeLayout;
-    private RuleCurve ruleCurve;
+    private LinearRegressionCurve linearRegressionCurve;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +30,15 @@ public class FunctionViewActivity extends Activity {
     }
     public void init(){
         Intent intent = getIntent();
-        rule = (Rule)intent.getSerializableExtra("Function");
+        linearRegressionModel = (LinearRegressionModel)intent.getSerializableExtra("Function");
         textView = findViewById(R.id.textView_view);
         relativeLayout = findViewById(R.id.relative_view);
-        ruleCurve = new RuleCurve(this, rule,MainActivity.getScreenWidth());
-        relativeLayout.addView(ruleCurve);
+        linearRegressionCurve = new LinearRegressionCurve(this, linearRegressionModel,MainActivity.getScreenWidth());
+        relativeLayout.addView(linearRegressionCurve);
         char c = '+';
-        if(rule.getOffset() < 0)
+        if(linearRegressionModel.getOffset() < 0)
             c = '-';
-        String str = "Concentration = "+String.format("%.2f", rule.getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(rule.getOffset()))+"\n"+"B0 = "+String.format("%.2f", rule.getBias());
+        String str = "Concentration = "+String.format("%.2f", linearRegressionModel.getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(linearRegressionModel.getOffset()))+"\n"+"B0 = "+String.format("%.2f", linearRegressionModel.getBias());
         textView.setText(str);
     }
 
@@ -52,7 +52,7 @@ public class FunctionViewActivity extends Activity {
         dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                DataSupport.deleteAll(Rule.class,"name = ?", rule.getName());
+                DataSupport.deleteAll(LinearRegressionModel.class,"name = ?", linearRegressionModel.getName());
                 FunctionViewActivity.this.finish();
             }
         });
