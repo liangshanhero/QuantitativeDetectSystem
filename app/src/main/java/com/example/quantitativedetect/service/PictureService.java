@@ -138,14 +138,16 @@ public class PictureService {
 
     public static Mark getFeatures(/*int[] result*/Mark mark){
         if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
+//            features[0]表示为试纸中的CLine(基准线)，即featureLine除开CLine以外，一共只有6条
             int[] features = new int[7];
             List<Line> tempFeatureLineList = new ArrayList<>();
 //          将整个mark的分为13份
             int stepLength = mark.getLineList().size()/13;//result.length/13;
-//          整个循环只有第一次能正常给到features
+//          整个循环只有第一次能正常给到features（CLine）
             for(int i = stepLength,index = 0;i < mark.getLineList().size()-stepLength && index < 6;index++,i++){
 //            for(int i = length,index = 0;i < result.length-length && index < 6;i++){
 //                i和index的作用是？？
+//                获取基准线
                 if(index == 0){
                     Line maybeMaxGrayLine = getMaxLineGray(cut(0,i-1,mark.getLineList()));
                     int maxGrayLineIndex = mark.getLineList().indexOf(maybeMaxGrayLine);
@@ -165,7 +167,7 @@ public class PictureService {
 //                    tempFeatureLineList.add(mark.getLineList().get(i));
                 }
             }
-            //判断最后一次扫描的后半部分是否存在极值点
+//            判断最后一次扫描的后半部分是否存在极值点
 //            int mayBeMaxGray = getMaxLineGray(cut(mark.getLineList().size()-stepLength,mark.getLineList().size()-1,mark.getLineList()));
             Line mayBeMaxGrayLine = getMaxLineGray(cut(mark.getLineList().size()-stepLength,mark.getLineList().size()-1,mark.getLineList()));
             int i;

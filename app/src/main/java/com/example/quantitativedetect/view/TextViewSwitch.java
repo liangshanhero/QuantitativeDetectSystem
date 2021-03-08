@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-
-public class TVS extends View {
+//原来是TVS
+public class TextViewSwitch extends View {
     // 2021-0218 猜测TVS:TextView Switch
     public static final int BASE_ID = 171;
     private LinearLayout linearLayout;
@@ -20,7 +20,7 @@ public class TVS extends View {
     private boolean hasInput = false;
     public static final int TVS_ID = 10086;
 
-    public TVS(Context context,String name, AbbreviationCurve abbreviationCurveView){
+    public TextViewSwitch(Context context, String name, AbbreviationCurve abbreviationCurveView){
         super(context);
         this.context = context;
         this.name = name;

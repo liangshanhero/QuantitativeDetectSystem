@@ -14,20 +14,20 @@ import com.example.quantitativedetect.domain.Line;
 
 import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.view.AbbreviationCurve;
-import com.example.quantitativedetect.view.TVS;
+import com.example.quantitativedetect.view.TextViewSwitch;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.quantitativedetect.service.PictureService.getFeatures;
-import static com.example.quantitativedetect.view.TVS.TVS_ID;
+import static com.example.quantitativedetect.view.TextViewSwitch.TVS_ID;
 
 //Bn/B0仅仅对灰度进行操作，暂未对浓度值进行同样操作
 public class FunctionFittingActivity extends MainActivity {
     private List<Mark> firstPicMarkList = new ArrayList<>();
     private List<Mark> secondPicMarkList = new ArrayList<>();
-    private List<TVS> tvsList1 = new ArrayList<>();
-    private List<TVS> tvsList2 = new ArrayList<>();
+    private List<TextViewSwitch> textViewSwitchList1 = new ArrayList<>();
+    private List<TextViewSwitch> textViewSwitchList2 = new ArrayList<>();
     private List<Stripe> firstPicStripes = new ArrayList<>();
     private List<Stripe> secondPicStripes = new ArrayList<>();
     private LinearLayout linearLayout;
@@ -56,13 +56,13 @@ public class FunctionFittingActivity extends MainActivity {
             Mark mark = firstPicMarkList.get(i);
             mark = getFeatures(mark);
             mark.setMode(TVS_ID+i);
-            TVS tvs1 = createTVS(mark,TVS_ID+i,"strip "+String.valueOf(i+1),listener1);
-            tvsList1.add(tvs1);
-            linearLayout.addView(tvs1.getLinearLayout());
+            TextViewSwitch textViewSwitch1 = createTVS(mark,TVS_ID+i,"strip "+String.valueOf(i+1),listener1);
+            textViewSwitchList1.add(textViewSwitch1);
+            linearLayout.addView(textViewSwitch1.getLinearLayout());
         }
     }
 
-    public TVS createTVS(Mark mark, int ID, String name, View.OnClickListener listener){
+    public TextViewSwitch createTVS(Mark mark, int ID, String name, View.OnClickListener listener){
 
 //        TODO 2021-0130 暂时使用固定的值代替
 //        
@@ -80,8 +80,8 @@ public class FunctionFittingActivity extends MainActivity {
         layoutParams.height = getScreenWidth()*4/7/2;
         layoutParams.weight = 4;
         abbreviationCurve.setLayoutParams(layoutParams);
-        TVS tvs = new TVS(this,name,abbreviationCurve);
-        return tvs;
+        TextViewSwitch textViewSwitch = new TextViewSwitch(this,name,abbreviationCurve);
+        return textViewSwitch;
     }
 
     public boolean createStripes(){
@@ -119,7 +119,7 @@ public class FunctionFittingActivity extends MainActivity {
                     Toast.makeText(this,"请正确输入所有样本的浓度值（数量不对称）",Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                if(!tvsList1.get(i).getaSwitch().isChecked()||!tvsList2.get(i).getaSwitch().isChecked())
+                if(!textViewSwitchList1.get(i).getaSwitch().isChecked()||!textViewSwitchList2.get(i).getaSwitch().isChecked())
                     continue;
                 Mark firstPicMark = firstPicMarkList.get(i);
                 Mark secondPicMark = secondPicMarkList.get(i);
@@ -165,7 +165,7 @@ public class FunctionFittingActivity extends MainActivity {
 //            TODO　2021-0209 firstPicMarkList.size()=1,i=1时无法进入循环,且size为1,后面的取值操作使用i会有越界错误
 //             故将循环初始值改为i=0,修改以后后续完成情况良好,且特征line已加入firstPicStripes中
             for(int i = 0; i < firstPicMarkList.size(); i++){
-                if(!tvsList1.get(i).getaSwitch().isChecked()){
+                if(!textViewSwitchList1.get(i).getaSwitch().isChecked()){
                     continue;
                 }
 
@@ -230,35 +230,35 @@ public class FunctionFittingActivity extends MainActivity {
     public void secondGet(){
         linearLayout.removeAllViews();
         for(int i = 0; i< secondPicMarkList.size(); i++){
-            TVS tvs1 = tvsList1.get(i);
+            TextViewSwitch textViewSwitch1 = textViewSwitchList1.get(i);
             Mark mark = secondPicMarkList.get(i);
 
             mark.setMode(TVS_ID+i+ secondPicMarkList.size());
-            TVS tvs2 = createTVS(mark,TVS_ID+i+ secondPicMarkList.size(),"Sstrip "+String.valueOf(i+1),listener2);
-            tvsList2.add(tvs2);
-            linearLayout.addView(tvs1.getLinearLayout());
-            linearLayout.addView(tvs2.getLinearLayout());
+            TextViewSwitch textViewSwitch2 = createTVS(mark,TVS_ID+i+ secondPicMarkList.size(),"Sstrip "+String.valueOf(i+1),listener2);
+            textViewSwitchList2.add(textViewSwitch2);
+            linearLayout.addView(textViewSwitch1.getLinearLayout());
+            linearLayout.addView(textViewSwitch2.getLinearLayout());
         }
     }
 
     public void InputtedData(int ID){
-        for(int i = 0;i < tvsList1.size();i++){
-            TVS tvs = tvsList1.get(i);
-            if(tvs.getAbbreviationCurveView().getId() == ID){
-                String[] str = tvs.getTextView().getText().toString().split("f");
+        for(int i = 0; i < textViewSwitchList1.size(); i++){
+            TextViewSwitch textViewSwitch = textViewSwitchList1.get(i);
+            if(textViewSwitch.getAbbreviationCurveView().getId() == ID){
+                String[] str = textViewSwitch.getTextView().getText().toString().split("f");
                 if(str.length<2)
-                    tvs.getTextView().setText(tvs.getTextView().getText()+"(fin)");
-                tvs.setHasInput(true);
+                    textViewSwitch.getTextView().setText(textViewSwitch.getTextView().getText()+"(fin)");
+                textViewSwitch.setHasInput(true);
                 break;
             }
         }
-        for(int i = 0;i < tvsList2.size();i++){
-            TVS tvs = tvsList2.get(i);
-            if(tvs.getAbbreviationCurveView().getId() == ID){
-                String[] str = tvs.getTextView().getText().toString().split("f");
+        for(int i = 0; i < textViewSwitchList2.size(); i++){
+            TextViewSwitch textViewSwitch = textViewSwitchList2.get(i);
+            if(textViewSwitch.getAbbreviationCurveView().getId() == ID){
+                String[] str = textViewSwitch.getTextView().getText().toString().split("f");
                 if(str.length<2)
-                    tvs.getTextView().setText(tvs.getTextView().getText()+"(fin)");
-                tvs.setHasInput(true);
+                    textViewSwitch.getTextView().setText(textViewSwitch.getTextView().getText()+"(fin)");
+                textViewSwitch.setHasInput(true);
                 break;
             }
         }
@@ -315,7 +315,7 @@ public class FunctionFittingActivity extends MainActivity {
                     if(length != firstPicMarkList.size()){
                         Toast.makeText(this,"两次扫描的样本数量不一致，请重试",Toast.LENGTH_SHORT).show();
                         secondPicMarkList.clear();
-                        tvsList2.clear();
+                        textViewSwitchList2.clear();
                         break;
                     }
                     for(int i = 0;i < length;i++){

@@ -3,7 +3,6 @@ package com.example.quantitativedetect.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,14 +10,13 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.Rule;
 import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.view.AbbreviationCurve;
 import com.example.quantitativedetect.view.STE;
-import com.example.quantitativedetect.view.TSS;
+import com.example.quantitativedetect.view.TextSpinnerSwitch;
 
 import org.litepal.crud.DataSupport;
 
@@ -30,7 +28,7 @@ public class FunctionInputDataActivity extends Activity {
     public static int SPINNER_ID = 1086;
     private Mark mark;
     private List<STE> steList = new ArrayList<>();
-    private List<TSS> tssList = new ArrayList<>();
+    private List<TextSpinnerSwitch> textSpinnerSwitchList = new ArrayList<>();
 //    private int[] functions = new int[]{1,2,3,4,5};
     private int[] functions = new int[]{0,0,0,0,0};
     private String function;
@@ -99,10 +97,10 @@ public class FunctionInputDataActivity extends Activity {
                     onChanged(0);
                 }
             };
-            TSS tss = new TSS(this,spinner,name);
-            tss.setListener(listener);
-            tssList.add(tss);
-            linearLayout.addView(tss.getLinearLayout());
+            TextSpinnerSwitch textSpinnerSwitch = new TextSpinnerSwitch(this,spinner,name);
+            textSpinnerSwitch.setListener(listener);
+            textSpinnerSwitchList.add(textSpinnerSwitch);
+            linearLayout.addView(textSpinnerSwitch.getLinearLayout());
         }
     }
 
@@ -131,9 +129,9 @@ public class FunctionInputDataActivity extends Activity {
 
         int[] feature = new int[0];
         if(flag == 0){
-            for(int i = 0;i < tssList.size();i++){
-                TSS tss = tssList.get(i);
-                if(!tss.getaSwitch().isChecked()){
+            for(int i = 0; i < textSpinnerSwitchList.size(); i++){
+                TextSpinnerSwitch textSpinnerSwitch = textSpinnerSwitchList.get(i);
+                if(!textSpinnerSwitch.getaSwitch().isChecked()){
                     feature[i+1] = feature[0];
                 }
             }
@@ -195,7 +193,7 @@ public class FunctionInputDataActivity extends Activity {
         int n = 0;
         List<Rule> ruleList = DataSupport.findAll(Rule.class);
         for(int i = 0;i < length;i++){
-            if(tssList.get(i).getaSwitch().isChecked())
+            if(textSpinnerSwitchList.get(i).getaSwitch().isChecked())
                 n++;
         }
 
@@ -203,8 +201,8 @@ public class FunctionInputDataActivity extends Activity {
         Intent intent = new Intent(this,FunctionFormulaActivity.class);
         int index = 0;
         for(int i = 0;i < length;i++){
-            TSS tss = tssList.get(i);
-            if(tss.getaSwitch().isChecked()){
+            TextSpinnerSwitch textSpinnerSwitch = textSpinnerSwitchList.get(i);
+            if(textSpinnerSwitch.getaSwitch().isChecked()){
                 //TODO 2021-0218 getTrc已注释,trc值暂为0,需要修改
                 strips[index] = mark.getTrC(i);
                 String str = "Function"+String.valueOf(index++);
