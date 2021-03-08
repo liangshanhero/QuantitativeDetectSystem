@@ -61,6 +61,7 @@ public class Mark implements Serializable {
     }
 
 //  2021-0130  不知道是什么字段，暂时放在这里，弄清楚后去除
+//    TrC：T/C：T 线的颜色/荧光强度与 C 线的颜色/荧光强度之比，T线：feature line，C线：第一条feature line
     private float trc;
     public float getTrC(int i) {
         float obj = 0;

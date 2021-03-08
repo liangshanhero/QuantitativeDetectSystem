@@ -73,6 +73,7 @@ public class FunctionInputDataActivity extends Activity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,R.layout.list_function,list);
         for(int i = 0;i < length;i++){
 //            TODO getTrc已注释,trc值暂为0,需要修改
+//             T/C：T 线的颜色/荧光强度与 C 线的颜色/荧光强度之比，T线：feature line，C线：第一条feature line
             String name = "B"+String.valueOf(i)+" = T"+String.valueOf(i)+"/C = "+String.format("%.2f", mark.getTrC(i));
             Spinner spinner = new Spinner(this);
             spinner.setId(SPINNER_ID+i);
