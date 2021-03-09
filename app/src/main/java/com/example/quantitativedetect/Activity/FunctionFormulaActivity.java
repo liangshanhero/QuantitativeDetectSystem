@@ -161,7 +161,7 @@ public class FunctionFormulaActivity extends Activity {
     public void computing(){
         for(int i = 0;i < strips.length;i++){
             double grey = strips[i]/ linearRegressionModelList.get(i).getBias();
-            double conc = FunctionService.calConc(linearRegressionModelList.get(i),grey);
+            double conc = FunctionService.calculateConcentration(linearRegressionModelList.get(i),grey);
             Result result = new Result();
             result.setConcentration(conc);
             resultList.add(result);

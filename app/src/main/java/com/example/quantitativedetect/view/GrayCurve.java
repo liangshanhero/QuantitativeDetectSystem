@@ -9,7 +9,7 @@ import com.example.quantitativedetect.domain.Mark;
 
 
 public class GrayCurve extends BaseCoordinate {
-    private int[] points;//所以的点的灰度值
+    private int[] points;//所有的点的灰度值
     private int[] featureIndex;//特征点在points这个数组里面的位置
     //第一个特征的点？？？？？
     private float CL = 1;

@@ -117,7 +117,9 @@ public class FunctionSampleActivity extends MainActivity {
 //        seekBar与MarkView的宽高对应
         seekBarWidth.setProgress(10);
         seekBarHeight.setProgress(40);
-        addMark(300,500,70,350);//测试用特征框
+//        似乎没有什么用，暂时屏蔽
+//        addMarkView();
+//        addMark(300,500,70,350);//测试用特征框
     }
     private void seekBarInit(){
         seekBarHeight = findViewById(R.id.seekBar_h);
@@ -230,17 +232,25 @@ public class FunctionSampleActivity extends MainActivity {
             onSelected(viewId);
     }
     //添加标识圈
-    public void addMark(int x, int y, int width, int height){
+//    public void addMark(int x, int y, int width, int height){
+//
+//
+//    }
 
+    public void addMarkView(View view){
         View testView = new View(this);
 
         MarkView markView = new MarkView(this);
         markView.setId(markId++);
+
+        markView.setMark(new Mark());
+        markView.setBitmap(bitmap);
+
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.width = width;  //设置宽高
-        layoutParams.height = height;
-        layoutParams.leftMargin = x;
-        layoutParams.topMargin = y;
+        layoutParams.width = 70;  //设置宽高
+        layoutParams.height = 120;
+        layoutParams.leftMargin = 200;
+        layoutParams.topMargin = 200;
         markView.setLayoutParams(layoutParams);
         markView.setOnTouchListener(moveOnTouchListener);
         relativeLayout.addView(markView);
@@ -252,10 +262,6 @@ public class FunctionSampleActivity extends MainActivity {
 
         markViews.add(markView);
         setSelectingID(markView.getId());
-    }
-
-    public void addMarkView(View view){
-        addMark(200,200,70,120);
     }
     public void deleteMarkView(View view){
         if(selectingID != 0){

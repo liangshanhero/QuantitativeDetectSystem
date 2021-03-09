@@ -67,7 +67,7 @@ public class PictureService {
         return inSampleSize;//求出缩放值
     }
 
-    //分析数据
+    //分析数据，获取需要的颜色数据
     public static Mark analyse(Bitmap bitmap, MarkView markView){
         Mark mark =new Mark();
 
@@ -138,9 +138,10 @@ public class PictureService {
 
     public static Mark getFeatures(/*int[] result*/Mark mark){
         if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
+            List<Line> tempFeatureLineList = new ArrayList<>();
+
 //            features[0]表示为试纸中的CLine(基准线)，即featureLine除开CLine以外，一共只有6条
             int[] features = new int[7];
-            List<Line> tempFeatureLineList = new ArrayList<>();
 //          将整个mark的分为13份
             int stepLength = mark.getLineList().size()/13;//result.length/13;
 //          整个循环只有第一次能正常给到features（CLine）
@@ -152,12 +153,11 @@ public class PictureService {
                     Line maybeMaxGrayLine = getMaxLineGray(cut(0,i-1,mark.getLineList()));
                     int maxGrayLineIndex = mark.getLineList().indexOf(maybeMaxGrayLine);
 
-                    if(!isMaxInList(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),maybeMaxGrayLine.getGray())){
+                    if(isMaxInList(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),maybeMaxGrayLine.getGray())){
                         features[index++] = maxGrayLineIndex;
                         continue;
                     }
                 }
-
                 if(isMaxInList(cut(i-stepLength,i-1,mark.getLineList()),mark.getLineList().get(i).getGray())&& isMaxInList(cut(i+1,i+stepLength,mark.getLineList()),mark.getLineList().get(i).getGray())){
                     if(index !=0 && i - features[index - 1] < stepLength/3*2)
                         continue;
@@ -167,6 +167,8 @@ public class PictureService {
 //                    tempFeatureLineList.add(mark.getLineList().get(i));
                 }
             }
+
+
 //            判断最后一次扫描的后半部分是否存在极值点
 //            int mayBeMaxGray = getMaxLineGray(cut(mark.getLineList().size()-stepLength,mark.getLineList().size()-1,mark.getLineList()));
             Line mayBeMaxGrayLine = getMaxLineGray(cut(mark.getLineList().size()-stepLength,mark.getLineList().size()-1,mark.getLineList()));
@@ -176,7 +178,6 @@ public class PictureService {
                 if (mark.getLineList().get(i).getGray() == mayBeMaxGrayLine.getGray())
                     break;
             }
-
             if(isMaxInList(cut(i-stepLength,i-1,mark.getLineList()),mayBeMaxGrayLine.getGray())){
 //                features[features.length-1] = i;
                 mark.getFeatureLineList().add(mark.getLineList().get(i));
@@ -185,12 +186,10 @@ public class PictureService {
 //            for(int j = 0;j < features.length-1;j++)
 //                feature[j] = features[j+1];
 //            return feature;
-
             for(int j = 0;j < features.length-1;j++) {
 //                mark.getLineList().get(j + 1).setFeaturte(true);
                 mark.getFeatureLineList().add(mark.getLineList().get(features[j + 1]));
             }
-
             return mark;
         }
 

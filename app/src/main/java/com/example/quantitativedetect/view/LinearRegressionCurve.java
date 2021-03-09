@@ -21,12 +21,12 @@ public class LinearRegressionCurve extends BaseCoordinate {
         this.linearRegressionModel = linearRegressionModel;
         super.init(width,width/2,40);
         if(linearRegressionModel.getSlope() > 0){
-            max = FunctionService.calConc(linearRegressionModel,1);
-            min = FunctionService.calConc(linearRegressionModel,0);
+            max = FunctionService.calculateConcentration(linearRegressionModel,1);
+            min = FunctionService.calculateConcentration(linearRegressionModel,0);
         }
         else {
-            max = FunctionService.calConc(linearRegressionModel,0);
-            min = FunctionService.calConc(linearRegressionModel,1);
+            max = FunctionService.calculateConcentration(linearRegressionModel,0);
+            min = FunctionService.calculateConcentration(linearRegressionModel,1);
         }
     }
     public void setArchive(Stripe stripe1, Stripe stripe2, LinearRegressionModel linearRegressionModel){
@@ -34,12 +34,12 @@ public class LinearRegressionCurve extends BaseCoordinate {
         this.stripe2 = stripe2;
         this.linearRegressionModel = linearRegressionModel;
         if(linearRegressionModel.getSlope() > 0){
-            max = FunctionService.calConc(linearRegressionModel,1);
-            min = FunctionService.calConc(linearRegressionModel,0);
+            max = FunctionService.calculateConcentration(linearRegressionModel,1);
+            min = FunctionService.calculateConcentration(linearRegressionModel,0);
         }
         else {
-            max = FunctionService.calConc(linearRegressionModel,0);
-            min = FunctionService.calConc(linearRegressionModel,1);
+            max = FunctionService.calculateConcentration(linearRegressionModel,0);
+            min = FunctionService.calculateConcentration(linearRegressionModel,1);
         }
         this.flag = 2;
         invalidate();
@@ -77,12 +77,12 @@ public class LinearRegressionCurve extends BaseCoordinate {
         this.gray = gray/(float) linearRegressionModel.getBias();
         this.linearRegressionModel = linearRegressionModel;
         if(linearRegressionModel.getSlope() > 0){
-            max = FunctionService.calConc(linearRegressionModel,1);
-            min = FunctionService.calConc(linearRegressionModel,0);
+            max = FunctionService.calculateConcentration(linearRegressionModel,1);
+            min = FunctionService.calculateConcentration(linearRegressionModel,0);
         }
         else {
-            max = FunctionService.calConc(linearRegressionModel,0);
-            min = FunctionService.calConc(linearRegressionModel,1);
+            max = FunctionService.calculateConcentration(linearRegressionModel,0);
+            min = FunctionService.calculateConcentration(linearRegressionModel,1);
         }
         this.flag = 3;
         invalidate();
@@ -150,8 +150,8 @@ public class LinearRegressionCurve extends BaseCoordinate {
         paint.setColor(Color.rgb(255,165,0));
 
         for(float i = pad;i < hei-pad-1;i++){
-            double conc1 = FunctionService.calConc(linearRegressionModel,(hei-pad-i)/(hei-2*pad));
-            double conc2 = FunctionService.calConc(linearRegressionModel,(hei-pad-i-1)/(hei-2*pad));
+            double conc1 = FunctionService.calculateConcentration(linearRegressionModel,(hei-pad-i)/(hei-2*pad));
+            double conc2 = FunctionService.calculateConcentration(linearRegressionModel,(hei-pad-i-1)/(hei-2*pad));
             float x1 = (float)(conc1-min)/(float) (max-min)*(wid-2*pad);
             float x2 = (float)(conc2-min)/(float) (max-min)*(wid-2*pad);
             if(x1 < 0)

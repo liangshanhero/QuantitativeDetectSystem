@@ -1,10 +1,14 @@
 package com.example.quantitativedetect.domain;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 //TODO 好像是特征Line对象的转换，将concentration和gray进行bias转换，
 public class Stripe implements Serializable {
+    private Bitmap bitmap;
+
     private int[] points;
 //    private float conc0 = 1;
     private float gray0 = 1;//
@@ -67,5 +71,13 @@ public class Stripe implements Serializable {
 
     public void setGray0(float gray0) {
         this.gray0 = gray0;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 }

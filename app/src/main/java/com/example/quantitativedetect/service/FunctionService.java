@@ -36,7 +36,7 @@ public class FunctionService {
         return linearRegressionModel;
     }
 
-    public static double calConc(LinearRegressionModel linearRegressionModel, double grey){
+    public static double calculateConcentration(LinearRegressionModel linearRegressionModel, double grey){
         return grey* linearRegressionModel.getSlope() + linearRegressionModel.getOffset();
     }
     public static double calGrey(LinearRegressionModel linearRegressionModel, double conc){

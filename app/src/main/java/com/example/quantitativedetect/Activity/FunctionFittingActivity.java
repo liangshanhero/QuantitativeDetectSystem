@@ -56,7 +56,7 @@ public class FunctionFittingActivity extends MainActivity {
         for(int i = 0; i< firstPicMarkList.size(); i++){
             Mark mark = firstPicMarkList.get(i);
             mark = getFeatures(mark);
-            mark.setMode(TVS_ID+i);
+            mark.setDetectMethod(TVS_ID+i);
             MarkSwitch markSwitch1 = createMarkGrayCurveSwitchView(mark,TVS_ID+i,"strip "+String.valueOf(i+1),listener1);
             markSwitchList1.add(markSwitch1);
             linearLayout.addView(markSwitch1.getLinearLayout());
@@ -81,13 +81,14 @@ public class FunctionFittingActivity extends MainActivity {
         layoutParams.height = getScreenWidth()*4/7/2;
         layoutParams.weight = 4;
         grayCurve.setLayoutParams(layoutParams);
-        MarkSwitch markSwitch = new MarkSwitch(this,name, grayCurve);
+        MarkSwitch markSwitch = new MarkSwitch(this,name, grayCurve,mark);
         return markSwitch;
     }
 
     public boolean createStripes(){
         firstPicStripes.clear();
         secondPicStripes.clear();
+
         if(secondPicMarkList.size() > 0){//有第二张图的情况,暂时不处理
             if(!isSame(0)){
                 Toast.makeText(this,"请正确输入所有样本的浓度值（数量不对称）",Toast.LENGTH_SHORT).show();
@@ -234,7 +235,7 @@ public class FunctionFittingActivity extends MainActivity {
             MarkSwitch markSwitch1 = markSwitchList1.get(i);
             Mark mark = secondPicMarkList.get(i);
 
-            mark.setMode(TVS_ID+i+ secondPicMarkList.size());
+            mark.setDetectMethod(TVS_ID+i+ secondPicMarkList.size());
             MarkSwitch markSwitch2 = createMarkGrayCurveSwitchView(mark,TVS_ID+i+ secondPicMarkList.size(),"Sstrip "+String.valueOf(i+1),listener2);
             markSwitchList2.add(markSwitch2);
             linearLayout.addView(markSwitch1.getLinearLayout());
@@ -298,13 +299,13 @@ public class FunctionFittingActivity extends MainActivity {
                 case REQUEST_CODE_DATA:
                     int ID = intent.getIntExtra("ID",0);
                     for(Mark mark: firstPicMarkList){
-                        if(ID == mark.getMode()){
+                        if(ID == mark.getDetectMethod()){
 //                            mark.setIaC(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
 //                            mark.setFlag(intent.getIntExtra("FLAG",1));
                         }
                     }
                     for(Mark virginPoint: secondPicMarkList){
-                    if(ID == virginPoint.getMode()){
+                    if(ID == virginPoint.getDetectMethod()){
 //                        virginPoint.setIaC(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
 //                        virginPoint.setFlag(intent.getIntExtra("FLAG",1));
                     }

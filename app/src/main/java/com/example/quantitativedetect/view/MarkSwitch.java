@@ -7,10 +7,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.example.quantitativedetect.domain.Mark;
+
 //原来是TVS
 //（1）表示是否将对应的Mark用于后面的拟合。（2）点击该视图的曲线，打开输入灰度与浓度界面
 public class MarkSwitch extends View {
     // 2021-0218 猜测TVS:TextView Switch
+    private Mark mark;
     public static final int BASE_ID = 171;
     private LinearLayout linearLayout;
     private TextView textView;
@@ -21,11 +25,12 @@ public class MarkSwitch extends View {
     private boolean hasInput = false;
     public static final int TVS_ID = 10086;
 
-    public MarkSwitch(Context context, String name, GrayCurve grayCurve){
+    public MarkSwitch(Context context, String name, GrayCurve grayCurve,Mark mark){
         super(context);
         this.context = context;
         this.name = name;
         this.grayCurve = grayCurve;
+        this.mark = mark;
         init();
     }
     private void init(){
@@ -80,5 +85,13 @@ public class MarkSwitch extends View {
 
     public void setHasInput(boolean hasInput) {
         this.hasInput = hasInput;
+    }
+
+    public Mark getMark() {
+        return mark;
+    }
+
+    public void setMark(Mark mark) {
+        this.mark = mark;
     }
 }

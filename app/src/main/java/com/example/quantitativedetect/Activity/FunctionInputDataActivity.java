@@ -161,8 +161,8 @@ public class FunctionInputDataActivity extends Activity {
         int[] IDs = new int[n];
         float[] conc = new float[n];
         int index = 0;
-//        TODO concsTemp临时变量,这样就不用填浓度数据了,测试完成后删除
-        int[] concsTemp ={2,4,6,8,10};
+//        TODO concTemp临时变量,这样就不用填浓度数据了,测试完成后删除
+        int[] concTemp ={2,4,6,8,10};
         for(int i = 0;i < length;i++){
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
             if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
@@ -175,13 +175,13 @@ public class FunctionInputDataActivity extends Activity {
 //                float cc = Float.parseFloat(str);
                 IDs[index] = i;
 //                conc[index++] = cc;
-                conc[index++] = concsTemp[i];
+                conc[index++] = concTemp[i];
             }
         }
 
-        mark.setFlag(Mark.FLAG_INPUTTED);
-        Intent intent = new Intent();
-        intent.putExtra("ID", mark.getMode());
+        mark.setIsConcentrationInputted(Mark.FLAG_INPUTTED);
+        Intent intent = getIntent();
+        intent.putExtra("ID", mark.getDetectMethod());
 //        IDs:在指定试制区域中检测出的峰值点的编号索引数组(featureIndex[])
         intent.putExtra("ids",IDs);
         intent.putExtra("conc",conc);
@@ -217,8 +217,14 @@ public class FunctionInputDataActivity extends Activity {
     }
 
     public void concentrationsConfirm(View view){
-        if(function.equals("data"))
+        if(function.equals("data")){
             input();
+
+            float[] concs = getIntent().getFloatArrayExtra("conc");
+            for (int i = 0; i < concs.length; i++) {
+                mark.getFeatureLineList().get(i).setConcentration(concs[i]);
+            }
+        }
         else if(function.equals("check"))
             check();
     }
