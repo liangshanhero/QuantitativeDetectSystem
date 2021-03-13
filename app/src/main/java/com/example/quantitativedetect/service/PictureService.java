@@ -68,8 +68,10 @@ public class PictureService {
     }
 
     //分析数据，获取需要的颜色数据
-    public static Mark analyse(Bitmap bitmap, MarkView markView){
+    public static Mark analyse(MarkView markView){
+//    public static Mark analyse(Bitmap bitmap, MarkView markView){
         Mark mark =new Mark();
+        Bitmap bitmap = markView.getBitmap();
 
 //        int width = markView.getWidth();
 //        int height = markView.getHeight();

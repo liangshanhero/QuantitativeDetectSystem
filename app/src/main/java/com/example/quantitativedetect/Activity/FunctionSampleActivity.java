@@ -320,7 +320,8 @@ public class FunctionSampleActivity extends MainActivity {
 //         以压缩的大小和位置在原始bitmap（1080*？（width*height））上获取了灰度值
         for(int i = 0;i < markViews.size();i++){
             MarkView markView = getMark(markViews.get(i));//应该再MarkView中建立该方法
-            mark = PictureService.analyse(bitmap, markView);
+//            mark = PictureService.analyse(bitmap, markView);
+            mark = PictureService.analyse(markView);
         }
 //        跳转到fit界面
         Intent intent = new Intent(this,FunctionFittingActivity.class);
@@ -337,7 +338,8 @@ public class FunctionSampleActivity extends MainActivity {
 
         for(int i = 0;i < markViews.size();i++){
             MarkView markView = getMark(markViews.get(i));
-            mark = PictureService.analyse(bitmap, markView);
+//            mark = PictureService.analyse(bitmap, markView);
+            mark = PictureService.analyse(markView);
         }
         Intent intent = new Intent();
         intent.putExtra("length",markViews.size());
@@ -350,8 +352,8 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     public void detect(){
-
-        Mark mark = PictureService.analyse(bitmap, getMark(markViews.get(0)));
+        Mark mark = PictureService.analyse(getMark(markViews.get(0)));
+//        Mark mark = PictureService.analyse(bitmap, getMark(markViews.get(0)));
 
 /*TODO 2021-0129 mark的特征需要封装，*/
         //对mark中的featureList进行封装
