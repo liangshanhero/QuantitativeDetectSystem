@@ -139,7 +139,56 @@ public class PictureService {
     public static Mark getFeatures(/*int[] result*/Mark mark){
         if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
             List<Line> tempFeatureLineList = new ArrayList<>();
+//            遍历mark的LineList，将其中灰度为峰值的Line加入到tempLineList，以备后续操作。
+            for (int i = 0; i <mark.getLineList().size()-1; i++) {
+                if (i==0) {
+                    if (mark.getLineList().get(i).getGray() >= mark.getLineList().get(i+1).getGray()){
+                        tempFeatureLineList.add(mark.getLineList().get(i));
+                    }
+                }else {
+                    if (mark.getLineList().get(i-1).getGray() < mark.getLineList().get(i).getGray() && mark.getLineList().get(i).getGray() >= mark.getLineList().get(i+1).getGray() ){
+                        tempFeatureLineList.add(mark.getLineList().get(i));
+                    }
+                }
+            }
+            /*
+            对得到的tempList进行剔除，将相隔近的几条线放入一个分区，以备后续剔除，最终得到与图片相符的feature个数
+            startIndex:特征区的开始索引列表
+            endIndex:特征区的结束索引列表
+            剔除操作：从tempList中取出startIndex（含）与endIndex（含）之间的行，然后将其中灰度值最大的行放入mark.featureLineList
+            TODO 还有bug，
+             */
+            List<Integer> startIndex = new ArrayList<>();
+            List<Integer> endIndex = new ArrayList<>();
+            for (int i = 0; i < tempFeatureLineList.size()-1; i++) {
+//                TODO +4是因为所属不同的Tline（featureLine）的tempFeatureLine之间的间距，会比属于同一条Tline的featureLine之间的间距更大，
+//                     但是间隔究竟取多大，还需要进一步确定（不想写成固定值，最好还是根据情况而定）
+                if (mark.getLineList().indexOf(tempFeatureLineList.get(i))+4<mark.getLineList().indexOf(tempFeatureLineList.get(i+1))){
+                    if (endIndex.isEmpty()){
+                        startIndex.add(0);
+                        endIndex.add(i);
+                    }else {
+                        startIndex.add(endIndex.get(endIndex.size()-1)+1);
+                        endIndex.add(i);
+                    }
+                }
+            }
+//            如果endIndex与startIndex不等长，则将tempList的最后一个的索引值放入endIndex
+            if (endIndex.size()!=startIndex.size()){
+                endIndex.add(tempFeatureLineList.size()-1);
+            }
+            for (int i = 0; i < startIndex.size(); i++) {
+                if (startIndex.get(i)==endIndex.get(i) && i!=startIndex.size()-1){
+                    startIndex.set(i+1,startIndex.get(i));
+                }else if (i==startIndex.size()-1) {
+                    mark.getFeatureLineList().add(tempFeatureLineList.get(i));
+                }else{
+                    mark.getFeatureLineList().add(getMaxGrayLine(cut(startIndex.get(i),endIndex.get(i),tempFeatureLineList)));
+                }
 
+            }
+//            mark.setFeatureLineList(tempFeatureLineList);
+            /*
 //            features[0]表示为试纸中的CLine(基准线)，即featureLine除开CLine以外，一共只有6条
             int[] features = new int[7];
 //          将整个mark的分为13份
@@ -182,15 +231,16 @@ public class PictureService {
 //                features[features.length-1] = i;
                 mark.getFeatureLineList().add(mark.getLineList().get(i));
             }
+//            以下四行由后四行代替
 //            int[] feature = new int[features.length-1];
 //            for(int j = 0;j < features.length-1;j++)
 //                feature[j] = features[j+1];
 //            return feature;
             for(int j = 0;j < features.length-1;j++) {
-//                mark.getLineList().get(j + 1).setFeaturte(true);
                 mark.getFeatureLineList().add(mark.getLineList().get(features[j + 1]));
-            }
+            }*/
             return mark;
+
         }
 
 
@@ -201,7 +251,7 @@ public class PictureService {
                 //判断扫描第一次范围的前半部分是否存在极值点
                 if(index == 0){
 //                    int mayBeMaxGray = getMaxLineGray(cut(0,i-1,mark.getLineList()));
-                    Line mayBeMaxGrayLine = getMaxLineGray(cut(0,i-1,mark.getLineList()));
+                    Line mayBeMaxGrayLine = getMaxGrayLine(cut(0,i-1,mark.getLineList()));
                     int maxGrayLineIndex = findIndex(mayBeMaxGrayLine.getGray(),cut(0,i-1,mark.getLineList()));
                     if(isMaxInList(cut(maxGrayLineIndex+1,maxGrayLineIndex+stepLength,mark.getLineList()),mayBeMaxGrayLine.getGray())){
                         features[index++] = maxGrayLineIndex;
@@ -251,7 +301,7 @@ public class PictureService {
                 return false;
         return true;
     }
-    public static Line/*int*/ getMaxLineGray(List<Line> lineList){
+    public static Line/*int*/ getMaxGrayLine(List<Line> lineList){
         Line maxGrayLine=lineList.get(0);
         int maxGray = 0;
         for(Line line:lineList){

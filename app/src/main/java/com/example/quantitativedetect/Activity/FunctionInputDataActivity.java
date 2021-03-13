@@ -59,12 +59,12 @@ public class FunctionInputDataActivity extends Activity {
         grayCurve.setFlag(1);
         relativeLayout.addView(grayCurve);
         if(function.equals("data"))
-            initSTE();
+            initGrayConcentrationSwitchView();
         else if(function.equals("check"))
-            intiTSS();
+            intiTextSpinnerSwitchView();
     }
 
-    private void intiTSS(){
+    private void intiTextSpinnerSwitchView(){
         final List<LinearRegressionModel> linearRegressionModelList = DataSupport.findAll(LinearRegressionModel.class);
         String[] list = new String[linearRegressionModelList.size()];
         for(int i = 0; i < linearRegressionModelList.size(); i++){
@@ -105,11 +105,11 @@ public class FunctionInputDataActivity extends Activity {
         }
     }
 
-    private void initSTE(){
+    private void initGrayConcentrationSwitchView(){
         for(int i = 0;i < length;i++){
 //          TODO 2020-0130，取值方法待解决，暂时使用固定值代替
 //          mark.getLineWidthPixelQuantity()=5(似乎一直不变),mark.getFeatureLineList().get(i+1).getGray()=44/64(会变)
-            String value = String.format("%.2f",(float) mark.getFeatureLineList().get(i+1).getGray()/mark.getLineWidthPixelQuantity());
+            String value = String.format("%.2f",(float) mark.getFeatureLineList().get(i).getGray()/mark.getLineWidthPixelQuantity());
 //          String value = String.format("%.2f",(float) mark.getDotrowAvgGrays()[mark.getFeatureIndexOnDotrowIndex()[i+1]]/ mark.getLineWidthPixelQuantity());
 //            String value = "1234123412341234.1234123412341243";
             GrayConcentrationSwitchView grayConcentrationSwitchView = new GrayConcentrationSwitchView(this,value);
@@ -190,6 +190,9 @@ public class FunctionInputDataActivity extends Activity {
         this.finish();
     }
 
+    /*
+    check ()
+     */
     public void check(){
         int n = 0;
         List<LinearRegressionModel> linearRegressionModelList = DataSupport.findAll(LinearRegressionModel.class);

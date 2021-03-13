@@ -145,6 +145,12 @@ public class FunctionFittingActivity extends MainActivity {
         }
         else {
             List<Line> firstPicFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
+//            for：测试，完成后删除
+            for (int i = 0; i < firstPicFeatureLineList.size(); i++) {
+                if (firstPicFeatureLineList.get(i).getConcentration()==0){
+                    firstPicFeatureLineList.get(i).setConcentration(i*5);
+                }
+            }
             for(int i = 0;i < firstPicFeatureLineList.size(); i++){
                 Stripe stripe1 = new Stripe(i);
                 Stripe stripe2 = new Stripe(i);
