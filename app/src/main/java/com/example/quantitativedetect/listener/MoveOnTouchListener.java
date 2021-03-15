@@ -14,8 +14,8 @@ public class MoveOnTouchListener implements View.OnTouchListener {
 
     public MoveOnTouchListener(FunctionSampleActivity functionSampleActivity){
         this.functionSampleActivity = functionSampleActivity;
-        imageWidth = functionSampleActivity.getImageWidth();
-        imageHeight = functionSampleActivity.getImageHeight();
+        imageWidth = functionSampleActivity.getImageDisplayAreaWidth();
+        imageHeight = functionSampleActivity.getImageDisplayAreaHeight();
     }
     @Override
     public boolean onTouch(View view, MotionEvent event){

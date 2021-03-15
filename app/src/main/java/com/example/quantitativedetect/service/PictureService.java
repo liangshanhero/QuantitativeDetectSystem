@@ -45,23 +45,28 @@ public class PictureService {
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         functionSampleActivity.startActivityForResult(intent, FROM_ALBUM);
     }
-    public static Bitmap getSmallBitmap(String filePath, int imageWidth, int imageHeight) {
+//    图片适应屏幕分辨率，将图片缩放至屏幕中imageView特定的大小
+    public static Bitmap getAdaptedScreenBitmap(String filePath, int imageTargetWidth, int imageTargetHeight) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
-        options.inSampleSize = calculateInSampleSize(options, imageWidth, imageHeight);//自定义一个宽和高
+        options.inSampleSize = calculateInSampleSize(options, imageTargetWidth, imageTargetHeight);//自定义一个宽和高
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
         return bitmap.copy(Bitmap.Config.ARGB_8888, true);//返回复制的可编辑的bitmap
     }
 
     public static int calculateInSampleSize(BitmapFactory.Options options,int reqWidth, int reqHeight) {
-        final int height = options.outHeight;//获取图片的高
-        final int width = options.outWidth;//获取图片的框
+        final int imageTrueHeight = options.outHeight;//获取图片的高
+        final int imageTrueWidth = options.outWidth;//获取图片的框
+        /*
+        原来是4,即图片的长宽都缩小为原图的1/4,整个图片缩小为原来的1/16,
+        为了扩大各特征线的间隔像素距离,现在改为2(即缩小1/4),可能会影响性能.
+         */
         int inSampleSize = 4;
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height/ (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
+        if (imageTrueHeight > reqHeight || imageTrueWidth > reqWidth) {
+            final int heightRatio = Math.round((float) imageTrueHeight/ (float) reqHeight);
+            final int widthRatio = Math.round((float) imageTrueWidth / (float) reqWidth);
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
         return inSampleSize;//求出缩放值
@@ -84,16 +89,32 @@ public class PictureService {
 
         int[] pixels = new int[width];
 
+//          测试颜色通道,可删
+        Bitmap bitmap1 = bitmap.copy(bitmap.getConfig(),true);
+        Bitmap bitmap2 = bitmap.copy(bitmap.getConfig(),true);
+//        Bitmap bitmap3 = bitmap.copy(bitmap.getConfig(),true);
+        for (int i = 0; i < bitmap1.getHeight(); i++) {
+            for (int j = 0; j < bitmap1.getWidth(); j++) {
+                int pixel = bitmap.getPixel(j, i);
+                int tempColor1 = Color.argb(Color.alpha(pixel), 255-Color.red(pixel), 0, 0);
+                int tempColor2 = Color.argb(Color.alpha(pixel), 0, 255-Color.green(pixel), 255-Color.blue(pixel));
+                bitmap1.setPixel(j,i,tempColor1);
+                bitmap2.setPixel(j,i,tempColor2);
+            }
+        }
+
+        int temp = 0;
         for(int i=(int) markView.getY(); i<markView.getY()+ height;i++){
             Line line = new Line();
             int length = 1, lineAvegGray = 0;
             bitmap.getPixels(pixels,0, width, x ,i, width,1);
 
-
-            for (int j=0;j<pixels.length;j++){
+            for (int j=0;j<pixels.length;j++) {
                 double tmpGray;
-                if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE)
-                    tmpGray = Color.red(pixels[j]);
+                if (FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
+                    tmpGray = 255 - Color.red(pixels[j]);
+//                    tmpGray = 255 - Color.green(pixels[j]) + 255 - Color.blue(pixels[j]);
+                }
                 else{
                     tmpGray = (255-Color.green(pixels[j]))/2+(255-Color.blue(pixels[j]))/2;
                 }
@@ -160,36 +181,38 @@ public class PictureService {
             剔除操作：从tempList中取出startIndex（含）与endIndex（含）之间的行，然后将其中灰度值最大的行放入mark.featureLineList
             TODO 还有bug，
              */
-            List<Integer> startIndex = new ArrayList<>();
-            List<Integer> endIndex = new ArrayList<>();
-            for (int i = 0; i < tempFeatureLineList.size()-1; i++) {
-//                TODO +4是因为所属不同的Tline（featureLine）的tempFeatureLine之间的间距，会比属于同一条Tline的featureLine之间的间距更大，
-//                     但是间隔究竟取多大，还需要进一步确定（不想写成固定值，最好还是根据情况而定）
-                if (mark.getLineList().indexOf(tempFeatureLineList.get(i))+4<mark.getLineList().indexOf(tempFeatureLineList.get(i+1))){
-                    if (endIndex.isEmpty()){
-                        startIndex.add(0);
-                        endIndex.add(i);
-                    }else {
-                        startIndex.add(endIndex.get(endIndex.size()-1)+1);
-                        endIndex.add(i);
-                    }
-                }
-            }
-//            如果endIndex与startIndex不等长，则将tempList的最后一个的索引值放入endIndex
-            if (endIndex.size()!=startIndex.size()){
-                endIndex.add(tempFeatureLineList.size()-1);
-            }
-            for (int i = 0; i < startIndex.size(); i++) {
-                if (startIndex.get(i)==endIndex.get(i) && i!=startIndex.size()-1){
-                    startIndex.set(i+1,startIndex.get(i));
-                }else if (i==startIndex.size()-1) {
-                    mark.getFeatureLineList().add(tempFeatureLineList.get(i));
-                }else{
-                    mark.getFeatureLineList().add(getMaxGrayLine(cut(startIndex.get(i),endIndex.get(i),tempFeatureLineList)));
-                }
+//            List<Integer> startIndex = new ArrayList<>();
+//            List<Integer> endIndex = new ArrayList<>();
+//            for (int i = 0; i < tempFeatureLineList.size()-1; i++) {
+////                TODO +4是因为所属不同的Tline（featureLine）的tempFeatureLine之间的间距，会比属于同一条Tline的featureLine之间的间距更大，
+////                     但是间隔究竟取多大，还需要进一步确定（不想写成固定值，最好还是根据情况而定）
+//                if (mark.getLineList().indexOf(tempFeatureLineList.get(i)) + 5 < mark.getLineList().indexOf(tempFeatureLineList.get(i+1))){
+//                    if (endIndex.isEmpty()){
+//                        startIndex.add(0);
+//                        endIndex.add(i);
+//                    }else {
+//                        startIndex.add(endIndex.get(endIndex.size()-1)+1);
+//                        endIndex.add(i);
+//                    }
+//                }
+//            }
+////            如果endIndex与startIndex不等长，则将tempList的最后一个的索引值放入endIndex
+//            if (endIndex.size()!=startIndex.size()){
+//                endIndex.add(tempFeatureLineList.size()-1);
+//            }
+//            for (int i = 0; i < startIndex.size(); i++) {
+//                if (startIndex.get(i)==endIndex.get(i) && i!=startIndex.size()-1){
+//                    startIndex.set(i+1,startIndex.get(i));
+//                }else if (i==startIndex.size()-1) {
+//                    mark.getFeatureLineList().add(tempFeatureLineList.get(i));
+//                }else{
+//                    mark.getFeatureLineList().add(getMaxGrayLine(cut(startIndex.get(i),endIndex.get(i),tempFeatureLineList)));
+//                }
+//
+//            }
 
-            }
-//            mark.setFeatureLineList(tempFeatureLineList);
+
+            mark.setFeatureLineList(tempFeatureLineList);
             /*
 //            features[0]表示为试纸中的CLine(基准线)，即featureLine除开CLine以外，一共只有6条
             int[] features = new int[7];
@@ -242,7 +265,6 @@ public class PictureService {
                 mark.getFeatureLineList().add(mark.getLineList().get(features[j + 1]));
             }*/
             return mark;
-
         }
 
 

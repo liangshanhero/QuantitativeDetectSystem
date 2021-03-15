@@ -3,6 +3,7 @@ package com.example.quantitativedetect.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -10,12 +11,13 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Mark;
-import com.example.quantitativedetect.view.GrayCurve;
 import com.example.quantitativedetect.view.GrayConcentrationSwitchView;
+import com.example.quantitativedetect.view.GrayCurve;
 import com.example.quantitativedetect.view.TextSpinnerSwitchView;
 
 import org.litepal.crud.DataSupport;
@@ -106,7 +108,11 @@ public class FunctionInputDataActivity extends Activity {
     }
 
     private void initGrayConcentrationSwitchView(){
-        for(int i = 0;i < length;i++){
+//        TODO 2021-03-15 length 表示特征线的数量,但是只有最左侧的Mark会有所有的特征线,而右侧的Mark不一定有全部的特征线,
+//         想办法不把length写死
+        for(int i = 0;i < length || i<mark.getFeatureLineList().size();i++){
+//            原代码:
+//            for(int i = 0;i < length;i++){
 //          TODO 2020-0130，取值方法待解决，暂时使用固定值代替
 //          mark.getLineWidthPixelQuantity()=5(似乎一直不变),mark.getFeatureLineList().get(i+1).getGray()=44/64(会变)
             String value = String.format("%.2f",(float) mark.getFeatureLineList().get(i).getGray()/mark.getLineWidthPixelQuantity());
@@ -167,15 +173,15 @@ public class FunctionInputDataActivity extends Activity {
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
             if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
                 //        TODO 测试完成后取消代码注释,
-//                if(TextUtils.isEmpty(ste.getEditText().getText())){
-//                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                String str = String.valueOf(ste.getEditText().getText());
-//                float cc = Float.parseFloat(str);
+                if(TextUtils.isEmpty(grayConcentrationSwitchView.getEditText().getText())){
+                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String str = String.valueOf(grayConcentrationSwitchView.getEditText().getText());
+                float cc = Float.parseFloat(str);
                 IDs[index] = i;
-//                conc[index++] = cc;
-                conc[index++] = concTemp[i];
+                conc[index++] = cc;
+//                conc[index++] = concTemp[i];
             }
         }
 

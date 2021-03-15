@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import static com.example.quantitativedetect.service.PictureService.FROM_ALBUM;
 import static com.example.quantitativedetect.service.PictureService.FROM_CAMERA;
 import static com.example.quantitativedetect.service.PictureService.getFeatures;
-import static com.example.quantitativedetect.service.PictureService.getSmallBitmap;
+import static com.example.quantitativedetect.service.PictureService.getAdaptedScreenBitmap;
 
 public class FunctionSampleActivity extends MainActivity {
 
@@ -56,8 +56,8 @@ public class FunctionSampleActivity extends MainActivity {
     private SeekBar seekBarWidth, seekBarHeight;
     private int selectingID = 0;
     private Button takePicture;
-    private int imageWidth;
-    private int imageHeight;
+    private int imageDisplayAreaWidth;
+    private int imageDisplayAreaHeight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +74,8 @@ public class FunctionSampleActivity extends MainActivity {
     private void init(){
         Intent intent = getIntent();
         function = intent.getStringExtra("function");
-        imageWidth = MainActivity.screenWidth;
-        imageHeight = screenWidth*5/4;
+        imageDisplayAreaWidth = MainActivity.screenWidth;
+        imageDisplayAreaHeight = screenWidth*5/4;
         relativeLayout = findViewById(R.id.relative_layout);
         takePicture = findViewById(R.id.take_picture);
         moveOnTouchListener = new MoveOnTouchListener(this);
@@ -95,8 +95,8 @@ public class FunctionSampleActivity extends MainActivity {
     private void imageViewInit(){
         imageView = findViewById(R.id.show_sample);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.width = imageWidth;
-        layoutParams.height = imageHeight;
+        layoutParams.width = imageDisplayAreaWidth;
+        layoutParams.height = imageDisplayAreaHeight;
         imageView.setLayoutParams(layoutParams);
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -109,16 +109,16 @@ public class FunctionSampleActivity extends MainActivity {
     public void mountBitmap(){
         //压缩的似乎仅仅是显示的图片
         //压缩拍摄到的图片以便在屏幕上显示
-        bitmap = getSmallBitmap(picturePath,imageWidth,imageHeight);
-        this.imageHeight = imageView.getHeight();
-        MoveOnTouchListener.setImageHeight(imageHeight);
+        bitmap = getAdaptedScreenBitmap(picturePath, imageDisplayAreaWidth, imageDisplayAreaHeight);
+        this.imageDisplayAreaHeight = imageView.getHeight();
+        MoveOnTouchListener.setImageHeight(imageDisplayAreaHeight);
 //        greyInRed(bitmap);
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
         seekBarWidth.setProgress(10);
         seekBarHeight.setProgress(40);
 //        似乎没有什么用，暂时屏蔽
-//        addMarkView();
+        addMarkView(new View(this));
 //        addMark(300,500,70,350);//测试用特征框
     }
     private void seekBarInit(){
@@ -129,7 +129,7 @@ public class FunctionSampleActivity extends MainActivity {
 
 
         seekBarWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            private int unit = imageWidth / 150;
+            private int unit = imageDisplayAreaWidth / 150;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(selectingID !=0 ){
@@ -156,7 +156,8 @@ public class FunctionSampleActivity extends MainActivity {
             }
         });
         seekBarHeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            private int unit = imageHeight / 150;
+//            private int unit = imageDisplayAreaHeight / 150;
+            private int unit = imageDisplayAreaHeight / 100;
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(selectingID !=0 ){
@@ -188,13 +189,13 @@ public class FunctionSampleActivity extends MainActivity {
 
 
 //      2021-0130图片压缩，MarkView也要压缩！！！压缩Mark图片
-        float rateX = markView.getX()/imageWidth;
+        float rateX = markView.getX()/ imageDisplayAreaWidth;
         int x = (int)(bitmap.getWidth()*rateX);
-        float rateWidth = (float) markView.getWidth()/imageWidth;
+        float rateWidth = (float) markView.getWidth()/ imageDisplayAreaWidth;
         int width = (int)(bitmap.getWidth()*rateWidth);
-        float rateY = markView.getY()/imageHeight;
+        float rateY = markView.getY()/ imageDisplayAreaHeight;
         int y = (int)(bitmap.getHeight()*rateY);
-        float rateHeight = (float)markView.getHeight()/imageHeight;
+        float rateHeight = (float)markView.getHeight()/ imageDisplayAreaHeight;
         int height = (int)(bitmap.getHeight()*rateHeight);
 
 
@@ -315,7 +316,6 @@ public class FunctionSampleActivity extends MainActivity {
 //    获取灰度
     public void analyse(){
         Mark mark = null;
-//TODO  2021-0224 featureLineList中每一条都是一样的,解决后再向后
 //        TODO 注意！！！markView获取到的灰度值有偏移，猜测是markView随bitmap压缩到的对应大小（240*240）后，
 //         以压缩的大小和位置在原始bitmap（1080*？（width*height））上获取了灰度值
         for(int i = 0;i < markViews.size();i++){
@@ -421,12 +421,12 @@ public class FunctionSampleActivity extends MainActivity {
                 default: break;
             }
     }
-    public int getImageWidth() {
-        return imageWidth;
+    public int getImageDisplayAreaWidth() {
+        return imageDisplayAreaWidth;
     }
 
-    public int getImageHeight() {
-        return imageHeight;
+    public int getImageDisplayAreaHeight() {
+        return imageDisplayAreaHeight;
     }
 
     public static void setCheckMode(int mode){
