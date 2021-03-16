@@ -45,7 +45,8 @@ public class GrayCurve extends BaseCoordinate {
 //        this.features = features;
         //TODO CL是偏移量，但不知道具体含义，CL值增大能使得缩略图（AbbreviationCurve）位置降低
         // （或者说是使整个Y轴的范围（0~maxValue）更大，导致曲线的上下边界被压缩至可见，即使曲线的振幅变小？）
-        this.CL = points[featureIndex[0]]+100;
+        this.CL = points[featureIndex[0]]+300;
+//        this.CL = points[featureIndex[0]];
         this.flag = flag;
         if(flag == 0){
             this.zoom = zoom*(width/3-2*pad);

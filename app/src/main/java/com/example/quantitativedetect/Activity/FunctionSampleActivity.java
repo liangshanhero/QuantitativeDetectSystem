@@ -117,7 +117,7 @@ public class FunctionSampleActivity extends MainActivity {
 //        seekBar与MarkView的宽高对应
 //        width=70,height=120,leftMargin=topMargin=200
 
-        seekBarWidth.setProgress(10);
+        seekBarWidth.setProgress(8);
         seekBarHeight.setProgress(40);
         addMarkView(new View(this));
 //        似乎没有什么用，暂时屏蔽
@@ -126,8 +126,8 @@ public class FunctionSampleActivity extends MainActivity {
     private void seekBarInit(){
         seekBarHeight = findViewById(R.id.seekBar_h);
         seekBarWidth = findViewById(R.id.seekBar_w);
-        seekBarWidth.setProgress(10);
-        seekBarHeight.setProgress(10);
+        seekBarWidth.setProgress(0);
+        seekBarHeight.setProgress(0);
 
 
         seekBarWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -219,8 +219,9 @@ public class FunctionSampleActivity extends MainActivity {
         MarkView markView = relativeLayout.findViewById(ID);
         markView.onSelected();
 
-//        seekBarWidth.setProgress(markView.getLayoutParams().height/(screenHeight/100));
-//        seekBarHeight.setProgress(markView.getLayoutParams().width/(screenWidth/100));
+        seekBarWidth.setProgress(markView.getLayoutParams().width/(imageDisplayAreaWidth/100));
+        seekBarHeight.setProgress(markView.getLayoutParams().height/(imageDisplayAreaHeight/100));
+
 //        seekBarH.setProgress(markView.getHeight()/screenHeight*150);
 //        seekBarW.setProgress(markView.getWidth()/screenWidth*150);
     }
@@ -239,11 +240,6 @@ public class FunctionSampleActivity extends MainActivity {
         if(viewId != 0)
             onSelected(viewId);
     }
-    //添加标识圈
-//    public void addMark(int x, int y, int width, int height){
-//
-//
-//    }
 
     public void addMarkView(View view){
         View testView = new View(this);
@@ -255,16 +251,15 @@ public class FunctionSampleActivity extends MainActivity {
 //        TODO 2021-0316 markView的adapted* 属性放到这里来添加
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        layoutParams.width = seekBarWidth;
-//        layoutParams.height = seekBarHeight;
-
-        layoutParams.width = 70;  //设置宽高
-        layoutParams.height = 120;
+        //通过获取seekBar的比例来设置markView的宽高
+        layoutParams.width = seekBarWidth.getProgress()*(imageDisplayAreaWidth / 100);
+        layoutParams.height = seekBarHeight.getProgress()*(imageDisplayAreaHeight / 100);
         layoutParams.leftMargin = 200;
         layoutParams.topMargin = 200;
 
-        markView.setAdaptedWidth(70);
-        markView.setAdaptedHeight(120);
+        markView.setAdaptedWidth(layoutParams.width);
+        markView.setAdaptedHeight(layoutParams.height);
+
         markView.setLayoutParams(layoutParams);
         markView.setOnTouchListener(moveOnTouchListener);
         relativeLayout.addView(markView);
@@ -290,9 +285,8 @@ public class FunctionSampleActivity extends MainActivity {
     private void sortMarkByX(){
         for(int i = 0;i < markViews.size() - 1;i++)
             for (int j = 0;j < markViews.size() - i - 1;j ++){
-                if(markViews.get(j).getAdaptedX() > markViews.get(j+1).getAdaptedX()){
-//                    if(markViews.get(j).getX() > markViews.get(j+1).getX()){
-
+//                if(markViews.get(j).getAdaptedX() > markViews.get(j+1).getAdaptedX()){
+                    if(markViews.get(j).getX() > markViews.get(j+1).getX()){
                     MarkView markView = markViews.remove(j+1);
                     markViews.add(j,markView);
                 }
