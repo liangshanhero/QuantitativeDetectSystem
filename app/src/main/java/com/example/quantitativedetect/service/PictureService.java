@@ -78,36 +78,20 @@ public class PictureService {
         Mark mark =new Mark();
         Bitmap bitmap = markView.getBitmap();
 
-//        int width = markView.getWidth();
-//        int height = markView.getHeight();
-        int width = markView.getLayoutParams().width;//.getWidth();
-        int height = markView.getLayoutParams().height;//.getHeight();
+        int width = markView.getAdaptedWidth();
+        int height = markView.getAdaptedHeight();
+//        int width = markView.getLayoutParams().width;//.getWidth();
+//        int height = markView.getLayoutParams().height;//.getHeight();
 
-        int x = (int)markView.getX();
-
+        int adaptedX = (int)markView.getAdaptedX();
         int lines = width/mark.getLineWidthPixelQuantity();
 
         int[] pixels = new int[width];
 
-//          测试颜色通道,可删
-        Bitmap bitmap1 = bitmap.copy(bitmap.getConfig(),true);
-        Bitmap bitmap2 = bitmap.copy(bitmap.getConfig(),true);
-//        Bitmap bitmap3 = bitmap.copy(bitmap.getConfig(),true);
-        for (int i = 0; i < bitmap1.getHeight(); i++) {
-            for (int j = 0; j < bitmap1.getWidth(); j++) {
-                int pixel = bitmap.getPixel(j, i);
-                int tempColor1 = Color.argb(Color.alpha(pixel), 255-Color.red(pixel), 0, 0);
-                int tempColor2 = Color.argb(Color.alpha(pixel), 0, 255-Color.green(pixel), 255-Color.blue(pixel));
-                bitmap1.setPixel(j,i,tempColor1);
-                bitmap2.setPixel(j,i,tempColor2);
-            }
-        }
-
-        int temp = 0;
-        for(int i=(int) markView.getY(); i<markView.getY()+ height;i++){
+        for(int i = (int) markView.getAdaptedY(); i<markView.getAdaptedY()+ height; i++){
             Line line = new Line();
             int length = 1, lineAvegGray = 0;
-            bitmap.getPixels(pixels,0, width, x ,i, width,1);
+            bitmap.getPixels(pixels,0, width, adaptedX ,i, width,1);
 
             for (int j=0;j<pixels.length;j++) {
                 double tmpGray;

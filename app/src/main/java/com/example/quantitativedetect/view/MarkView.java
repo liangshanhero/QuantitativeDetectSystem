@@ -5,10 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.RectF;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.quantitativedetect.domain.Mark;
 
@@ -17,6 +15,10 @@ public class MarkView extends View {
     private Bitmap bitmap ;// 后期添加：表示该markView在哪个bitmap。
 
     RectF rectF;//表示本markView
+    private int adaptedWidth;
+    private int adaptedHeight;
+    private int adaptedX;
+    private int adaptedY;
     private int color = Color.GREEN;
     private Paint paint = new Paint();
 
@@ -45,7 +47,7 @@ public class MarkView extends View {
         rectF = new RectF(0,0, getLayoutParams().width, getLayoutParams().height);
         paint.setColor(color);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(3);
+        paint.setStrokeWidth(5);
         canvas.drawRect(rectF,paint);
     }
 
@@ -63,5 +65,37 @@ public class MarkView extends View {
 
     public void setMark(Mark mark) {
         this.mark = mark;
+    }
+
+    public int getAdaptedHeight() {
+        return adaptedHeight;
+    }
+
+    public void setAdaptedHeight(int adaptedHeight) {
+        this.adaptedHeight = adaptedHeight;
+    }
+
+    public int getAdaptedWidth() {
+        return adaptedWidth;
+    }
+
+    public void setAdaptedWidth(int adaptedWidth) {
+        this.adaptedWidth = adaptedWidth;
+    }
+
+    public int getAdaptedY() {
+        return adaptedY;
+    }
+
+    public void setAdaptedY(int adaptedY) {
+        this.adaptedY = adaptedY;
+    }
+
+    public int getAdaptedX() {
+        return adaptedX;
+    }
+
+    public void setAdaptedX(int adaptedX) {
+        this.adaptedX = adaptedX;
     }
 }

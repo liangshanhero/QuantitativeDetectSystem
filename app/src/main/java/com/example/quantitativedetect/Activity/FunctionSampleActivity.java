@@ -115,10 +115,12 @@ public class FunctionSampleActivity extends MainActivity {
 //        greyInRed(bitmap);
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
+//        width=70,height=120,leftMargin=topMargin=200
+
         seekBarWidth.setProgress(10);
         seekBarHeight.setProgress(40);
-//        似乎没有什么用，暂时屏蔽
         addMarkView(new View(this));
+//        似乎没有什么用，暂时屏蔽
 //        addMark(300,500,70,350);//测试用特征框
     }
     private void seekBarInit(){
@@ -129,7 +131,7 @@ public class FunctionSampleActivity extends MainActivity {
 
 
         seekBarWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            private int unit = imageDisplayAreaWidth / 150;
+            private int unit = imageDisplayAreaWidth / 100;//原来是/150
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(selectingID !=0 ){
@@ -185,35 +187,40 @@ public class FunctionSampleActivity extends MainActivity {
         });
     }
     //采样框在图片中的坐标及宽高
-    public MarkView getMark(MarkView markView){
-
+    public MarkView getAdaptedMark(MarkView markView){
 
 //      2021-0130图片压缩，MarkView也要压缩！！！压缩Mark图片
         float rateX = markView.getX()/ imageDisplayAreaWidth;
-        int x = (int)(bitmap.getWidth()*rateX);
+        int adaptedX = (int)(bitmap.getWidth()*rateX);
         float rateWidth = (float) markView.getWidth()/ imageDisplayAreaWidth;
-        int width = (int)(bitmap.getWidth()*rateWidth);
-        float rateY = markView.getY()/ imageDisplayAreaHeight;
-        int y = (int)(bitmap.getHeight()*rateY);
-        float rateHeight = (float)markView.getHeight()/ imageDisplayAreaHeight;
-        int height = (int)(bitmap.getHeight()*rateHeight);
+        int adaptedWidth = (int)(bitmap.getWidth()*rateWidth);
 
+        float rateY = markView.getY()/ imageDisplayAreaHeight;
+        int adaptedY = (int)(bitmap.getHeight()*rateY);
+        float rateHeight = (float)markView.getHeight()/ imageDisplayAreaHeight;
+        int adaptedHeight = (int)(bitmap.getHeight()*rateHeight);
 
         ViewGroup.LayoutParams layoutParams = markView.getLayoutParams();
 
 //        将MarkView对应在bitmap中的位置进行缩放，便于后续操作，但是这样操作后，按下“next”键时，
 //        显示的markview会缩小、错位，得到的灰度数据似乎是正常的
-        markView.setX(x);
-        markView.setY(y);
-        layoutParams.width = width;
-        layoutParams.height = height;
-        markView.setLayoutParams(layoutParams);
+
+        markView.setAdaptedX(adaptedX);
+        markView.setAdaptedY(adaptedY);
+        markView.setAdaptedWidth(adaptedWidth);
+        markView.setAdaptedHeight(adaptedHeight);
+//        layoutParams.width = width;
+//        layoutParams.height = height;
+//        markView.setLayoutParams(layoutParams);
 
         return markView;
     }
     public void onSelected(int ID){
         MarkView markView = relativeLayout.findViewById(ID);
         markView.onSelected();
+
+//        seekBarWidth.setProgress(markView.getLayoutParams().height/(screenHeight/100));
+//        seekBarHeight.setProgress(markView.getLayoutParams().width/(screenWidth/100));
 //        seekBarH.setProgress(markView.getHeight()/screenHeight*150);
 //        seekBarW.setProgress(markView.getWidth()/screenWidth*150);
     }
@@ -243,23 +250,26 @@ public class FunctionSampleActivity extends MainActivity {
 
         MarkView markView = new MarkView(this);
         markView.setId(markId++);
-
         markView.setMark(new Mark());
         markView.setBitmap(bitmap);
+//        TODO 2021-0316 markView的adapted* 属性放到这里来添加
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        layoutParams.width = seekBarWidth;
+//        layoutParams.height = seekBarHeight;
+
         layoutParams.width = 70;  //设置宽高
         layoutParams.height = 120;
         layoutParams.leftMargin = 200;
         layoutParams.topMargin = 200;
+
+        markView.setAdaptedWidth(70);
+        markView.setAdaptedHeight(120);
         markView.setLayoutParams(layoutParams);
         markView.setOnTouchListener(moveOnTouchListener);
         relativeLayout.addView(markView);
-
         testView.setLayoutParams(layoutParams);
-
         relativeLayout.addView(testView);
-
 
         markViews.add(markView);
         setSelectingID(markView.getId());
@@ -277,10 +287,12 @@ public class FunctionSampleActivity extends MainActivity {
             selectingID = 0;
         }
     }
-    private void sortMark(){
+    private void sortMarkByX(){
         for(int i = 0;i < markViews.size() - 1;i++)
             for (int j = 0;j < markViews.size() - i - 1;j ++){
-                if(markViews.get(j).getX() > markViews.get(j+1).getX()){
+                if(markViews.get(j).getAdaptedX() > markViews.get(j+1).getAdaptedX()){
+//                    if(markViews.get(j).getX() > markViews.get(j+1).getX()){
+
                     MarkView markView = markViews.remove(j+1);
                     markViews.add(j,markView);
                 }
@@ -319,7 +331,7 @@ public class FunctionSampleActivity extends MainActivity {
 //        TODO 注意！！！markView获取到的灰度值有偏移，猜测是markView随bitmap压缩到的对应大小（240*240）后，
 //         以压缩的大小和位置在原始bitmap（1080*？（width*height））上获取了灰度值
         for(int i = 0;i < markViews.size();i++){
-            MarkView markView = getMark(markViews.get(i));//应该再MarkView中建立该方法
+            MarkView markView = getAdaptedMark(markViews.get(i));//应该再MarkView中建立该方法
 //            mark = PictureService.analyse(bitmap, markView);
             mark = PictureService.analyse(markView);
         }
@@ -337,7 +349,7 @@ public class FunctionSampleActivity extends MainActivity {
         Mark mark =null;
 
         for(int i = 0;i < markViews.size();i++){
-            MarkView markView = getMark(markViews.get(i));
+            MarkView markView = getAdaptedMark(markViews.get(i));
 //            mark = PictureService.analyse(bitmap, markView);
             mark = PictureService.analyse(markView);
         }
@@ -352,7 +364,7 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     public void detect(){
-        Mark mark = PictureService.analyse(getMark(markViews.get(0)));
+        Mark mark = PictureService.analyse(getAdaptedMark(markViews.get(0)));
 //        Mark mark = PictureService.analyse(bitmap, getMark(markViews.get(0)));
 
 /*TODO 2021-0129 mark的特征需要封装，*/
@@ -370,7 +382,7 @@ public class FunctionSampleActivity extends MainActivity {
 
 //    照片中选取了mark后，获取mark的灰度
     public void next(View view){
-        sortMark();
+        sortMarkByX();
         //TODO mark中的featureLineList为空
         if(function.equals(FUNCTION_FIRST_SAMPLE))
 //            if(markViews.size() < 3){

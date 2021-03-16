@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.quantitativedetect.service.PictureService.getFeatures;
-import static com.example.quantitativedetect.view.MarkSwitch.TVS_ID;
+import static com.example.quantitativedetect.view.MarkSwitch.MARK_SWITCH_ID;
 
 //Bn/B0仅仅对灰度进行操作，暂未对浓度值进行同样操作
 public class FunctionFittingActivity extends MainActivity {
@@ -56,8 +56,8 @@ public class FunctionFittingActivity extends MainActivity {
         for(int i = 0; i< firstPicMarkList.size(); i++){
             Mark mark = firstPicMarkList.get(i);
             mark = getFeatures(mark);
-            mark.setDetectMethod(TVS_ID+i);
-            MarkSwitch markSwitch1 = createMarkGrayCurveSwitchView(mark,TVS_ID+i,"strip "+String.valueOf(i+1),listener1);
+            mark.setDetectMethod(MARK_SWITCH_ID +i);
+            MarkSwitch markSwitch1 = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i,"strip "+String.valueOf(i+1),listener1);
             markSwitchList1.add(markSwitch1);
             linearLayout.addView(markSwitch1.getLinearLayout());
         }
@@ -210,7 +210,7 @@ public class FunctionFittingActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FunctionFittingActivity.this,FunctionInputDataActivity.class);
-                intent.putExtra("VirginPoint", firstPicMarkList.get(v.getId()-TVS_ID));
+                intent.putExtra("VirginPoint", firstPicMarkList.get(v.getId()- MARK_SWITCH_ID));
                 intent.putExtra("length", length);
                 intent.putExtra("function","data");
                 startActivityForResult(intent,REQUEST_CODE_DATA);
@@ -222,7 +222,7 @@ public class FunctionFittingActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FunctionFittingActivity.this,FunctionInputDataActivity.class);
-                intent.putExtra("VirginPoint", secondPicMarkList.get(v.getId()-TVS_ID- firstPicMarkList.size()));
+                intent.putExtra("VirginPoint", secondPicMarkList.get(v.getId()- MARK_SWITCH_ID - firstPicMarkList.size()));
                 intent.putExtra("length", length);
                 intent.putExtra("function","data");
                 startActivityForResult(intent,REQUEST_CODE_DATA);
@@ -241,8 +241,8 @@ public class FunctionFittingActivity extends MainActivity {
             MarkSwitch markSwitch1 = markSwitchList1.get(i);
             Mark mark = secondPicMarkList.get(i);
 
-            mark.setDetectMethod(TVS_ID+i+ secondPicMarkList.size());
-            MarkSwitch markSwitch2 = createMarkGrayCurveSwitchView(mark,TVS_ID+i+ secondPicMarkList.size(),"Sstrip "+String.valueOf(i+1),listener2);
+            mark.setDetectMethod(MARK_SWITCH_ID +i+ secondPicMarkList.size());
+            MarkSwitch markSwitch2 = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i+ secondPicMarkList.size(),"Sstrip "+String.valueOf(i+1),listener2);
             markSwitchList2.add(markSwitch2);
             linearLayout.addView(markSwitch1.getLinearLayout());
             linearLayout.addView(markSwitch2.getLinearLayout());

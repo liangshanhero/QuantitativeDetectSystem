@@ -3,7 +3,6 @@ package com.example.quantitativedetect.Activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,7 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
@@ -173,15 +171,15 @@ public class FunctionInputDataActivity extends Activity {
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
             if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
                 //        TODO 测试完成后取消代码注释,
-                if(TextUtils.isEmpty(grayConcentrationSwitchView.getEditText().getText())){
-                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String str = String.valueOf(grayConcentrationSwitchView.getEditText().getText());
-                float cc = Float.parseFloat(str);
+//                if(TextUtils.isEmpty(grayConcentrationSwitchView.getEditText().getText())){
+//                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                String str = String.valueOf(grayConcentrationSwitchView.getEditText().getText());
+//                float cc = Float.parseFloat(str);
                 IDs[index] = i;
-                conc[index++] = cc;
-//                conc[index++] = concTemp[i];
+//                conc[index++] = cc;
+                conc[index++] = concTemp[i];
             }
         }
 
