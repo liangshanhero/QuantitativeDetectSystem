@@ -26,6 +26,8 @@ import java.util.List;
 public class FunctionInputDataActivity extends Activity {
 
     public static int SPINNER_ID = 1086;
+    public static int TEXT_SPINNER_SWITCH = 0;
+//    public static int GRAY_CONCENTRATION_SWITCH = 1;
     private Mark mark;
     private List<GrayConcentrationSwitchView> grayConcentrationSwitchViewList = new ArrayList<>();
     private List<TextSpinnerSwitchView> textSpinnerSwitchViewList = new ArrayList<>();
@@ -128,12 +130,20 @@ public class FunctionInputDataActivity extends Activity {
             linearLayout.addView(grayConcentrationSwitchView.getLinearLayout());
         }
     }
-    public void onChanged(int flag){
+    public void onChanged(int switchType){
         //TODO ****************************************************************
         // List<Line> feature = (List<Line>) mark.getFeatureLineList().clone();
 
-        int[] feature = new int[0];
-        if(flag == 0){
+//        int[] feature = new int[0];
+        int[] feature = new int[mark.getFeatureLineList().size()];
+        for (int i = 0; i < feature.length; i++) {
+            feature[i] = mark.getFeatureLineList().get(i).getGray();
+        }
+        /*switchType的值有0,1
+        // 0表示变化的switch的type是TEXT_SPINNER_SWITCH
+        // 1表示变化的switch的type是GRAY_CONCENTRATION_SWITCH
+         */
+        if(switchType == TEXT_SPINNER_SWITCH){
             for(int i = 0; i < textSpinnerSwitchViewList.size(); i++){
                 TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
                 if(!textSpinnerSwitchView.getaSwitch().isChecked()){
@@ -146,6 +156,7 @@ public class FunctionInputDataActivity extends Activity {
                 GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
                 if(!grayConcentrationSwitchView.getValidSwitch().isChecked()){
                     feature[i+1] = feature[0];
+                    mark.getFeatureLineList().get(i).setValid(false);
                 }
             }
         }

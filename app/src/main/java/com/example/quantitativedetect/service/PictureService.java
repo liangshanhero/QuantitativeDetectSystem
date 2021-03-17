@@ -75,7 +75,7 @@ public class PictureService {
     //分析数据，获取需要的颜色数据
     public static Mark analyse(MarkView markView){
 //    public static Mark analyse(Bitmap bitmap, MarkView markView){
-        Mark mark =new Mark();
+        Mark mark = new Mark();
         Bitmap bitmap = markView.getBitmap();
 
         int width = markView.getAdaptedWidth();
@@ -150,10 +150,12 @@ public class PictureService {
             for (int i = 0; i <mark.getLineList().size()-1; i++) {
                 if (i==0) {
                     if (mark.getLineList().get(i).getGray() >= mark.getLineList().get(i+1).getGray()){
+                        mark.getLineList().get(i).setValid(true);
                         tempFeatureLineList.add(mark.getLineList().get(i));
                     }
                 }else {
                     if (mark.getLineList().get(i-1).getGray() < mark.getLineList().get(i).getGray() && mark.getLineList().get(i).getGray() >= mark.getLineList().get(i+1).getGray() ){
+                        mark.getLineList().get(i).setValid(true);
                         tempFeatureLineList.add(mark.getLineList().get(i));
                     }
                 }
