@@ -7,9 +7,11 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +32,9 @@ import com.example.quantitativedetect.service.PictureService;
 import com.example.quantitativedetect.view.MarkView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static com.example.quantitativedetect.service.PictureService.FROM_ALBUM;
 import static com.example.quantitativedetect.service.PictureService.FROM_CAMERA;
@@ -115,8 +120,6 @@ public class FunctionSampleActivity extends MainActivity {
 //        greyInRed(bitmap);
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
-//        width=70,height=120,leftMargin=topMargin=200
-
         seekBarWidth.setProgress(8);
         seekBarHeight.setProgress(40);
         addMarkView(new View(this));
@@ -250,20 +253,22 @@ public class FunctionSampleActivity extends MainActivity {
         markView.setBitmap(bitmap);
 //        TODO 2021-0316 markView的adapted* 属性放到这里来添加
 
+
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        //通过获取seekBar的比例来设置markView的宽高
+        //通过获取当前seekBar的比例来设置markView的宽高
         layoutParams.width = seekBarWidth.getProgress()*(imageDisplayAreaWidth / 100);
         layoutParams.height = seekBarHeight.getProgress()*(imageDisplayAreaHeight / 100);
         layoutParams.leftMargin = 200;
         layoutParams.topMargin = 200;
 
-        markView.setAdaptedWidth(layoutParams.width);
-        markView.setAdaptedHeight(layoutParams.height);
+//        markView.setAdaptedWidth(layoutParams.width);
+//        markView.setAdaptedHeight(layoutParams.height);
 
         markView.setLayoutParams(layoutParams);
         markView.setOnTouchListener(moveOnTouchListener);
         relativeLayout.addView(markView);
         testView.setLayoutParams(layoutParams);
+
         relativeLayout.addView(testView);
 
         markViews.add(markView);
@@ -282,16 +287,7 @@ public class FunctionSampleActivity extends MainActivity {
             selectingID = 0;
         }
     }
-    private void sortMarkByX(){
-        for(int i = 0;i < markViews.size() - 1;i++)
-            for (int j = 0;j < markViews.size() - i - 1;j ++){
-//                if(markViews.get(j).getAdaptedX() > markViews.get(j+1).getAdaptedX()){
-                    if(markViews.get(j).getX() > markViews.get(j+1).getX()){
-                    MarkView markView = markViews.remove(j+1);
-                    markViews.add(j,markView);
-                }
-            }
-    }
+
     public void loadPicture(View view){
         AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
         listDialog.setTitle("Please choose a way to get the picture. ");
@@ -322,12 +318,12 @@ public class FunctionSampleActivity extends MainActivity {
 //    获取灰度
     public void analyse(){
         Mark mark = null;
-//        TODO 注意！！！markView获取到的灰度值有偏移，猜测是markView随bitmap压缩到的对应大小（240*240）后，
-//         以压缩的大小和位置在原始bitmap（1080*？（width*height））上获取了灰度值
         for(int i = 0;i < markViews.size();i++){
-            MarkView markView = getAdaptedMark(markViews.get(i));//应该再MarkView中建立该方法
+            markViews.get(i).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
+            mark = PictureService.analyse(markViews.get(i));
+//            MarkView markView = markViews.get(i);
+//            MarkView markView = getAdaptedMark(markViews.get(i));//应该在MarkView中建立该方法
 //            mark = PictureService.analyse(bitmap, markView);
-            mark = PictureService.analyse(markView);
         }
 //        跳转到fit界面
         Intent intent = new Intent(this,FunctionFittingActivity.class);
@@ -343,9 +339,11 @@ public class FunctionSampleActivity extends MainActivity {
         Mark mark =null;
 
         for(int i = 0;i < markViews.size();i++){
-            MarkView markView = getAdaptedMark(markViews.get(i));
-//            mark = PictureService.analyse(bitmap, markView);
-            mark = PictureService.analyse(markView);
+            markViews.get(i).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
+            mark = PictureService.analyse(markViews.get(i));
+//            MarkView markView = getAdaptedMark(markViews.get(i));
+////            mark = PictureService.analyse(bitmap, markView);
+//            mark = PictureService.analyse(markView);
         }
         Intent intent = new Intent();
         intent.putExtra("length",markViews.size());
@@ -358,7 +356,8 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     public void detect(){
-        Mark mark = PictureService.analyse(getAdaptedMark(markViews.get(0)));
+        markViews.get(0).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
+        Mark mark = PictureService.analyse(markViews.get(0));
 //        Mark mark = PictureService.analyse(bitmap, getMark(markViews.get(0)));
 
 /*TODO 2021-0129 mark的特征需要封装，*/
@@ -376,8 +375,9 @@ public class FunctionSampleActivity extends MainActivity {
 
 //    照片中选取了mark后，获取mark的灰度
     public void next(View view){
-        sortMarkByX();
-        //TODO mark中的featureLineList为空
+//        根据markView的横坐标(X)对markViews列表进行排序,X小的在前
+        Collections.sort(markViews);
+
         if(function.equals(FUNCTION_FIRST_SAMPLE))
 //            if(markViews.size() < 3){
 //                Toast.makeText(this,"样本数量不足以建立标曲，请重试",Toast.LENGTH_SHORT).show();
@@ -385,10 +385,12 @@ public class FunctionSampleActivity extends MainActivity {
 //            }
 //            else
                 analyse();
-        else if(function.equals(FUNCTION_SECOND_SAMPLE))
+        else if(function.equals(FUNCTION_SECOND_SAMPLE)) {
             secondSample();
-        else if(function.equals(FUNCTION_CHECK))
+        }
+        else if(function.equals(FUNCTION_CHECK)) {
             detect();
+        }
     }
 
 

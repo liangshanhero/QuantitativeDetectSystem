@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.example.quantitativedetect.domain.Mark;
 
-public class MarkView extends View {
+public class MarkView extends View implements Comparable<MarkView>{
     private Mark mark;
     private Bitmap bitmap ;// 后期添加：表示该markView在哪个bitmap。
 
@@ -97,5 +97,26 @@ public class MarkView extends View {
 
     public void setAdaptedX(int adaptedX) {
         this.adaptedX = adaptedX;
+    }
+
+    public void setAdapted(int imageDisplayAreaWidth,int imageDisplayAreaHeight){
+        float rateX = getX()/ imageDisplayAreaWidth;
+        int adaptedX = (int)(bitmap.getWidth()*rateX);
+        float rateWidth = (float) getWidth()/ imageDisplayAreaWidth;
+        int adaptedWidth = (int)(bitmap.getWidth()*rateWidth);
+
+        float rateY = getY()/ imageDisplayAreaHeight;
+        int adaptedY = (int)(bitmap.getHeight()*rateY);
+        float rateHeight = (float) getHeight()/ imageDisplayAreaHeight;
+        int adaptedHeight = (int)(bitmap.getHeight()*rateHeight);
+
+        this.adaptedX = adaptedX;
+        this.adaptedY = adaptedY;
+        this.adaptedWidth = adaptedWidth;
+        this.adaptedHeight = adaptedHeight;
+    }
+    @Override
+    public int compareTo(MarkView o){
+        return (int) (getX()-o.getX());
     }
 }
