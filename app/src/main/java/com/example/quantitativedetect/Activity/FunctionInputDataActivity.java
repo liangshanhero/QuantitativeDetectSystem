@@ -185,7 +185,7 @@ public class FunctionInputDataActivity extends Activity {
 
         mark.setIsConcentrationInputted(Mark.FLAG_INPUTTED);
         Intent intent = getIntent();
-        intent.putExtra("ID", mark.getDetectMethod());
+        intent.putExtra("ID", mark.getDetectMethodPlusID());
 //        IDs:在指定试制区域中检测出的峰值点的编号索引数组(featureIndex[])
         intent.putExtra("ids",IDs);
         intent.putExtra("conc",conc);

@@ -45,7 +45,7 @@ public class FunctionFittingActivity extends MainActivity {
         int markViewQuantity = intent.getIntExtra("length",0);
         linearLayout = findViewById(R.id.linear_fitting);
         for(int i = 0;i < markViewQuantity;i++){
-            String str = "points" + String.valueOf(i);
+            String str = "mark" + String.valueOf(i);
 //            把intent里对应str的数据转换成对象
 
             Mark mark = (Mark) intent.getSerializableExtra(str);
@@ -56,10 +56,10 @@ public class FunctionFittingActivity extends MainActivity {
         for(int i = 0; i< firstPicMarkList.size(); i++){
             Mark mark = firstPicMarkList.get(i);
             mark = getFeatures(mark);
-            mark.setDetectMethod(MARK_SWITCH_ID +i);
-            MarkSwitch markSwitch1 = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i,"strip "+String.valueOf(i+1),listener1);
-            markSwitchList1.add(markSwitch1);
-            linearLayout.addView(markSwitch1.getLinearLayout());
+            mark.setDetectMethodPlusID(MARK_SWITCH_ID +i);
+            MarkSwitch tempMarkSwitch = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i,"mark "+String.valueOf(i+1),listener1);
+            markSwitchList1.add(tempMarkSwitch);
+            linearLayout.addView(tempMarkSwitch.getLinearLayout());
         }
     }
 
@@ -71,9 +71,8 @@ public class FunctionFittingActivity extends MainActivity {
 //        int[] features = new int[0];
 //        int[] dotrowAvgGrays = new int[0];
         GrayCurve grayCurve = new GrayCurve(this,getScreenWidth()*4/7, mark,(float)1,0);
-        
 
-        
+
         grayCurve.setId(ID);
         grayCurve.setOnClickListener(listener);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -241,8 +240,8 @@ public class FunctionFittingActivity extends MainActivity {
             MarkSwitch markSwitch1 = markSwitchList1.get(i);
             Mark mark = secondPicMarkList.get(i);
 
-            mark.setDetectMethod(MARK_SWITCH_ID +i+ secondPicMarkList.size());
-            MarkSwitch markSwitch2 = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i+ secondPicMarkList.size(),"Sstrip "+String.valueOf(i+1),listener2);
+            mark.setDetectMethodPlusID(MARK_SWITCH_ID +i+ secondPicMarkList.size());
+            MarkSwitch markSwitch2 = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i+ secondPicMarkList.size(),"Smark "+String.valueOf(i+1),listener2);
             markSwitchList2.add(markSwitch2);
             linearLayout.addView(markSwitch1.getLinearLayout());
             linearLayout.addView(markSwitch2.getLinearLayout());
@@ -305,13 +304,13 @@ public class FunctionFittingActivity extends MainActivity {
                 case REQUEST_CODE_DATA:
                     int ID = intent.getIntExtra("ID",0);
                     for(Mark mark: firstPicMarkList){
-                        if(ID == mark.getDetectMethod()){
+                        if(ID == mark.getDetectMethodPlusID()){
 //                            mark.setIaC(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
 //                            mark.setFlag(intent.getIntExtra("FLAG",1));
                         }
                     }
                     for(Mark virginPoint: secondPicMarkList){
-                    if(ID == virginPoint.getDetectMethod()){
+                    if(ID == virginPoint.getDetectMethodPlusID()){
 //                        virginPoint.setIaC(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
 //                        virginPoint.setFlag(intent.getIntExtra("FLAG",1));
                     }

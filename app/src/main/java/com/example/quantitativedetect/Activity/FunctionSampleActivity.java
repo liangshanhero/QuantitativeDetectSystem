@@ -317,10 +317,11 @@ public class FunctionSampleActivity extends MainActivity {
 
 //    获取灰度
     public void analyse(){
+        List<Mark> markList = new ArrayList<>();
         Mark mark = null;
         for(int i = 0;i < markViews.size();i++){
             markViews.get(i).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
-            mark = PictureService.analyse(markViews.get(i));
+            markList.add(PictureService.analyse(markViews.get(i)));
 //            MarkView markView = markViews.get(i);
 //            MarkView markView = getAdaptedMark(markViews.get(i));//应该在MarkView中建立该方法
 //            mark = PictureService.analyse(bitmap, markView);
@@ -329,8 +330,8 @@ public class FunctionSampleActivity extends MainActivity {
         Intent intent = new Intent(this,FunctionFittingActivity.class);
         intent.putExtra("length",markViews.size());
         for (int i = 0;i < markViews.size();i++){
-            String str = "points" + String.valueOf(i);
-            intent.putExtra(str, mark);
+            String str = "mark" + String.valueOf(i);
+            intent.putExtra(str, markList.get(i));
         }
         startActivity(intent);
     }

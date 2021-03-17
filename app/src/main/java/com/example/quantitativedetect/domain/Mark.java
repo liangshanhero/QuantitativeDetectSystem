@@ -11,7 +11,7 @@ public class Mark implements Serializable {
     public static final int FLAG_INPUTTED = 1,FLAG_NOT_INPUT = 0;
     //凭感觉flag要改变时，将FLAG_INPUTTED的值赋给flag
     private int isConcentrationInputted =0;
-    private int detectMethod;//原来是ID，表示胶体金或者荧光啥的？？？   检测方式
+    private int detectMethodPlusID;//原来是ID，表示胶体金或者荧光啥的？？？   检测方式
 
     private List<Line> lineList = new ArrayList<>();//所有的行对象列表
     private List<Line> featureLineList = new ArrayList<>();//所有的特征行对象列表    存峰值的行 的数组
@@ -31,12 +31,12 @@ public class Mark implements Serializable {
         this.lineWidthPixelQuantity = lineWidthPixelQuantity;
     }
 
-    public int getDetectMethod() {
-        return detectMethod;
+    public int getDetectMethodPlusID() {
+        return detectMethodPlusID;
     }
 
-    public void setDetectMethod(int detectMethod) {
-        this.detectMethod = detectMethod;
+    public void setDetectMethodPlusID(int detectMethodPlusID) {
+        this.detectMethodPlusID = detectMethodPlusID;
     }
 
     public List<Line> getLineList() {
