@@ -121,7 +121,7 @@ public class FunctionSampleActivity extends MainActivity {
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
         seekBarWidth.setProgress(8);
-        seekBarHeight.setProgress(40);
+        seekBarHeight.setProgress(45);
         addMarkView(new View(this));
 //        似乎没有什么用，暂时屏蔽
 //        addMark(300,500,70,350);//测试用特征框
@@ -289,30 +289,32 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     public void loadPicture(View view){
-        AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
-        listDialog.setTitle("Please choose a way to get the picture. ");
-        //选择获取照片的方式
-        String[] getPictures = {"Photograph","Photo Album"};
-        listDialog.setItems(getPictures, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case 0:
-                        picturePath = PictureService.takePhoto(FunctionSampleActivity.this);
-                        break;
-                    case 1:
-                        PictureService.pickPhoto(FunctionSampleActivity.this);
-                        break;
-                }
-            }
-        });
-        listDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        listDialog.show();
+//      TODO 测试通过后删除,并恢复hou后续代码
+        PictureService.pickPhoto(FunctionSampleActivity.this);
+//        AlertDialog.Builder listDialog = new AlertDialog.Builder(this);
+//        listDialog.setTitle("Please choose a way to get the picture. ");
+//        //选择获取照片的方式
+//        String[] getPictures = {"Photograph","Photo Album"};
+//        listDialog.setItems(getPictures, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                switch (which){
+//                    case 0:
+//                        picturePath = PictureService.takePhoto(FunctionSampleActivity.this);
+//                        break;
+//                    case 1:
+//                        PictureService.pickPhoto(FunctionSampleActivity.this);
+//                        break;
+//                }
+//            }
+//        });
+//        listDialog.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//            }
+//        });
+//        listDialog.show();
     }
 
 //    获取灰度

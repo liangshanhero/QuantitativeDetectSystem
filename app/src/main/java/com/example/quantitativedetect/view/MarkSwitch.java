@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.example.quantitativedetect.domain.Mark;
 
+import java.io.Serializable;
+import java.util.List;
+
 //原来是TVS
 //（1）表示是否将对应的Mark用于后面的拟合。（2）点击该视图的曲线，打开输入灰度与浓度界面
 public class MarkSwitch extends View {
@@ -23,6 +26,7 @@ public class MarkSwitch extends View {
     private String name;
     private Context context;
     private boolean hasInput = false;
+    private List<GrayConcentrationSwitchView> grayConcentrationSwitchViewList;
     public static final int MARK_SWITCH_ID = 10086;
 //    考虑添加List，GrayConcentrationSwitch，TSS待定
 
@@ -94,5 +98,13 @@ public class MarkSwitch extends View {
 
     public void setMark(Mark mark) {
         this.mark = mark;
+    }
+
+    public List<GrayConcentrationSwitchView> getGrayConcentrationSwitchViewList() {
+        return grayConcentrationSwitchViewList;
+    }
+
+    public void setGrayConcentrationSwitchViewList(List<GrayConcentrationSwitchView> grayConcentrationSwitchViewList) {
+        this.grayConcentrationSwitchViewList = grayConcentrationSwitchViewList;
     }
 }

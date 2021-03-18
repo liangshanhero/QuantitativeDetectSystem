@@ -9,12 +9,18 @@ import com.example.quantitativedetect.domain.Mark;
 
 
 public class GrayCurve extends BaseCoordinate {
+
+    public static final int TEXT_SPINNER_SWITCH_CURVE = 0;
+
     private int[] points;//所有的点的灰度值
     private int[] featureIndex;//特征点在points这个数组里面的位置
+    private int cLineIndex;//第一个特征点
+    private int selectedPointIndex;//目前选中的输入框对应的点
+//    private int focusPoint = -1;//上一次选中的点,初始为-1,即没有点被选中
     //第一个特征的点？？？？？
     private float CL = 1;
     private float zoom = 1;
-    private int flag = 0;
+    private int curveType = 0;
 //    public AbbreviationCurve(Context context,int width,int[] points,float zoom,int[] features,int flag){
 //        super(context);
 //        super.init(width,width/2,40);
@@ -29,7 +35,7 @@ public class GrayCurve extends BaseCoordinate {
 //        }
 //    }
 
-    public GrayCurve(Context context, int width, Mark mark, float zoom, int flag){
+    public GrayCurve(Context context, int width, Mark mark, float zoom, int curveType){
         super(context);
         super.init(width,width/2,40);
         points = new int[mark.getLineList().size()];
@@ -41,14 +47,15 @@ public class GrayCurve extends BaseCoordinate {
         for (int i=0; i<mark.getFeatureLineList().size();i++){
             featureIndex[i]=mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
         }
+        this.cLineIndex=featureIndex[0];
 //        this.points = points;
 //        this.features = features;
         //TODO CL是偏移量，但不知道具体含义，CL值增大能使得缩略图（grayCurve）位置降低
         // （或者说是使整个Y轴的范围（0~maxValue）更大，导致曲线的上下边界被压缩至可见，即使曲线的振幅变小？）
         this.CL = points[featureIndex[0]]+300;
 //        this.CL = points[featureIndex[0]];
-        this.flag = flag;
-        if(flag == 0){
+        this.curveType = curveType;
+        if(curveType == 0){
             this.zoom = zoom*(width/3-2*pad);
             super.init(width,width/3,40);
         }
@@ -60,15 +67,22 @@ public class GrayCurve extends BaseCoordinate {
 
     public void setFeatureIndex(int[] featureIndex){
         this.featureIndex = featureIndex;
+        boolean isFirstPositive = false;
+        for (int i = 0; i < featureIndex.length && !isFirstPositive; i++) {
+            if (featureIndex[i]>=0){
+                this.cLineIndex = featureIndex[i];
+                isFirstPositive = true;
+            }
+        }
         invalidate();
     }
     public void setWid(int wid){
         super.init(wid,wid/3,25);
         invalidate();
     }
-    public void setFlag(int flag){
-        this.flag = flag;
-        if(this.flag ==1)
+    public void setCurveType(int curveType){
+        this.curveType = curveType;
+        if(this.curveType ==1)
         invalidate();
     }
     @Override
@@ -108,9 +122,18 @@ public class GrayCurve extends BaseCoordinate {
         paint.setColor(Color.RED);
         paint.setStrokeWidth(9);
         for(int i = 0; i < featureIndex.length; i++){
+            if (featureIndex[i]<=-1){
+                continue;
+            }
             paint.setColor(Color.RED);
-            if(i == 0)
+            paint.setStrokeWidth(9);
+            if(featureIndex[i] == cLineIndex) {
                 paint.setColor(Color.GREEN);
+            }
+            if(featureIndex[i] == selectedPointIndex){
+                paint.setColor(Color.BLUE);
+                paint.setStrokeWidth(18);
+            }
             float x = (float) featureIndex[i]/points.length * (wid - 2*pad) + pad;
             float y = hei - pad - (float)points[featureIndex[i]]/CL * zoom;
             canvas.drawPoint(x,y,paint);
@@ -120,7 +143,7 @@ public class GrayCurve extends BaseCoordinate {
     @Override
     public void onDraw(Canvas canvas){
         super.onDraw(canvas);
-        if(flag == 0){
+        if(curveType == 0){
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
             paint.setStrokeWidth(2);
@@ -140,7 +163,31 @@ public class GrayCurve extends BaseCoordinate {
                 canvas.drawPoint(x,y,paint);
             }
         }
-        else if(flag == 1)
+        else if(curveType == 1)
             bigDraw(canvas);
     }
+
+    public int getcLineIndex() {
+        return cLineIndex;
+    }
+
+    public void setcLineIndex(int cLineIndex) {
+        this.cLineIndex = cLineIndex;
+    }
+
+    public int getSelectedPointIndex() {
+        return selectedPointIndex;
+    }
+
+    public void setSelectedPointIndex(int selectedPointIndex) {
+        this.selectedPointIndex = selectedPointIndex;
+    }
+
+//    public int getFocusPoint() {
+//        return focusPoint;
+//    }
+//
+//    public void setFocusPoint(int focusPoint) {
+//        this.focusPoint = focusPoint;
+//    }
 }

@@ -16,6 +16,7 @@ import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.view.GrayCurve;
 import com.example.quantitativedetect.view.MarkSwitch;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,9 +210,10 @@ public class FunctionFittingActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FunctionFittingActivity.this,FunctionInputDataActivity.class);
-                intent.putExtra("VirginPoint", firstPicMarkList.get(v.getId()- MARK_SWITCH_ID));
+                intent.putExtra("Mark", firstPicMarkList.get(v.getId()- MARK_SWITCH_ID));
                 intent.putExtra("length", length);
                 intent.putExtra("function","data");
+//                intent.putExtra("MarkSwitch", markSwitchList1.get(v.getId()-MARK_SWITCH_ID));
                 startActivityForResult(intent,REQUEST_CODE_DATA);
             }
         };
@@ -221,7 +223,7 @@ public class FunctionFittingActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FunctionFittingActivity.this,FunctionInputDataActivity.class);
-                intent.putExtra("VirginPoint", secondPicMarkList.get(v.getId()- MARK_SWITCH_ID - firstPicMarkList.size()));
+                intent.putExtra("Mark", secondPicMarkList.get(v.getId()- MARK_SWITCH_ID - firstPicMarkList.size()));
                 intent.putExtra("length", length);
                 intent.putExtra("function","data");
                 startActivityForResult(intent,REQUEST_CODE_DATA);

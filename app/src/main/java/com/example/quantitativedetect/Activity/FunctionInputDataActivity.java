@@ -4,19 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.view.GrayConcentrationSwitchView;
 import com.example.quantitativedetect.view.GrayCurve;
+import com.example.quantitativedetect.view.MarkSwitch;
 import com.example.quantitativedetect.view.TextSpinnerSwitchView;
 
 import org.litepal.crud.DataSupport;
@@ -27,9 +28,12 @@ import java.util.List;
 public class FunctionInputDataActivity extends Activity {
 
     public static int SPINNER_ID = 1086;
-    public static int TEXT_SPINNER_SWITCH = 0;
+    public static final int TEXT_SPINNER_SWITCH = 0;
 //    public static int GRAY_CONCENTRATION_SWITCH = 1;
     private Mark mark;
+
+    private MarkSwitch markSwitch;
+
     private List<GrayConcentrationSwitchView> grayConcentrationSwitchViewList = new ArrayList<>();
     private List<TextSpinnerSwitchView> textSpinnerSwitchViewList = new ArrayList<>();
 //    private int[] functions = new int[]{1,2,3,4,5};
@@ -49,8 +53,9 @@ public class FunctionInputDataActivity extends Activity {
     private void init(){
         Intent intent = getIntent();
         length = intent.getIntExtra("length",0);
-        mark = (Mark) intent.getSerializableExtra("VirginPoint");
+        mark = (Mark) intent.getSerializableExtra("Mark");
         function = intent.getStringExtra("function");
+//        markSwitch = (MarkSwitch) intent.getSerializableExtra("MarkSwitch");
         linearLayout = findViewById(R.id.linear_data);
         relativeLayout = findViewById(R.id.relative_AC);
 //        TODO 2021-0130
@@ -59,7 +64,7 @@ public class FunctionInputDataActivity extends Activity {
 //        int[] dotrowAvgGrays = new int[0];
 //        int[] featureIndexOnDotrowIndex = new int[0];
         grayCurve = new GrayCurve(this,MainActivity.getScreenWidth(), mark, (float)1, 1);
-        grayCurve.setFlag(1);
+        grayCurve.setCurveType(1);
         relativeLayout.addView(grayCurve);
         if(function.equals("data"))
             initGrayConcentrationSwitchView();
@@ -126,26 +131,26 @@ public class FunctionInputDataActivity extends Activity {
                     onChanged(1);
                 }
             };
-
+            final int finalI = i;
             View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
                 @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    onFocus(1);
+                public void onFocusChange(View view, boolean b) {
+                    onFocus(finalI);
                 }
             };
-
-            grayConcentrationSwitchView.setListener(checkedChangeListener);
-            grayConcentrationSwitchView.setListener(focusChangeListener);
-
+            grayConcentrationSwitchView.setCheckedChangeListener(checkedChangeListener);
+            grayConcentrationSwitchView.setFocusChangeListener(focusChangeListener);
             grayConcentrationSwitchViewList.add(grayConcentrationSwitchView);
             linearLayout.addView(grayConcentrationSwitchView.getLinearLayout());
         }
     }
+
+    public void onFocus(int finalI) {
+        grayCurve.setSelectedPointIndex(mark.getLineList().indexOf(mark.getFeatureLineList().get(finalI)));
+        grayCurve.invalidate();
+    }
+
     public void onChanged(int switchType){
-        //TODO ****************************************************************
-        // List<Line> feature = (List<Line>) mark.getFeatureLineList().clone();
-
-//        int[] feature = new int[0];
         int[] featureIndex = new int[mark.getFeatureLineList().size()];
         for (int i = 0; i < featureIndex.length; i++) {
             featureIndex[i] = mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
@@ -166,46 +171,20 @@ public class FunctionInputDataActivity extends Activity {
             for(int i = 0; i < grayConcentrationSwitchViewList.size(); i++){
                 GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
                 if(!grayConcentrationSwitchView.getValidSwitch().isChecked()){
-                    featureIndex[i+1] = featureIndex[0];
-                    mark.getFeatureLineList().get(i).setValid(false);
+                    featureIndex[i] = -1 - featureIndex[i];
+                    grayConcentrationSwitchView.getEditText().setText("");
+                    grayConcentrationSwitchView.getEditText().setEnabled(false);
+//                    mark.getFeatureLineList().get(i).setValid(false);
+                }else{
+//                    grayConcentrationSwitchView.getEditText().setId(i);
+                    grayConcentrationSwitchView.getEditText().setEnabled(true);
+//                    grayConcentrationSwitchView.getEditText().setNextFocusDownId(i+1);
                 }
             }
         }
         grayCurve.setFeatureIndex(featureIndex);
     }
 
-    public void onFocus(int switchType){
-        //TODO ****************************************************************
-        // List<Line> feature = (List<Line>) mark.getFeatureLineList().clone();
-
-//        int[] feature = new int[0];
-        int[] featureIndex = new int[mark.getFeatureLineList().size()];
-        for (int i = 0; i < featureIndex.length; i++) {
-            featureIndex[i] = mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
-        }
-        /*switchType的值有0,1
-        // 0表示变化的switch的type是TEXT_SPINNER_SWITCH
-        // 1表示变化的switch的type是GRAY_CONCENTRATION_SWITCH
-         */
-        if(switchType == TEXT_SPINNER_SWITCH){
-            for(int i = 0; i < textSpinnerSwitchViewList.size(); i++){
-                TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
-                if(!textSpinnerSwitchView.getaSwitch().isChecked()){
-                    featureIndex[i+1] = featureIndex[0];
-                }
-            }
-        }
-        else {
-            for(int i = 0; i < grayConcentrationSwitchViewList.size(); i++){
-                GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
-                if(!grayConcentrationSwitchView.getValidSwitch().isChecked()){
-                    featureIndex[i+1] = featureIndex[0];
-                    mark.getFeatureLineList().get(i).setValid(false);
-                }
-            }
-        }
-        grayCurve.setFeatureIndex(featureIndex);
-    }
 
     public void selectFunction(int index,int position){
         functions[index] = position;
@@ -225,7 +204,7 @@ public class FunctionInputDataActivity extends Activity {
         for(int i = 0;i < length;i++){
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
             if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
-                //        TODO 测试完成后取消代码注释,
+                //        TODO 测试完成后取消注释
 //                if(TextUtils.isEmpty(grayConcentrationSwitchView.getEditText().getText())){
 //                    Toast.makeText(this,"请输入所有被选中的样本值！",Toast.LENGTH_SHORT).show();
 //                    return;

@@ -41,20 +41,21 @@ public class GrayConcentrationSwitchView {
         textView.setLayoutParams(layoutParams1);
         textView.setText(value);
 
-        validSwitch = new Switch(context);
+        editText = new EditText(context);
         LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams2.gravity = Gravity.CENTER;
-        layoutParams2.weight = 1;
-        layoutParams2.rightMargin = 50;
-        validSwitch.setChecked(true);
-        validSwitch.setLayoutParams(layoutParams2);
+        layoutParams2.weight = 3;
+        editText.clearFocus();
+        editText.setLayoutParams(layoutParams2);
+        editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
-        editText = new EditText(context);
+        validSwitch = new Switch(context);
         LinearLayout.LayoutParams layoutParams3 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams3.gravity = Gravity.CENTER;
-        layoutParams3.weight = 3;
-        editText.setLayoutParams(layoutParams3);
-        editText.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        layoutParams3.weight = 1;
+        layoutParams3.rightMargin = 50;
+        validSwitch.setChecked(true);
+        validSwitch.setLayoutParams(layoutParams3);
 
         linearLayout.addView(textView);
         linearLayout.addView(editText);
@@ -69,14 +70,15 @@ public class GrayConcentrationSwitchView {
         return editText;
     }
 
-    public void setListener(CompoundButton.OnCheckedChangeListener listener){
+    public void setCheckedChangeListener(CompoundButton.OnCheckedChangeListener listener){
         validSwitch.setOnCheckedChangeListener(listener);
     }
-    public void setListener(View.OnFocusChangeListener listener){
+    public void setFocusChangeListener(View.OnFocusChangeListener listener){
         editText.setOnFocusChangeListener(listener);
     }
-
     public LinearLayout getLinearLayout() {
         return this.linearLayout;
     }
+
+
 }

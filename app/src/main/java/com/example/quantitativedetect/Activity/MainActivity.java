@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    首页点击TRFMs-xLFIA,跳转到FunctionsActivity界面
+//    首页点击TRFMs-xLFIA,跳转到FunctionSampleActivity界面
     public void fluorescentMicrosphere(View view){
         FunctionSampleActivity.setCheckMode(FunctionSampleActivity.FLUORESCENT_MICROSPHERE);
         Intent intent = new Intent(this, FunctionMainActivity.class);
