@@ -3,6 +3,7 @@ package com.example.quantitativedetect.view;
 import android.content.Context;
 import android.text.InputType;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -70,6 +71,9 @@ public class GrayConcentrationSwitchView {
 
     public void setListener(CompoundButton.OnCheckedChangeListener listener){
         validSwitch.setOnCheckedChangeListener(listener);
+    }
+    public void setListener(View.OnFocusChangeListener listener){
+        editText.setOnFocusChangeListener(listener);
     }
 
     public LinearLayout getLinearLayout() {

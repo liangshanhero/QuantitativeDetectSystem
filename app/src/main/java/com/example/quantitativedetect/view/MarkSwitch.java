@@ -24,6 +24,7 @@ public class MarkSwitch extends View {
     private Context context;
     private boolean hasInput = false;
     public static final int MARK_SWITCH_ID = 10086;
+//    考虑添加List，GrayConcentrationSwitch，TSS待定
 
     public MarkSwitch(Context context, String name, GrayCurve grayCurve,Mark mark){
         super(context);

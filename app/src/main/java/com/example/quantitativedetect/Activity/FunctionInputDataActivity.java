@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
@@ -115,17 +116,27 @@ public class FunctionInputDataActivity extends Activity {
 //            for(int i = 0;i < length;i++){
 //          TODO 2020-0130，取值方法待解决，暂时使用固定值代替
 //          mark.getLineWidthPixelQuantity()=5(似乎一直不变),mark.getFeatureLineList().get(i+1).getGray()=44/64(会变)
-            String value = String.format("%.2f",(float) mark.getFeatureLineList().get(i).getGray()/mark.getLineWidthPixelQuantity());
+            String trGray = String.format("%.2f",(float) mark.getFeatureLineList().get(i).getGray()/mark.getLineWidthPixelQuantity());
 //          String value = String.format("%.2f",(float) mark.getDotrowAvgGrays()[mark.getFeatureIndexOnDotrowIndex()[i+1]]/ mark.getLineWidthPixelQuantity());
 //            String value = "1234123412341234.1234123412341243";
-            GrayConcentrationSwitchView grayConcentrationSwitchView = new GrayConcentrationSwitchView(this,value);
-            CompoundButton.OnCheckedChangeListener listener = new CompoundButton.OnCheckedChangeListener() {
+            GrayConcentrationSwitchView grayConcentrationSwitchView = new GrayConcentrationSwitchView(this,trGray);
+            CompoundButton.OnCheckedChangeListener checkedChangeListener = new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     onChanged(1);
                 }
             };
-            grayConcentrationSwitchView.setListener(listener);
+
+            View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    onFocus(1);
+                }
+            };
+
+            grayConcentrationSwitchView.setListener(checkedChangeListener);
+            grayConcentrationSwitchView.setListener(focusChangeListener);
+
             grayConcentrationSwitchViewList.add(grayConcentrationSwitchView);
             linearLayout.addView(grayConcentrationSwitchView.getLinearLayout());
         }
@@ -135,9 +146,9 @@ public class FunctionInputDataActivity extends Activity {
         // List<Line> feature = (List<Line>) mark.getFeatureLineList().clone();
 
 //        int[] feature = new int[0];
-        int[] feature = new int[mark.getFeatureLineList().size()];
-        for (int i = 0; i < feature.length; i++) {
-            feature[i] = mark.getFeatureLineList().get(i).getGray();
+        int[] featureIndex = new int[mark.getFeatureLineList().size()];
+        for (int i = 0; i < featureIndex.length; i++) {
+            featureIndex[i] = mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
         }
         /*switchType的值有0,1
         // 0表示变化的switch的type是TEXT_SPINNER_SWITCH
@@ -147,7 +158,7 @@ public class FunctionInputDataActivity extends Activity {
             for(int i = 0; i < textSpinnerSwitchViewList.size(); i++){
                 TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
                 if(!textSpinnerSwitchView.getaSwitch().isChecked()){
-                    feature[i+1] = feature[0];
+                    featureIndex[i+1] = featureIndex[0];
                 }
             }
         }
@@ -155,12 +166,45 @@ public class FunctionInputDataActivity extends Activity {
             for(int i = 0; i < grayConcentrationSwitchViewList.size(); i++){
                 GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
                 if(!grayConcentrationSwitchView.getValidSwitch().isChecked()){
-                    feature[i+1] = feature[0];
+                    featureIndex[i+1] = featureIndex[0];
                     mark.getFeatureLineList().get(i).setValid(false);
                 }
             }
         }
-        grayCurve.setFeatureIndex(feature);
+        grayCurve.setFeatureIndex(featureIndex);
+    }
+
+    public void onFocus(int switchType){
+        //TODO ****************************************************************
+        // List<Line> feature = (List<Line>) mark.getFeatureLineList().clone();
+
+//        int[] feature = new int[0];
+        int[] featureIndex = new int[mark.getFeatureLineList().size()];
+        for (int i = 0; i < featureIndex.length; i++) {
+            featureIndex[i] = mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
+        }
+        /*switchType的值有0,1
+        // 0表示变化的switch的type是TEXT_SPINNER_SWITCH
+        // 1表示变化的switch的type是GRAY_CONCENTRATION_SWITCH
+         */
+        if(switchType == TEXT_SPINNER_SWITCH){
+            for(int i = 0; i < textSpinnerSwitchViewList.size(); i++){
+                TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
+                if(!textSpinnerSwitchView.getaSwitch().isChecked()){
+                    featureIndex[i+1] = featureIndex[0];
+                }
+            }
+        }
+        else {
+            for(int i = 0; i < grayConcentrationSwitchViewList.size(); i++){
+                GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
+                if(!grayConcentrationSwitchView.getValidSwitch().isChecked()){
+                    featureIndex[i+1] = featureIndex[0];
+                    mark.getFeatureLineList().get(i).setValid(false);
+                }
+            }
+        }
+        grayCurve.setFeatureIndex(featureIndex);
     }
 
     public void selectFunction(int index,int position){
