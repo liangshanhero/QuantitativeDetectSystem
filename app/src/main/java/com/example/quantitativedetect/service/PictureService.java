@@ -96,8 +96,8 @@ public class PictureService {
             for (int j=0;j<pixels.length;j++) {
                 double tmpGray;
                 if (FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
-//                    tmpGray = 255 - Color.red(pixels[j]);
-                    tmpGray = (255 - Color.green(pixels[j]) + 255 - Color.blue(pixels[j]))/2;
+                    tmpGray = 255 - Color.red(pixels[j]);
+//                    tmpGray = (255 - Color.green(pixels[j]) + 255 - Color.blue(pixels[j]))/2;
                 }
                 else{
                     tmpGray = (255-Color.green(pixels[j]))/2+(255-Color.blue(pixels[j]))/2;

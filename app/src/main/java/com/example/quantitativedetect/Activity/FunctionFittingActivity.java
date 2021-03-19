@@ -64,9 +64,7 @@ public class FunctionFittingActivity extends MainActivity {
     }
 
     public MarkSwitch createMarkGrayCurveSwitchView(Mark mark, int ID, String name, View.OnClickListener listener){
-
-//        TODO 2021-0130 暂时使用固定的值代替
-//        
+//
 //        AbbreviationCurve abbreviationCurve = new AbbreviationCurve(this,getScreenWidth()*4/7, mark.getDotrowAvgGrays(),(float)1,features,0);
 //        int[] features = new int[0];
 //        int[] dotrowAvgGrays = new int[0];
@@ -111,8 +109,8 @@ public class FunctionFittingActivity extends MainActivity {
                 g2 = secondPicMarkFeatureLineList.get(i).getGray();
                 Stripe stripe1 = firstPicStripes.get(i);
                 Stripe stripe2 = secondPicStripes.get(i);
-                stripe1.setGray0(g1);
-                stripe2.setGray0(g2);
+                stripe1.settLineAndeCLineGrayRatio(g1);
+                stripe2.settLineAndeCLineGrayRatio(g2);
             }
             //为标曲输入用于构建的样本值
             for(int i = 1; i < firstPicMarkList.size(); i++){
@@ -135,8 +133,8 @@ public class FunctionFittingActivity extends MainActivity {
                     g2 = secondPicMarkFeatureLine.getGray();
                     Stripe stripe1 = firstPicStripes.get(j);
                     Stripe stripe2 = secondPicStripes.get(j);
-                    Line line1 = new Line(c1, (int)(g1/ stripe1.getGray0()));
-                    Line line2 = new Line(c2,(int)(g2/ stripe2.getGray0()));
+                    Line line1 = new Line(c1, (int)(g1/ stripe1.gettLineAndeCLineGrayRatio()));
+                    Line line2 = new Line(c2,(int)(g2/ stripe2.gettLineAndeCLineGrayRatio()));
                     stripe1.addLine(line1);
                     stripe2.addLine(line2);
                 }
@@ -144,30 +142,30 @@ public class FunctionFittingActivity extends MainActivity {
         }
         else {
             List<Line> firstPicFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
-//            for：测试，完成后删除
-            for (int i = 0; i < firstPicFeatureLineList.size(); i++) {
-                if (firstPicFeatureLineList.get(i).getConcentration()==0){
-                    firstPicFeatureLineList.get(i).setConcentration(i*5);
-                }
-            }
             for(int i = 0;i < firstPicFeatureLineList.size(); i++){
+                if (!firstPicFeatureLineList.get(i).isValid()){
+                    continue;
+                }
                 Stripe stripe1 = new Stripe(i);
                 Stripe stripe2 = new Stripe(i);
-//            gray0默认值为1
+//            tLineAndeCLineGrayRatio默认值为1
+                float g1 = firstPicMarkList.get(0).getTrC(i);
+                stripe1.settLineAndeCLineGrayRatio(g1);
                 firstPicStripes.add(stripe1);
                 secondPicStripes.add(stripe2);
             }
             //为每个标曲输入B0
 //            Mark mark = firstPicMarkList.get(0);
 //            firstPicFeatureLineList
-            for(int i = 0;i < firstPicFeatureLineList.size(); i++){
-//                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
-//                float g1 = firstPicFeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
-                float g1 = firstPicFeatureLineList.get(i).getGray()/(float)firstPicMarkList.get(0).getLineWidthPixelQuantity();
-                Stripe stripe1 = firstPicStripes.get(i);
-                stripe1.setGray0(g1);
-//                TODO 2021-0131 可以试着将featureLine加入到对应的archive1中（暂时没想好怎么用，但是感觉有用。。。。。。）
-            }
+//            for(int i = 0;i < firstPicFeatureLineList.size(); i++){
+////                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
+////                float g1 = firstPicFeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
+////                float g1 = firstPicFeatureLineList.get(i).getGray()/(float)firstPicMarkList.get(0).getLineWidthPixelQuantity();
+//                float g1 = firstPicMarkList.get(0).getTrC(i);
+//                Stripe stripe1 = firstPicStripes.get(i);
+//                stripe1.settLineAndeCLineGrayRatio(g1);
+////                TODO 2021-0131 可以试着将featureLine加入到对应的archive1中（暂时没想好怎么用，但是感觉有用。。。。。。）
+//            }
             //为标曲输入用于构建的样本值
 //            TODO　2021-0209 firstPicMarkList.size()=1,i=1时无法进入循环,且size为1,后面的取值操作使用i会有越界错误
 //             故将循环初始值改为i=0,修改以后后续完成情况良好,且特征line已加入firstPicStripes中
@@ -182,14 +180,15 @@ public class FunctionFittingActivity extends MainActivity {
                 for(int j = 0;j < firstPicFeatureLineList.size(); j++){
 
 //                    mark.getFeatureLineList().get(j).getGray();
-                    float g1,c1;
-                    c1 = mark.getFeatureLineList().get(j).getConcentration();
+                    float grayRatio1,concentration1;
+                    concentration1 = mark.getFeatureLineList().get(j).getConcentration();
 //                    g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
-                    g1 = mark.getFeatureLineList().get(j).getGray()/(float)mark.getLineWidthPixelQuantity();
+                    grayRatio1 = mark.getTrC(i);
+//                    g1 = mark.getFeatureLineList().get(j).getGray()/(float)mark.getLineWidthPixelQuantity();
                     Stripe stripe1 = firstPicStripes.get(j);
 
-                    Line line1 = new Line(c1,(int)(g1/ stripe1.getGray0()));
-                    Log.w("Result",String.valueOf(g1/ stripe1.getGray0()));
+                    Line line1 = new Line(concentration1,(int)(grayRatio1/ stripe1.gettLineAndeCLineGrayRatio()));
+                    Log.w("Result",String.valueOf(grayRatio1/ stripe1.gettLineAndeCLineGrayRatio()));
                     stripe1.addLine(line1);
                 }
             }
@@ -212,7 +211,6 @@ public class FunctionFittingActivity extends MainActivity {
                 intent.putExtra("Mark", firstPicMarkList.get(v.getId()- MARK_SWITCH_ID));
                 intent.putExtra("length", length);
                 intent.putExtra("function","data");
-//                intent.putExtra("MarkSwitch", markSwitchList1.get(v.getId()-MARK_SWITCH_ID));
                 startActivityForResult(intent,REQUEST_CODE_DATA);
             }
         };

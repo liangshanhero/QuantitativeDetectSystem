@@ -11,17 +11,17 @@ public class Stripe implements Serializable {
 
     private int[] points;
 //    private float conc0 = 1;
-    private float gray0 = 1;//
-    private int ID;//ID: index of featureLine
+    private float tLineAndeCLineGrayRatio = 1;//用于存放对应的特征点在所在的Mark中的T/C的值
+    private int indexOfFeatureLineList;//ID: index of featureLine
 //    lines表示本archive中包含的mark中的特征行列表
     private List<Line> lines = new ArrayList<>();
 
-    public Stripe(int ID){
-        this.ID = ID;
+    public Stripe(int indexOfFeatureLineList){
+        this.indexOfFeatureLineList = indexOfFeatureLineList;
     }
 
-    public int getID() {
-        return ID;
+    public int getIndexOfFeatureLineList() {
+        return indexOfFeatureLineList;
     }
 
     public List<Line> getLines() {
@@ -61,16 +61,16 @@ public class Stripe implements Serializable {
 //        return conc0;
 //    }
 
-    public float getGray0() {
-        return gray0;
+    public float gettLineAndeCLineGrayRatio() {
+        return tLineAndeCLineGrayRatio;
     }
 
 //    public void setConc0(float conc0) {
 //        this.conc0 = conc0;
 //    }
 
-    public void setGray0(float gray0) {
-        this.gray0 = gray0;
+    public void settLineAndeCLineGrayRatio(float tLineAndeCLineGrayRatio) {
+        this.tLineAndeCLineGrayRatio = tLineAndeCLineGrayRatio;
     }
 
     public Bitmap getBitmap() {

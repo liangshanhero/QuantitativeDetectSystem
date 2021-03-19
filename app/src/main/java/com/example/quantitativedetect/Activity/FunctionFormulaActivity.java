@@ -129,7 +129,7 @@ public class FunctionFormulaActivity extends Activity {
                     concrations[j] = (firstPicLine.getConcentration()+ secondPicLine.getConcentration())/2;
                 }
                 LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
-                linearRegressionModel.setBias((firstPicStripes.get(i).getGray0()+ secondPicStripes.get(i).getGray0())/2);
+                linearRegressionModel.setBias((firstPicStripes.get(i).gettLineAndeCLineGrayRatio()+ secondPicStripes.get(i).gettLineAndeCLineGrayRatio())/2);
                 linearRegressionModelList.add(linearRegressionModel);
             }
             else{
@@ -152,7 +152,7 @@ public class FunctionFormulaActivity extends Activity {
                 Stripe stripe = firstPicStripes.get(i);
                 int lengthTest = stripe.length();
                 LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations, grays);
-                linearRegressionModel.setBias(firstPicStripes.get(i).getGray0());
+                linearRegressionModel.setBias(firstPicStripes.get(i).gettLineAndeCLineGrayRatio());
                 linearRegressionModelList.add(linearRegressionModel);
             }
         }

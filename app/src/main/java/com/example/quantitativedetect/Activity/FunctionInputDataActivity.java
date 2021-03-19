@@ -131,7 +131,8 @@ public class FunctionInputDataActivity extends Activity {
 //            for(int i = 0;i < length;i++){
 //          TODO 2020-0130，取值方法待解决，暂时使用固定值代替
 //          mark.getLineWidthPixelQuantity()=5(似乎一直不变),mark.getFeatureLineList().get(i+1).getGray()=44/64(会变)
-            String trGray = String.format("%.2f",(float) mark.getFeatureLineList().get(i).getGray()/mark.getLineWidthPixelQuantity());
+            String trGray = String.format("%.2f",(float)mark.getTrC(i));
+//            String trGray = String.format("%.2f",(float) mark.getFeatureLineList().get(i).getGray()/mark.getLineWidthPixelQuantity());
 //          String value = String.format("%.2f",(float) mark.getDotrowAvgGrays()[mark.getFeatureIndexOnDotrowIndex()[i+1]]/ mark.getLineWidthPixelQuantity());
 //            String value = "1234123412341234.1234123412341243";
             GrayConcentrationSwitchView grayConcentrationSwitchView = new GrayConcentrationSwitchView(this,trGray);
@@ -156,6 +157,9 @@ public class FunctionInputDataActivity extends Activity {
                 grayConcentrationSwitchView.getValidSwitch().setChecked(false);
                 tempFeatureIndex[i] = -1 - tempFeatureIndex[i];
                 grayCurve.setFeatureIndex(tempFeatureIndex);
+            }
+            if(mark.getFeatureLineList().get(i).getConcentration()!=0){
+                grayConcentrationSwitchView.getEditText().setText(Float.toString(mark.getFeatureLineList().get(i).getConcentration()));
             }
             grayConcentrationSwitchView.setCheckedChangeListener(checkedChangeListener);
             grayConcentrationSwitchView.setFocusChangeListener(focusChangeListener);
@@ -213,15 +217,22 @@ public class FunctionInputDataActivity extends Activity {
 
     public void input(){
         int n = 0;
+        int cLineIndex = 0;
         for(int i = 0;i < grayConcentrationSwitchViewList.size();i++){
-            if(grayConcentrationSwitchViewList.get(i).getValidSwitch().isChecked())
+            if(grayConcentrationSwitchViewList.get(i).getValidSwitch().isChecked()) {
+                if (n==0){
+                    cLineIndex=n;
+                }
                 n++;
+            }
         }
         int[] IDs = new int[n];
         float[] conc = new float[n];
         int index = 0;
 //        TODO concTemp临时变量,这样就不用填浓度数据了,测试完成后删除
         int[] concTemp ={2,4,6,8,10};
+        float[] tempConc = new float[]{(float) 0.75, (float) 2.8, (float) 7.2, (float) 3.8, (float) 8.0,(float)9.2,(float)2.4};
+        boolean isClinePassed = false;
         for(int i = 0;i < grayConcentrationSwitchViewList.size();i++){
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
             if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
@@ -232,22 +243,37 @@ public class FunctionInputDataActivity extends Activity {
 //                }
 //                String str = String.valueOf(grayConcentrationSwitchView.getEditText().getText());
 //                float cc = Float.parseFloat(str);
+
+                if (i==cLineIndex){
+                    continue;
+                }
                 IDs[index] = i;
 //                conc[index++] = cc;
-                conc[index] = concTemp[index];
+                conc[index] = tempConc[index];
                 index++;
             }
         }
 
         mark.setIsConcentrationInputted(Mark.FLAG_INPUTTED);
         Intent intent = getIntent();
-        intent.putExtra("Mark",mark);
+
 //        intent.putExtra("ID", mark.getDetectMethodPlusID());
 //        IDs:在指定试制区域中检测出的峰值点的编号索引数组(featureIndex[])
 //      TODO 2021-0319
+
+        index = 0;
+        for (int i = 0; i < mark.getFeatureLineList().size(); i++) {
+            if (mark.getFeatureLineList().get(i).isValid() && cLineIndex!=i){
+                mark.getFeatureLineList().get(i).setConcentration(conc[index++]);
+            }
+            if (i==cLineIndex){
+                mark.getFeatureLineList().get(i).setConcentration(-1);
+            }
+        }
+        getIntent().putExtra("Mark",mark);
         intent.putExtra("ids",IDs);
-        intent.putExtra("conc",conc);
-        intent.putExtra("FLAG", Mark.FLAG_INPUTTED);
+//        intent.putExtra("conc",conc);
+        intent.putExtra("FLAG",Mark.FLAG_INPUTTED);
         setResult(RESULT_OK,intent);
         this.finish();
     }
@@ -284,11 +310,6 @@ public class FunctionInputDataActivity extends Activity {
     public void concentrationsConfirm(View view){
         if(function.equals("data")){
             input();
-
-            float[] concs = getIntent().getFloatArrayExtra("conc");
-            for (int i = 0; i < concs.length; i++) {
-                mark.getFeatureLineList().get(i).setConcentration(concs[i]);
-            }
         }
         else if(function.equals("check"))
             check();

@@ -258,8 +258,8 @@ public class FunctionSampleActivity extends MainActivity {
         //通过获取当前seekBar的比例来设置markView的宽高
         layoutParams.width = seekBarWidth.getProgress()*(imageDisplayAreaWidth / 100);
         layoutParams.height = seekBarHeight.getProgress()*(imageDisplayAreaHeight / 100);
-        layoutParams.leftMargin = 200;
-        layoutParams.topMargin = 200;
+        layoutParams.leftMargin = 100;
+        layoutParams.topMargin = 100;
 
 //        markView.setAdaptedWidth(layoutParams.width);
 //        markView.setAdaptedHeight(layoutParams.height);
