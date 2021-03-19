@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -66,10 +65,21 @@ public class FunctionInputDataActivity extends Activity {
         grayCurve = new GrayCurve(this,MainActivity.getScreenWidth(), mark, (float)1, 1);
         grayCurve.setCurveType(1);
         relativeLayout.addView(grayCurve);
-        if(function.equals("data"))
-            initGrayConcentrationSwitchView();
-        else if(function.equals("check"))
+        if(function.equals("data")) {
+            initGrayConcentrationSwitchViews();
+//          将焦点放在第一个启用的特征点的editView上
+            boolean isFirstPositive=false;
+            int[] tempFeatureIndex = grayCurve.getFeatureIndex();
+            for (int i = 0; i < tempFeatureIndex.length && !isFirstPositive; i++) {
+                if(tempFeatureIndex[i]>-1){
+                    grayConcentrationSwitchViewList.get(i).getEditText().requestFocus();
+                    isFirstPositive=true;
+                }
+            }
+        }
+        else if(function.equals("check")) {
             intiTextSpinnerSwitchView();
+        }
     }
 
     private void intiTextSpinnerSwitchView(){
@@ -113,7 +123,7 @@ public class FunctionInputDataActivity extends Activity {
         }
     }
 
-    private void initGrayConcentrationSwitchView(){
+    private void initGrayConcentrationSwitchViews(){
 //        TODO 2021-03-15 length 表示特征线的数量,但是只有最左侧的Mark会有所有的特征线,而右侧的Mark不一定有全部的特征线,
 //         想办法不把length写死
         for(int i = 0;i < length || i<mark.getFeatureLineList().size();i++){
@@ -138,8 +148,18 @@ public class FunctionInputDataActivity extends Activity {
                     onFocus(finalI);
                 }
             };
+
+            int[] tempFeatureIndex = grayCurve.getFeatureIndex();
+            if (!mark.getFeatureLineList().get(i).isValid()){
+                grayConcentrationSwitchView.getEditText().setText("");
+                grayConcentrationSwitchView.getEditText().setEnabled(false);
+                grayConcentrationSwitchView.getValidSwitch().setChecked(false);
+                tempFeatureIndex[i] = -1 - tempFeatureIndex[i];
+                grayCurve.setFeatureIndex(tempFeatureIndex);
+            }
             grayConcentrationSwitchView.setCheckedChangeListener(checkedChangeListener);
             grayConcentrationSwitchView.setFocusChangeListener(focusChangeListener);
+            
             grayConcentrationSwitchViewList.add(grayConcentrationSwitchView);
             linearLayout.addView(grayConcentrationSwitchView.getLinearLayout());
         }
@@ -174,10 +194,11 @@ public class FunctionInputDataActivity extends Activity {
                     featureIndex[i] = -1 - featureIndex[i];
                     grayConcentrationSwitchView.getEditText().setText("");
                     grayConcentrationSwitchView.getEditText().setEnabled(false);
-//                    mark.getFeatureLineList().get(i).setValid(false);
+                    mark.getFeatureLineList().get(i).setValid(false);
                 }else{
 //                    grayConcentrationSwitchView.getEditText().setId(i);
                     grayConcentrationSwitchView.getEditText().setEnabled(true);
+                    mark.getFeatureLineList().get(i).setValid(true);
 //                    grayConcentrationSwitchView.getEditText().setNextFocusDownId(i+1);
                 }
             }
@@ -192,7 +213,7 @@ public class FunctionInputDataActivity extends Activity {
 
     public void input(){
         int n = 0;
-        for(int i = 0;i < length;i++){
+        for(int i = 0;i < grayConcentrationSwitchViewList.size();i++){
             if(grayConcentrationSwitchViewList.get(i).getValidSwitch().isChecked())
                 n++;
         }
@@ -201,7 +222,7 @@ public class FunctionInputDataActivity extends Activity {
         int index = 0;
 //        TODO concTemp临时变量,这样就不用填浓度数据了,测试完成后删除
         int[] concTemp ={2,4,6,8,10};
-        for(int i = 0;i < length;i++){
+        for(int i = 0;i < grayConcentrationSwitchViewList.size();i++){
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
             if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
                 //        TODO 测试完成后取消注释
@@ -213,14 +234,17 @@ public class FunctionInputDataActivity extends Activity {
 //                float cc = Float.parseFloat(str);
                 IDs[index] = i;
 //                conc[index++] = cc;
-                conc[index++] = concTemp[i];
+                conc[index] = concTemp[index];
+                index++;
             }
         }
 
         mark.setIsConcentrationInputted(Mark.FLAG_INPUTTED);
         Intent intent = getIntent();
-        intent.putExtra("ID", mark.getDetectMethodPlusID());
+        intent.putExtra("Mark",mark);
+//        intent.putExtra("ID", mark.getDetectMethodPlusID());
 //        IDs:在指定试制区域中检测出的峰值点的编号索引数组(featureIndex[])
+//      TODO 2021-0319
         intent.putExtra("ids",IDs);
         intent.putExtra("conc",conc);
         intent.putExtra("FLAG", Mark.FLAG_INPUTTED);

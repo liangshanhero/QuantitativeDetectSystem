@@ -16,7 +16,6 @@ import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.view.GrayCurve;
 import com.example.quantitativedetect.view.MarkSwitch;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -304,11 +303,16 @@ public class FunctionFittingActivity extends MainActivity {
         if (resultCode == RESULT_OK)
             switch (requestCode) {
                 case REQUEST_CODE_DATA:
-                    int ID = intent.getIntExtra("ID",0);
+                    Mark tempMark = (Mark) intent.getSerializableExtra("Mark");
+//                    int ID = intent.getIntExtra("ID",0);
+                    int ID = tempMark.getDetectMethodPlusID();
+                    firstPicMarkList.get(ID-MARK_SWITCH_ID).setLineList(tempMark.getLineList());
+                    firstPicMarkList.get(ID-MARK_SWITCH_ID).setFeatureLineList(tempMark.getFeatureLineList());
                     for(Mark mark: firstPicMarkList){
                         if(ID == mark.getDetectMethodPlusID()){
-//                            mark.setIaC(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
-//                            mark.setFlag(intent.getIntExtra("FLAG",1));
+//                            TODO 2021-0319
+                            mark.setConcentrations(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
+                            mark.setFlag(intent.getIntExtra("FLAG",1));
                         }
                     }
                     for(Mark virginPoint: secondPicMarkList){

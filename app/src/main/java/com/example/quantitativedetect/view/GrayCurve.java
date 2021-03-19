@@ -62,8 +62,9 @@ public class GrayCurve extends BaseCoordinate {
     }
 
 
-
-
+    public int[] getFeatureIndex() {
+        return featureIndex;
+    }
 
     public void setFeatureIndex(int[] featureIndex){
         this.featureIndex = featureIndex;

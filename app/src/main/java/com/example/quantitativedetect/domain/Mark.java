@@ -71,6 +71,12 @@ public class Mark implements Serializable {
         return obj;
     }
 
+    public void setConcentrations(int[] ids, float[] concs) {
+    }
+
+    public void setFlag(int flag) {
+    }
+
 //    原始getTrC,需要修改加以利用
 //    public float getTrC(int index){
 //        return ((float) dotrowAvgGrays[featureIndexOnDotrowIndex[index+1]])/((float)CLine);
