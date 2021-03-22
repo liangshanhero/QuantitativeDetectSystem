@@ -7,6 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 //TODO 好像是特征Line对象的转换，将concentration和gray进行bias转换，
 public class Stripe implements Serializable {
+
+
+    private List<Line> CLine;//存放第一条特征线,用于计算T/C
+    //用于存放对应横行的特征线,用于计算阴性T/C(即第一条Mark的featureLine/CLine)和阳性T/C
+    private List<Line> featureLineList;
+
+
+
+
     private Bitmap bitmap;
 
     private int[] points;
@@ -79,5 +88,13 @@ public class Stripe implements Serializable {
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public List<Line> getCLine() {
+        return CLine;
+    }
+
+    public void setCLine(List<Line> CLine) {
+        this.CLine = CLine;
     }
 }
