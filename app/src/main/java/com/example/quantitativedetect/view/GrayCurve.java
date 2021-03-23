@@ -12,7 +12,8 @@ public class GrayCurve extends BaseCoordinate {
 
     public static final int TEXT_SPINNER_SWITCH_CURVE = 0;
 
-    private int[] points;//所有的点的灰度值
+    private float[] points;//所有点的trc值
+//    private int[] points;//所有的点的灰度值
     private int[] featureIndex;//特征点在points这个数组里面的位置
     private int cLineIndex;//第一个特征点
     private int selectedPointIndex;//目前选中的输入框对应的点
@@ -38,10 +39,12 @@ public class GrayCurve extends BaseCoordinate {
     public GrayCurve(Context context, int width, Mark mark, float zoom, int curveType){
         super(context);
         super.init(width,width/2,40);
-        points = new int[mark.getLineList().size()];
+        points = new float[mark.getLineList().size()];
+//        points = new int[mark.getLineList().size()];
         featureIndex = new int[mark.getFeatureLineList().size()];
         for (int i=0; i<mark.getLineList().size();i++){
-            points[i]=mark.getLineList().get(i).getGray();
+//            points[i]=mark.getLineList().get(i).getGray();
+            points[i] = mark.getTrC(i);
         }
         this.zoom = zoom*(width/2-2*pad);//width/3为View的高度，而width/3-2*pad才是Y轴的长度
         for (int i=0; i<mark.getFeatureLineList().size();i++){
@@ -52,7 +55,7 @@ public class GrayCurve extends BaseCoordinate {
 //        this.features = features;
         //TODO CL是偏移量，但不知道具体含义，CL值增大能使得缩略图（grayCurve）位置降低
         // （或者说是使整个Y轴的范围（0~maxValue）更大，导致曲线的上下边界被压缩至可见，即使曲线的振幅变小？）
-        this.CL = points[featureIndex[0]]+300;
+        this.CL = points[featureIndex[0]];
 //        this.CL = points[featureIndex[0]];
         this.curveType = curveType;
         if(curveType == 0){

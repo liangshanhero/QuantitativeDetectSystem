@@ -67,7 +67,8 @@ public class Mark implements Serializable {
 //    TrC：T/C：T 线的灰度与 C 线的灰度之比，       线：feature line，C线：第一条feature line
     private float trc;
     public float getTrC(int i) {
-        return (float)this.getFeatureLineList().get(i).getGray()/(float)this.getFeatureLineList().get(0).getGray();
+        return (float)this.getLineList().get(i).getGray()/(float)this.getFeatureLineList().get(0).getGray();
+//        return (float)this.getFeatureLineList().get(i).getGray()/(float)this.getFeatureLineList().get(0).getGray();
     }
 
     public void setConcentrations(int[] ids, float[] concs) {
