@@ -9,11 +9,14 @@ import java.util.List;
 public class Stripe implements Serializable {
 
 
-    private List<Line> CLine;//存放第一条特征线,用于计算T/C
+    private List<Line> cLineList;//存放第一条特征线,用于计算T/C
     //用于存放对应横行的特征线,用于计算阴性T/C(即第一条Mark的featureLine/CLine)和阳性T/C
     private List<Line> featureLineList;
-
-
+//    论文中用B表示阳性特征行(除第一条mark)的灰度值与所在mark的CLine的灰度值的比值,应该有多个
+    private List<Float> BList;
+    //    论文中用B0表示阴性特征行(第一条mark)的灰度值与所在mark的CLine的灰度值的比值
+    private float B0;
+    private List<Float> concentrationList;
 
 
     private Bitmap bitmap;
@@ -90,11 +93,43 @@ public class Stripe implements Serializable {
         this.bitmap = bitmap;
     }
 
-    public List<Line> getCLine() {
-        return CLine;
+    public List<Line> getcLineList() {
+        return cLineList;
     }
 
-    public void setCLine(List<Line> CLine) {
-        this.CLine = CLine;
+    public void setcLineList(List<Line> cLineList) {
+        this.cLineList = cLineList;
+    }
+
+    public float getB0() {
+        return B0;
+    }
+
+    public void setB0(float b0) {
+        B0 = b0;
+    }
+
+    public List<Float> getBList() {
+        return BList;
+    }
+
+    public void setBList(List<Float> BList) {
+        this.BList = BList;
+    }
+
+    public List<Line> getFeatureLineList() {
+        return featureLineList;
+    }
+
+    public void setFeatureLineList(List<Line> featureLineList) {
+        this.featureLineList = featureLineList;
+    }
+
+    public List<Float> getConcentrationList() {
+        return concentrationList;
+    }
+
+    public void setConcentrationList(List<Float> concentrationList) {
+        this.concentrationList = concentrationList;
     }
 }

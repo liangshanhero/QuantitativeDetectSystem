@@ -141,57 +141,113 @@ public class FunctionFittingActivity extends MainActivity {
             }
         }
         else {
-            List<Line> firstPicFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
-            for(int i = 0;i < firstPicFeatureLineList.size(); i++){
-                if (!firstPicFeatureLineList.get(i).isValid()){
-                    continue;
+            //重构
+            List<Line> firstMarkFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
+            List<Line> validFeatureLineList = new ArrayList<>();
+//            将有效的特征行取出
+            for (int i = 0; i < firstMarkFeatureLineList.size(); i++) {
+                if (firstMarkFeatureLineList.get(i).isValid()){
+                    validFeatureLineList.add(firstMarkFeatureLineList.get(i));
                 }
-                Stripe stripe1 = new Stripe(i);
-                Stripe stripe2 = new Stripe(i);
-//            tLineAndeCLineGrayRatio默认值为1
-                float g1 = firstPicMarkList.get(0).getTrC(i);
-                stripe1.settLineAndeCLineGrayRatio(g1);
-                firstPicStripes.add(stripe1);
-                secondPicStripes.add(stripe2);
             }
-            //为每个标曲输入B0
+//            将第一条mark的CLine和featureLine加入到stripe中.
+            List<Stripe> stripeList = new ArrayList<>();
+//            mark的第一条featureLine为Cline,因此i从1开始
+            for (int i = 1; i < validFeatureLineList.size(); i++) {
+                Stripe stripe = new Stripe(i);
+                stripe.getcLineList().add(validFeatureLineList.get(0));
+                stripe.getFeatureLineList().add(validFeatureLineList.get(i));
+                stripeList.add(stripe);
+            }
+//            遍历剩下的markList
+            for (int i = 1; i < firstPicMarkList.size(); i++) {
+                Mark tempMark = firstPicMarkList.get(i);
+                for (int j = 1; j < tempMark.getFeatureLineList().size(); j++) {
+                    //stripeList的第0个是从i=1开始添加的,因此此处取第i-1个stripe
+                    int lineInY = tempMark.getFeatureLineList().get(i).getAdaptedY();
+                    int stripeInY = stripeList.get(i-1).getFeatureLineList().get(j-1).getAdaptedY();
+//                    判断取出的featureLine是否与stripe取出的featureLine在bitmap中处于相同的高度,如果在这个范围内,则将本行加入到对应stripe中
+//                    ±5的依据暂时没有,待测试.
+                    if ( lineInY < stripeInY + 5 && lineInY > stripeInY -5){
+                        stripeList.get(i-1).getcLineList().add(tempMark.getFeatureLineList().get(0));
+                        stripeList.get(i-1).getFeatureLineList().add(tempMark.getFeatureLineList().get(i));
+                    }
+                }
+            }
+//            获取B0和B的值,为Y轴的B/B0做准备
+            for (int i = 0; i < stripeList.size() ; i++) {
+                Stripe tempStripe = stripeList.get(i);
+                for (int j = 0; j < tempStripe.getFeatureLineList().size(); j++) {
+                    if (j==0){
+                        tempStripe.setB0( (float) tempStripe.getFeatureLineList().get(0).getGray() / (float) tempStripe.getcLineList().get(0).getGray());
+                    }
+                    else{
+                        float tempB = (float)tempStripe.getFeatureLineList().get(j).getGray() / (float)tempStripe.getcLineList().get(j).getGray();
+                        tempStripe.getBList().add(tempB);
+                    }
+
+                    tempStripe.getLines().add(new Line(tempStripe.getFeatureLineList().get(j).getConcentration(), (int) (tempStripe.getBList().get(j)/tempStripe.getB0())));
+                    Log.w("Result",String.valueOf( tempStripe.getB0()/ tempStripe.gettLineAndeCLineGrayRatio()));
+                }
+            }
+            firstPicStripes.addAll(stripeList);
+//            重构完,待测试
+
+
+
+
+
+//            List<Line> firstPicFirstFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
+//            for(int i = 0;i < firstPicFirstFeatureLineList.size(); i++){
+//                if (!firstPicFirstFeatureLineList.get(i).isValid()){
+//                    continue;
+//                }
+//                Stripe stripe1 = new Stripe(i);
+//                Stripe stripe2 = new Stripe(i);
+////            tLineAndCLineGrayRatio默认值为1
+//                float g1 = firstPicMarkList.get(0).getTrC(i);
+//                stripe1.settLineAndeCLineGrayRatio(g1);
+//                firstPicStripes.add(stripe1);
+//                secondPicStripes.add(stripe2);
+//            }
+//            //为每个标曲输入B0
 //            Mark mark = firstPicMarkList.get(0);
-//            firstPicFeatureLineList
-//            for(int i = 0;i < firstPicFeatureLineList.size(); i++){
+//            firstPicFirstFeatureLineList
+//            for(int i = 0;i < firstPicFirstFeatureLineList.size(); i++){
 ////                TODO 2021-0130 原来的是TRC，**********！！！！！！！！！！！！！！！！！！！！！
 ////                float g1 = firstPicFeatureLineList.get(i).getGray();//对应位置的灰度/C的值///
 ////                float g1 = firstPicFeatureLineList.get(i).getGray()/(float)firstPicMarkList.get(0).getLineWidthPixelQuantity();
 //                float g1 = firstPicMarkList.get(0).getTrC(i);
 //                Stripe stripe1 = firstPicStripes.get(i);
-//                stripe1.settLineAndeCLineGrayRatio(g1);
+//                stripe1.settLineAndCLineGrayRatio(g1);
 ////                TODO 2021-0131 可以试着将featureLine加入到对应的archive1中（暂时没想好怎么用，但是感觉有用。。。。。。）
 //            }
             //为标曲输入用于构建的样本值
 //            TODO　2021-0209 firstPicMarkList.size()=1,i=1时无法进入循环,且size为1,后面的取值操作使用i会有越界错误
 //             故将循环初始值改为i=0,修改以后后续完成情况良好,且特征line已加入firstPicStripes中
-            for(int i = 0; i < firstPicMarkList.size(); i++){
-                if(!markSwitchList1.get(i).getValidSwitch().isChecked()){
-                    continue;
-                }
-
-//                依次拿取每个mark,越界报错,将Mark mark = firstPicMarkList.get(i);改为:
-                Mark mark = firstPicMarkList.get(i);
-
-                for(int j = 0;j < firstPicFeatureLineList.size(); j++){
-
-//                    mark.getFeatureLineList().get(j).getGray();
-                    float grayRatio1,concentration1;
-                    concentration1 = mark.getFeatureLineList().get(j).getConcentration();
-//                    g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
-                    grayRatio1 = mark.getTrC(i);
-//                    g1 = mark.getFeatureLineList().get(j).getGray()/(float)mark.getLineWidthPixelQuantity();
-                    Stripe stripe1 = firstPicStripes.get(j);
-
-                    Line line1 = new Line(concentration1,(int)(grayRatio1/ stripe1.gettLineAndeCLineGrayRatio()));
-                    Log.w("Result",String.valueOf(grayRatio1/ stripe1.gettLineAndeCLineGrayRatio()));
-                    stripe1.addLine(line1);
-                }
-            }
+//            for(int i = 0; i < firstPicMarkList.size(); i++){
+//                if(!markSwitchList1.get(i).getValidSwitch().isChecked()){
+//                    continue;
+//                }
+//
+////                依次拿取每个mark,越界报错,将Mark mark = firstPicMarkList.get(i);改为:
+//                Mark mark = firstPicMarkList.get(i);
+//
+//                for(int j = 0;j < firstPicFirstFeatureLineList.size(); j++){
+//
+////                    mark.getFeatureLineList().get(j).getGray();
+//                    float grayRatio1,concentration1;
+//                    concentration1 = mark.getFeatureLineList().get(j).getConcentration();
+////                    g1 = mark.getFeatureLineList().get(j).getGray();//对应位置的灰度/C的值
+//                    grayRatio1 = mark.getTrC(i);
+////                    g1 = mark.getFeatureLineList().get(j).getGray()/(float)mark.getLineWidthPixelQuantity();
+//                    Stripe stripe1 = firstPicStripes.get(j);
+//
+//                    Line line1 = new Line(concentration1,(int)(grayRatio1/ stripe1.gettLineAndeCLineGrayRatio()));
+//                    Log.w("Result",String.valueOf(grayRatio1/ stripe1.gettLineAndeCLineGrayRatio()));
+//                    stripe1.addLine(line1);
+//                }
+//            }
         }
         return true;
     }

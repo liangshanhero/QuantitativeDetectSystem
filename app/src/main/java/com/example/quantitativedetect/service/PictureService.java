@@ -83,7 +83,7 @@ public class PictureService {
 //        int width = markView.getLayoutParams().width;//.getWidth();
 //        int height = markView.getLayoutParams().height;//.getHeight();
 
-        int adaptedX = (int)markView.getAdaptedX();
+        int adaptedX = markView.getAdaptedX();
         int lines = width/mark.getLineWidthPixelQuantity();
 
         int[] pixels = new int[width];
@@ -106,6 +106,7 @@ public class PictureService {
             }
 //TODO      2021-0222 featureLineList中的所有featureLine都是同一条Line,故gray都是一样的...待查
             line.setGray(lineAvegGray);
+            line.setAdaptedY(i);
             mark.getLineList().add(line);
         }
         return mark;

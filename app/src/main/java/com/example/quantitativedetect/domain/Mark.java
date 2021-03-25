@@ -16,6 +16,7 @@ public class Mark implements Serializable {
     private List<Line> lineList = new ArrayList<>();//所有的行对象列表
     private List<Line> featureLineList = new ArrayList<>();//所有的特征行对象列表    存峰值的行 的数组
 
+
     //  TODO 2021-0130 暂时固定设置5个，似乎没用上
     private int lineWidthPixelQuantity = 5;//line的宽度，每行有几个点。CL可能时基准线
 
@@ -76,6 +77,7 @@ public class Mark implements Serializable {
 
     public void setFlag(int flag) {
     }
+
 
 //    原始getTrC,需要修改加以利用
 //    public float getTrC(int index){

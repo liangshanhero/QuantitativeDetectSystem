@@ -13,6 +13,7 @@ public class Line implements Serializable, Cloneable{
         表示该条Line在输入浓度值时被舍弃(grayConcentrationSwitch的isChecked状态为false.
     */
     private boolean isValid;
+    private int adaptedY;//用于存放Line在bitmap中的位置
 
 
     public int getGray() {
@@ -53,5 +54,13 @@ public class Line implements Serializable, Cloneable{
 
     public void setValid(boolean valid) {
         isValid = valid;
+    }
+
+    public int getAdaptedY() {
+        return adaptedY;
+    }
+
+    public void setAdaptedY(int adaptedY) {
+        this.adaptedY = adaptedY;
     }
 }
