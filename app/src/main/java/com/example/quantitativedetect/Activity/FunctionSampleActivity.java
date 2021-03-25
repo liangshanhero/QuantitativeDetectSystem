@@ -319,6 +319,9 @@ public class FunctionSampleActivity extends MainActivity {
 
 //    获取灰度
     public void analyse(){
+
+
+
         List<Mark> markList = new ArrayList<>();
         Mark mark = null;
         for(int i = 0;i < markViews.size();i++){
