@@ -30,7 +30,6 @@ import com.example.quantitativedetect.view.CheckPanelView;
 import com.example.quantitativedetect.view.MarkView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.example.quantitativedetect.service.PictureService.FROM_ALBUM;
@@ -53,9 +52,10 @@ public class FunctionSampleActivity extends MainActivity {
     private String picturePath;
     private RelativeLayout relativeLayout;
     private int markId = 999;     //给每一个标识圈添加一个Id
-    private int checkPanelId = 999;
+    private int checkPanelViewId = 999;
     private MoveOnTouchListener moveOnTouchListener;
     private ArrayList<MarkView> markViews = new ArrayList<MarkView>();
+    private CheckPanelView checkPanelView;
     private SeekBar seekBarWidth, seekBarHeight;
     private int selectingID = 0;
     private Button takePicture;
@@ -118,8 +118,8 @@ public class FunctionSampleActivity extends MainActivity {
 //        greyInRed(bitmap);
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
-        seekBarWidth.setProgress(80);
-        seekBarHeight.setProgress(50);
+        seekBarWidth.setProgress(96);
+        seekBarHeight.setProgress(40);
 //        addMarkView(new View(this));
         addCheckPanelView(new View(this));
 //        似乎没有什么用，暂时屏蔽
@@ -131,7 +131,6 @@ public class FunctionSampleActivity extends MainActivity {
         seekBarWidth = findViewById(R.id.seekBar_w);
         seekBarWidth.setProgress(0);
         seekBarHeight.setProgress(0);
-
 
         seekBarWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private int unit = imageDisplayAreaWidth / 100;//原来是/150
@@ -230,8 +229,8 @@ public class FunctionSampleActivity extends MainActivity {
 //        MarkView markView = relativeLayout.findViewById(ID);
 //        markView.onSelected();
 
-        seekBarWidth.setProgress(checkPanelView.getLayoutParams().width/(imageDisplayAreaWidth/100));
-        seekBarHeight.setProgress(checkPanelView.getLayoutParams().height/(imageDisplayAreaHeight/100));
+        seekBarWidth.setProgress(checkPanelView.getLayoutParams().width*100/imageDisplayAreaWidth);
+        seekBarHeight.setProgress(checkPanelView.getLayoutParams().height*100/imageDisplayAreaHeight);
 //        seekBarWidth.setProgress(markView.getLayoutParams().width/(imageDisplayAreaWidth/100));
 //        seekBarHeight.setProgress(markView.getLayoutParams().height/(imageDisplayAreaHeight/100));
 
@@ -260,7 +259,7 @@ public class FunctionSampleActivity extends MainActivity {
 //        View tempView = new View(this);
         CheckPanelView checkPanelView = new CheckPanelView(this);
         checkPanelView.setBitmap(bitmap);
-        checkPanelView.setId(checkPanelId);
+        checkPanelView.setId(checkPanelViewId);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.width = (seekBarWidth.getProgress()*imageDisplayAreaWidth)/100;
@@ -275,9 +274,8 @@ public class FunctionSampleActivity extends MainActivity {
         relativeLayout.addView(view);
 
         setSelectingID(checkPanelView.getId());
-
     }
-
+//markView弃用，addMarkView准备删除
     public void addMarkView(View view){
         View testView = new View(this);
 
@@ -308,6 +306,7 @@ public class FunctionSampleActivity extends MainActivity {
         markViews.add(markView);
         setSelectingID(markView.getId());
     }
+//markView弃用，deleteMarkView准备删除
     public void deleteMarkView(View view){
         if(selectingID != 0){
             CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
@@ -355,7 +354,10 @@ public class FunctionSampleActivity extends MainActivity {
 
 //    获取灰度
     public void analyse(){
-
+        CheckPanelView checkPanelView = findViewById(checkPanelViewId);
+        checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
+        CheckPanel checkPanel = checkPanelView.cutPanelToMark();
+        checkPanel.setStripeQuantity(checkPanelView.getStripeQuantity());
 
 
         List<Mark> markList = new ArrayList<>();
@@ -374,6 +376,7 @@ public class FunctionSampleActivity extends MainActivity {
             String str = "mark" + String.valueOf(i);
             intent.putExtra(str, markList.get(i));
         }
+        intent.putExtra("checkPanel", checkPanel);
         startActivity(intent);
     }
 
@@ -418,7 +421,7 @@ public class FunctionSampleActivity extends MainActivity {
 //    照片中选取了mark后，获取mark的灰度
     public void next(View view){
 //        根据markView的横坐标(X)对markViews列表进行排序,X小的在前
-        Collections.sort(markViews);
+//        Collections.sort(markViews);
 
         if(function.equals(FUNCTION_FIRST_SAMPLE))
 //            if(markViews.size() < 3){

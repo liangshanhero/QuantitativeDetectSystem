@@ -9,8 +9,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.example.quantitativedetect.Activity.FunctionSampleActivity;
+import com.example.quantitativedetect.domain.CheckPanel;
 import com.example.quantitativedetect.domain.Line;
 import com.example.quantitativedetect.domain.Mark;
+import com.example.quantitativedetect.view.CheckPanelView;
 import com.example.quantitativedetect.view.MarkView;
 
 
@@ -73,6 +75,31 @@ public class PictureService {
     }
 
     //分析数据，获取需要的颜色数据
+    public static Mark analyse(int[] pixels,int markWidth,int adaptedY){
+        Mark mark = new Mark();
+
+        for (int i=0;i<pixels.length/markWidth;i++) {
+            int length = 1,lineAvegGray = 0;
+            Line line = new Line();
+            double tmpGray;
+            for (int j = 0; j < markWidth; j++) {
+                if (FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
+                    tmpGray = 255 - Color.red(pixels[i*markWidth+j]);
+//                    tmpGray = (255 - Color.green(pixels[i]) + 255 - Color.blue(pixels[i]))/2;
+                }
+                else{
+                    tmpGray = (255-Color.green(pixels[i*markWidth+j]))/2+(255-Color.blue(pixels[i*markWidth+j]))/2;
+                }
+                lineAvegGray += (tmpGray - lineAvegGray) / length++ ;
+            }
+            line.setGray(lineAvegGray);
+            line.setAdaptedY(adaptedY+i);
+            mark.getLineList().add(line);
+        }
+//TODO      2021-0222 featureLineList中的所有featureLine都是同一条Line,故gray都是一样的...待查
+        return mark;
+    }
+
     public static Mark analyse(MarkView markView){
 //    public static Mark analyse(Bitmap bitmap, MarkView markView){
         Mark mark = new Mark();
@@ -144,6 +171,36 @@ public class PictureService {
         bitmap.setPixels(pixels,0,bitmap.getWidth(),0,0,bitmap.getWidth(),bitmap.getHeight());
     }
 
+
+
+    public static CheckPanel getFeatures(CheckPanel checkPanel) {
+        if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
+
+            int stripeQuantity = checkPanel.getStripeQuantity();
+            int stripeHeight =checkPanel.getMarkList().size() / stripeQuantity;
+
+            for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
+                Mark mark = checkPanel.getMarkList().get(i);
+                for (int j = 0; j < stripeQuantity; j++) {
+                    List<Line> lineList;
+                    if (j!=stripeQuantity-1){
+                        lineList = mark.getLineList().subList(j*stripeQuantity,j*stripeQuantity+stripeHeight);
+                    }else{
+                        lineList = mark.getLineList().subList(j*stripeQuantity,mark.getLineList().size()-1);
+                    }
+                    Line maxGrayLine = lineList.get(0);
+                    for (int k = 1; k < lineList.size(); k++) {
+                        maxGrayLine = (lineList.get(k).getGray() <= maxGrayLine.getGray()) ? maxGrayLine : lineList.get(k);
+                    }
+                    mark.getFeatureLineList().add(maxGrayLine);
+                }
+            }
+        }else{
+
+        }
+
+        return checkPanel;
+    }
     public static Mark getFeatures(/*int[] result*/Mark mark){
         if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
             List<Line> tempFeatureLineList = new ArrayList<>();

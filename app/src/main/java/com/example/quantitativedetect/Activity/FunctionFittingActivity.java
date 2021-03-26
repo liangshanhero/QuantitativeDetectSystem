@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
+import com.example.quantitativedetect.domain.CheckPanel;
 import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.domain.Line;
 
@@ -30,6 +31,7 @@ public class FunctionFittingActivity extends MainActivity {
     private List<MarkSwitch> markSwitchList2 = new ArrayList<>();
     private List<Stripe> firstPicStripes = new ArrayList<>();
     private List<Stripe> secondPicStripes = new ArrayList<>();
+    private CheckPanel checkPanel;
     private LinearLayout linearLayout;
     private View.OnClickListener listener1,listener2;
     private int length = 5;
@@ -51,8 +53,12 @@ public class FunctionFittingActivity extends MainActivity {
             Mark mark = (Mark) intent.getSerializableExtra(str);
             firstPicMarkList.add(mark);
         }
+        checkPanel = (CheckPanel) intent.getSerializableExtra("checkPanel");
         initListener1();
         initListener2();
+        checkPanel = getFeatures(checkPanel);
+
+
         for(int i = 0; i< firstPicMarkList.size(); i++){
             Mark mark = firstPicMarkList.get(i);
             mark = getFeatures(mark);

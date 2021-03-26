@@ -2,6 +2,7 @@ package com.example.quantitativedetect.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +10,11 @@ import android.graphics.RectF;
 import android.view.View;
 
 import com.example.quantitativedetect.domain.CheckPanel;
+import com.example.quantitativedetect.domain.Mark;
+import com.example.quantitativedetect.service.PictureService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckPanelView extends View {
 
@@ -20,6 +26,12 @@ public class CheckPanelView extends View {
     private int markGap;
     private int markQuantity;
     private int stripeQuantity;
+    private int adaptedWidth;
+    private int adaptedHeight;
+    private int adaptedX;
+    private int adaptedY;
+    private int adaptedMarkGap;
+
 
     private int color = Color.GREEN;
     private Paint paint = new Paint();
@@ -30,8 +42,10 @@ public class CheckPanelView extends View {
         this.markGap = 50;
         this.markQuantity = 7;
         this.stripeQuantity = 6;
+        this.checkPanel = new CheckPanel();
         setWillNotDraw(false);
     }
+
     public void onSelecet(){
         this.color = Color.RED;
         invalidate();
@@ -39,6 +53,11 @@ public class CheckPanelView extends View {
     public void offSelected(){
         this.color = Color.GREEN;
         invalidate();
+    }
+
+    @Override
+    public void invalidate(){
+        super.invalidate();
     }
 
     @Override
@@ -74,9 +93,6 @@ public class CheckPanelView extends View {
                 canvas.drawLine(startX,startY,stopX,stopY,paint);
             }
         }
-
-
-
     }
 
 
@@ -119,4 +135,83 @@ public class CheckPanelView extends View {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
+
+    public int getAdaptedY() {
+        return adaptedY;
+    }
+
+    public void setAdaptedY(int adaptedY) {
+        this.adaptedY = adaptedY;
+    }
+
+    public int getAdaptedX() {
+        return adaptedX;
+    }
+
+    public void setAdaptedX(int adaptedX) {
+        this.adaptedX = adaptedX;
+    }
+
+    public int getAdaptedHeight() {
+        return adaptedHeight;
+    }
+
+    public void setAdaptedHeight(int adaptedHeight) {
+        this.adaptedHeight = adaptedHeight;
+    }
+
+    public int getAdaptedWidth() {
+        return adaptedWidth;
+    }
+
+    public void setAdaptedWidth(int adaptedWidth) {
+        this.adaptedWidth = adaptedWidth;
+    }
+
+    public int getAdaptedMarkGap() {
+        return adaptedMarkGap;
+    }
+
+    public void setAdaptedMarkGap(int adaptedMarkGap) {
+        this.adaptedMarkGap = adaptedMarkGap;
+    }
+
+    public void setAdapted(int imageDisplayAreaWidth,int imageDisplayAreaHeight){
+        float rateX = getX()/ imageDisplayAreaWidth;
+        int adaptedX = (int)(bitmap.getWidth()*rateX);
+
+        float rateWidth = (float) getWidth()/ imageDisplayAreaWidth;
+        int adaptedWidth = (int)(bitmap.getWidth()*rateWidth);
+
+        float rateGap = (float) markGap/ imageDisplayAreaWidth;
+        int adaptedGap = (int) (markGap*rateGap);
+
+        float rateY = getY()/ imageDisplayAreaHeight;
+        int adaptedY = (int)(bitmap.getHeight()*rateY);
+        float rateHeight = (float) getHeight()/ imageDisplayAreaHeight;
+        int adaptedHeight = (int)(bitmap.getHeight()*rateHeight);
+
+        this.adaptedX = adaptedX;
+        this.adaptedY = adaptedY;
+        this.adaptedWidth = adaptedWidth;
+        this.adaptedHeight = adaptedHeight;
+        this.adaptedMarkGap = adaptedGap;
+    }
+
+    public CheckPanel cutPanelToMark(){
+        int markWidth = (int) ((adaptedWidth - adaptedMarkGap*(markQuantity-1)) / markQuantity);
+        int[] pixels = new int[adaptedHeight*markWidth];
+
+
+        for (int i = 0; i < markQuantity; i++) {
+            float startX = adaptedX + i * (markWidth + adaptedMarkGap);
+            float stopX = startX + markWidth;
+            float startY = adaptedY;
+            float stopY = adaptedY + adaptedHeight;
+                bitmap.getPixels(pixels,0,markWidth,(int) startX,(int)startY,markWidth,adaptedHeight);
+            checkPanel.getMarkList().add(PictureService.analyse(pixels,markWidth, (int) startY));
+        }
+        return checkPanel;
+    }
+
 }
