@@ -1,20 +1,16 @@
 package com.example.quantitativedetect.Activity;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,14 +22,15 @@ import android.widget.SeekBar;
 
 import com.example.quantitativedetect.R;
 
+import com.example.quantitativedetect.domain.CheckPanel;
 import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.listener.MoveOnTouchListener;
 import com.example.quantitativedetect.service.PictureService;
+import com.example.quantitativedetect.view.CheckPanelView;
 import com.example.quantitativedetect.view.MarkView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.example.quantitativedetect.service.PictureService.FROM_ALBUM;
@@ -56,6 +53,7 @@ public class FunctionSampleActivity extends MainActivity {
     private String picturePath;
     private RelativeLayout relativeLayout;
     private int markId = 999;     //给每一个标识圈添加一个Id
+    private int checkPanelId = 999;
     private MoveOnTouchListener moveOnTouchListener;
     private ArrayList<MarkView> markViews = new ArrayList<MarkView>();
     private SeekBar seekBarWidth, seekBarHeight;
@@ -120,12 +118,14 @@ public class FunctionSampleActivity extends MainActivity {
 //        greyInRed(bitmap);
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
-        seekBarWidth.setProgress(8);
-        seekBarHeight.setProgress(45);
-        addMarkView(new View(this));
+        seekBarWidth.setProgress(80);
+        seekBarHeight.setProgress(50);
+//        addMarkView(new View(this));
+        addCheckPanelView(new View(this));
 //        似乎没有什么用，暂时屏蔽
 //        addMark(300,500,70,350);//测试用特征框
     }
+
     private void seekBarInit(){
         seekBarHeight = findViewById(R.id.seekBar_h);
         seekBarWidth = findViewById(R.id.seekBar_w);
@@ -138,16 +138,21 @@ public class FunctionSampleActivity extends MainActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(selectingID !=0 ){
-                    MarkView markView = relativeLayout.findViewById(selectingID);
+//                    MarkView markView = relativeLayout.findViewById(selectingID);
+                    CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
                     //设置宽度最小值为10
-                    if(unit*progress <= 10)
+                    if(progress*imageDisplayAreaWidth/100 <= 10)
                         return;
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.width = progress*unit;  //设置宽高
-                    layoutParams.height = markView.getHeight();
-                    layoutParams.leftMargin = markView.getLeft();
-                    layoutParams.topMargin = markView.getTop();
-                    markView.setLayoutParams(layoutParams);
+                    layoutParams.width = progress*imageDisplayAreaWidth/100;  //设置宽高
+                    layoutParams.height = checkPanelView.getHeight();
+                    layoutParams.leftMargin = checkPanelView.getLeft();
+                    layoutParams.topMargin = checkPanelView.getTop();
+                    checkPanelView.setLayoutParams(layoutParams);
+//                    layoutParams.height = markView.getHeight();
+//                    layoutParams.leftMargin = markView.getLeft();
+//                    layoutParams.topMargin = markView.getTop();
+//                    markView.setLayoutParams(layoutParams);
 //                    markView.setWidth(progress*unit);
                 }
             }
@@ -166,16 +171,17 @@ public class FunctionSampleActivity extends MainActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(selectingID !=0 ){
-                    MarkView markView = relativeLayout.findViewById(selectingID);
+//                    MarkView markView = relativeLayout.findViewById(selectingID);
+                    CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
                     //设置宽度最小值为10
-                    if(progress*unit <=10)
+                    if(progress*imageDisplayAreaHeight / 100 <=10)
                         return;
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.width = markView.getWidth();  //设置宽高
-                    layoutParams.height = progress*unit;
-                    layoutParams.leftMargin = markView.getLeft();
-                    layoutParams.topMargin = markView.getTop();
-                    markView.setLayoutParams(layoutParams);
+                    layoutParams.width = checkPanelView.getWidth();  //设置宽高
+                    layoutParams.height = progress*imageDisplayAreaHeight /100;
+                    layoutParams.leftMargin = checkPanelView.getLeft();
+                    layoutParams.topMargin = checkPanelView.getTop();
+                    checkPanelView.setLayoutParams(layoutParams);
                     //markView.setHeight(progress*unit);
                 }
             }
@@ -219,18 +225,24 @@ public class FunctionSampleActivity extends MainActivity {
         return markView;
     }
     public void onSelected(int ID){
-        MarkView markView = relativeLayout.findViewById(ID);
-        markView.onSelected();
+        CheckPanelView checkPanelView = relativeLayout.findViewById(ID);
+        checkPanelView.onSelecet();
+//        MarkView markView = relativeLayout.findViewById(ID);
+//        markView.onSelected();
 
-        seekBarWidth.setProgress(markView.getLayoutParams().width/(imageDisplayAreaWidth/100));
-        seekBarHeight.setProgress(markView.getLayoutParams().height/(imageDisplayAreaHeight/100));
+        seekBarWidth.setProgress(checkPanelView.getLayoutParams().width/(imageDisplayAreaWidth/100));
+        seekBarHeight.setProgress(checkPanelView.getLayoutParams().height/(imageDisplayAreaHeight/100));
+//        seekBarWidth.setProgress(markView.getLayoutParams().width/(imageDisplayAreaWidth/100));
+//        seekBarHeight.setProgress(markView.getLayoutParams().height/(imageDisplayAreaHeight/100));
 
 //        seekBarH.setProgress(markView.getHeight()/screenHeight*150);
 //        seekBarW.setProgress(markView.getWidth()/screenWidth*150);
     }
     public void offSelected(int ID){
-        MarkView markView = (MarkView)relativeLayout.findViewById(ID);
-        markView.offSelected();
+//        MarkView markView = (MarkView)relativeLayout.findViewById(ID);
+        CheckPanelView checkPanelView = (CheckPanelView) relativeLayout.findViewById(ID);
+        checkPanelView.offSelected();
+//        markView.offSelected();
     }
 
     public RelativeLayout getRelativeLayout(){
@@ -242,6 +254,28 @@ public class FunctionSampleActivity extends MainActivity {
         this.selectingID = viewId;
         if(viewId != 0)
             onSelected(viewId);
+    }
+
+    private void addCheckPanelView(View view) {
+//        View tempView = new View(this);
+        CheckPanelView checkPanelView = new CheckPanelView(this);
+        checkPanelView.setBitmap(bitmap);
+        checkPanelView.setId(checkPanelId);
+
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.width = (seekBarWidth.getProgress()*imageDisplayAreaWidth)/100;
+        layoutParams.height = (seekBarHeight.getProgress()*imageDisplayAreaHeight)/100;
+        layoutParams.leftMargin = 10;
+        layoutParams.topMargin = 10;
+
+        checkPanelView.setLayoutParams(layoutParams);
+        checkPanelView.setOnTouchListener(moveOnTouchListener);
+        relativeLayout.addView(checkPanelView);
+        view.setLayoutParams(layoutParams);
+        relativeLayout.addView(view);
+
+        setSelectingID(checkPanelView.getId());
+
     }
 
     public void addMarkView(View view){
@@ -276,14 +310,16 @@ public class FunctionSampleActivity extends MainActivity {
     }
     public void deleteMarkView(View view){
         if(selectingID != 0){
-            MarkView markView = relativeLayout.findViewById(selectingID);
-            relativeLayout.removeView(markView);
-            for(int i = 0;i < markViews.size();i++){
-                if(markViews.get(i) == markView){
-                    markViews.remove(i);
-                    break;
-                }
-            }
+            CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
+            relativeLayout.removeView(checkPanelView);
+//            MarkView markView = relativeLayout.findViewById(selectingID);
+//            relativeLayout.removeView(markView);
+//            for(int i = 0;i < markViews.size();i++){
+//                if(markViews.get(i) == markView){
+//                    markViews.remove(i);
+//                    break;
+//                }
+//            }
             selectingID = 0;
         }
     }
