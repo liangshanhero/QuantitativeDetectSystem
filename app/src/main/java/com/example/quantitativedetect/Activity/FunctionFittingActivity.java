@@ -206,10 +206,19 @@ public class FunctionFittingActivity extends MainActivity {
 //            firstPicStripes.addAll(stripeList);
 //            重构完,待测试
 
+//            重构
+            for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
+                Mark mark = checkPanel.getMarkList().get(i);
+                for (int j = 0; j < checkPanel.getStripeQuantity(); j++) {
+                    int gray = mark.getFeatureLineList().get(j).getGray();
+                    float concencration = mark.getFeatureLineList().get(j).getConcentration();
+                    checkPanel.getStripeList().add(new Stripe(gray,concencration));
+                }
+            }
+//            重构完,待测试
 
-
-
-
+/*
+//            List<Line> lineList = checkPanel.getMarkList().get(0).getLineList();
             List<Line> firstPicFirstFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
             for(int i = 0;i < firstPicFirstFeatureLineList.size(); i++){
                 if (!firstPicFirstFeatureLineList.get(i).isValid()){
@@ -260,7 +269,7 @@ public class FunctionFittingActivity extends MainActivity {
                     Log.w("Result",String.valueOf(grayRatio1/ stripe1.gettLineAndeCLineGrayRatio()));
                     stripe1.addLine(line1);
                 }
-            }
+            }*/
         }
         return true;
     }
@@ -374,9 +383,13 @@ public class FunctionFittingActivity extends MainActivity {
                     Mark tempMark = (Mark) intent.getSerializableExtra("Mark");
 //                    int ID = intent.getIntExtra("ID",0);
                     int ID = tempMark.getDetectMethodPlusID();
-                    firstPicMarkList.get(ID-MARK_SWITCH_ID).setLineList(tempMark.getLineList());
-                    firstPicMarkList.get(ID-MARK_SWITCH_ID).setFeatureLineList(tempMark.getFeatureLineList());
-                    for(Mark mark: firstPicMarkList){
+//                    checkPanel.getMarkList().get(ID - MARK_SWITCH_ID).setLineList(tempMark.getLineList());
+//                    checkPanel.getMarkList().get(ID - MARK_SWITCH_ID).setFeatureLineList(tempMark.getFeatureLineList());
+                    checkPanel.getMarkList().set(ID - MARK_SWITCH_ID , tempMark);
+//                    firstPicMarkList.get(ID-MARK_SWITCH_ID).setLineList(tempMark.getLineList());
+//                    firstPicMarkList.get(ID-MARK_SWITCH_ID).setFeatureLineList(tempMark.getFeatureLineList());
+                    for(Mark mark: checkPanel.getMarkList()){
+//                    for(Mark mark: firstPicMarkList){
                         if(ID == mark.getDetectMethodPlusID()){
 //                            TODO 2021-0319
                             mark.setConcentrations(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));

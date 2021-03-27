@@ -39,8 +39,8 @@ public class CheckPanelView extends View {
 
     public CheckPanelView(Context context) {
         super(context);
-        this.markGap = 50;
-        this.markQuantity = 7;
+        this.markGap = 5;
+        this.markQuantity = 5;
         this.stripeQuantity = 6;
         this.checkPanel = new CheckPanel();
         setWillNotDraw(false);
@@ -198,7 +198,8 @@ public class CheckPanelView extends View {
         this.adaptedMarkGap = adaptedGap;
     }
 
-    public CheckPanel cutPanelToMark(){
+//    public CheckPanel cutPanelToMark(){
+    public void cutPanelToMark(){
         int markWidth = (int) ((adaptedWidth - adaptedMarkGap*(markQuantity-1)) / markQuantity);
         int[] pixels = new int[adaptedHeight*markWidth];
 
@@ -211,7 +212,7 @@ public class CheckPanelView extends View {
                 bitmap.getPixels(pixels,0,markWidth,(int) startX,(int)startY,markWidth,adaptedHeight);
             checkPanel.getMarkList().add(PictureService.analyse(pixels,markWidth, (int) startY));
         }
-        return checkPanel;
+//        return checkPanel;
     }
 
 }

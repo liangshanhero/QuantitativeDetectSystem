@@ -84,7 +84,8 @@ public class PictureService {
             double tmpGray;
             for (int j = 0; j < markWidth; j++) {
                 if (FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
-                    tmpGray = 255 - Color.red(pixels[i*markWidth+j]);
+                    tmpGray = Color.red(pixels[i*markWidth+j]);
+//                    tmpGray = 255 - Color.red(pixels[i*markWidth+j]);
 //                    tmpGray = (255 - Color.green(pixels[i]) + 255 - Color.blue(pixels[i]))/2;
                 }
                 else{
@@ -123,7 +124,8 @@ public class PictureService {
             for (int j=0;j<pixels.length;j++) {
                 double tmpGray;
                 if (FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
-                    tmpGray = 255 - Color.red(pixels[j]);
+                    tmpGray = Color.red(pixels[j]);
+//                    tmpGray = 255 - Color.red(pixels[j]);
 //                    tmpGray = (255 - Color.green(pixels[j]) + 255 - Color.blue(pixels[j]))/2;
                 }
                 else{
@@ -193,6 +195,7 @@ public class PictureService {
                     for (int k = 1; k < lineList.size(); k++) {
                         maxGrayLine = (lineList.get(k).getGray() <= maxGrayLine.getGray()) ? maxGrayLine : lineList.get(k);
                     }
+                    maxGrayLine.setValid(true);
                     mark.getFeatureLineList().add(maxGrayLine);
                 }
             }

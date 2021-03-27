@@ -370,30 +370,31 @@ public class FunctionSampleActivity extends MainActivity {
 //    获取灰度
     public void analyse(){
         checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
-        checkPanelView.setCheckPanel(new CheckPanel());
-        CheckPanel checkPanel  = checkPanelView.cutPanelToMark();
+        CheckPanel checkPanel = new CheckPanel();
+        checkPanelView.setCheckPanel(checkPanel);
+        checkPanelView.cutPanelToMark();
 //        CheckPanelView checkPanelView = findViewById(checkPanelViewId);
 //        checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
 //        CheckPanel checkPanel = checkPanelView.cutPanelToMark();
         checkPanel.setStripeQuantity(checkPanelView.getStripeQuantity());
 
 
-        List<Mark> markList = new ArrayList<>();
-        Mark mark = null;
-        for(int i = 0;i < markViews.size();i++){
-            markViews.get(i).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
-            markList.add(PictureService.analyse(markViews.get(i)));
-//            MarkView markView = markViews.get(i);
-//            MarkView markView = getAdaptedMark(markViews.get(i));//应该在MarkView中建立该方法
-//            mark = PictureService.analyse(bitmap, markView);
-        }
+//        List<Mark> markList = new ArrayList<>();
+//        Mark mark = null;
+//        for(int i = 0;i < markViews.size();i++){
+//            markViews.get(i).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
+//            markList.add(PictureService.analyse(markViews.get(i)));
+////            MarkView markView = markViews.get(i);
+////            MarkView markView = getAdaptedMark(markViews.get(i));//应该在MarkView中建立该方法
+////            mark = PictureService.analyse(bitmap, markView);
+//        }
 //        跳转到fit界面
         Intent intent = new Intent(this,FunctionFittingActivity.class);
-        intent.putExtra("length",markViews.size());
-        for (int i = 0;i < markViews.size();i++){
-            String str = "mark" + String.valueOf(i);
-            intent.putExtra(str, markList.get(i));
-        }
+        intent.putExtra("length",checkPanel.getMarkList().size());
+//        for (int i = 0;i < markViews.size();i++){
+//            String str = "mark" + String.valueOf(i);
+//            intent.putExtra(str, markList.get(i));
+//        }
         intent.putExtra("checkPanel", checkPanel);
         startActivity(intent);
     }
