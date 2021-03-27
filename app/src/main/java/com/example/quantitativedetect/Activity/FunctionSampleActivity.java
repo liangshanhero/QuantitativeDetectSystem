@@ -257,23 +257,40 @@ public class FunctionSampleActivity extends MainActivity {
 
     private void addCheckPanelView(View view) {
 //        View tempView = new View(this);
-        CheckPanelView checkPanelView = new CheckPanelView(this);
-        checkPanelView.setBitmap(bitmap);
-        checkPanelView.setId(checkPanelViewId);
+        CheckPanelView tempCheckPanelView = new CheckPanelView(this);
+        tempCheckPanelView.setBitmap(bitmap);
+        tempCheckPanelView.setId(checkPanelViewId);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.width = (seekBarWidth.getProgress()*imageDisplayAreaWidth)/100;
         layoutParams.height = (seekBarHeight.getProgress()*imageDisplayAreaHeight)/100;
         layoutParams.leftMargin = 10;
-        layoutParams.topMargin = 10;
+        layoutParams.topMargin = 100;
 
-        checkPanelView.setLayoutParams(layoutParams);
-        checkPanelView.setOnTouchListener(moveOnTouchListener);
-        relativeLayout.addView(checkPanelView);
-        view.setLayoutParams(layoutParams);
-        relativeLayout.addView(view);
+        tempCheckPanelView.setLayoutParams(layoutParams);
+        tempCheckPanelView.setOnTouchListener(moveOnTouchListener);
+        relativeLayout.addView(tempCheckPanelView);
+//        view.setLayoutParams(layoutParams);
+//        relativeLayout.addView(view);
+
+        this.checkPanelView = tempCheckPanelView;
 
         setSelectingID(checkPanelView.getId());
+    }
+    public void deleteCheckPanelView(View view){
+        if(selectingID != 0){
+            CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
+            relativeLayout.removeView(checkPanelView);
+//            MarkView markView = relativeLayout.findViewById(selectingID);
+//            relativeLayout.removeView(markView);
+//            for(int i = 0;i < markViews.size();i++){
+//                if(markViews.get(i) == markView){
+//                    markViews.remove(i);
+//                    break;
+//                }
+//            }
+            selectingID = 0;
+        }
     }
 //markView弃用，addMarkView准备删除
     public void addMarkView(View view){
@@ -309,16 +326,14 @@ public class FunctionSampleActivity extends MainActivity {
 //markView弃用，deleteMarkView准备删除
     public void deleteMarkView(View view){
         if(selectingID != 0){
-            CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
-            relativeLayout.removeView(checkPanelView);
-//            MarkView markView = relativeLayout.findViewById(selectingID);
-//            relativeLayout.removeView(markView);
-//            for(int i = 0;i < markViews.size();i++){
-//                if(markViews.get(i) == markView){
-//                    markViews.remove(i);
-//                    break;
-//                }
-//            }
+            MarkView markView = relativeLayout.findViewById(selectingID);
+            relativeLayout.removeView(markView);
+            for(int i = 0;i < markViews.size();i++){
+                if(markViews.get(i) == markView){
+                    markViews.remove(i);
+                    break;
+                }
+            }
             selectingID = 0;
         }
     }
@@ -354,9 +369,12 @@ public class FunctionSampleActivity extends MainActivity {
 
 //    获取灰度
     public void analyse(){
-        CheckPanelView checkPanelView = findViewById(checkPanelViewId);
         checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
-        CheckPanel checkPanel = checkPanelView.cutPanelToMark();
+        checkPanelView.setCheckPanel(new CheckPanel());
+        CheckPanel checkPanel  = checkPanelView.cutPanelToMark();
+//        CheckPanelView checkPanelView = findViewById(checkPanelViewId);
+//        checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
+//        CheckPanel checkPanel = checkPanelView.cutPanelToMark();
         checkPanel.setStripeQuantity(checkPanelView.getStripeQuantity());
 
 

@@ -177,16 +177,17 @@ public class PictureService {
         if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
 
             int stripeQuantity = checkPanel.getStripeQuantity();
-            int stripeHeight =checkPanel.getMarkList().size() / stripeQuantity;
+
 
             for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
                 Mark mark = checkPanel.getMarkList().get(i);
+                int stripeHeight =mark.getLineList().size() / stripeQuantity;
                 for (int j = 0; j < stripeQuantity; j++) {
                     List<Line> lineList;
                     if (j!=stripeQuantity-1){
-                        lineList = mark.getLineList().subList(j*stripeQuantity,j*stripeQuantity+stripeHeight);
+                        lineList = mark.getLineList().subList(j * stripeHeight,(j+1) * stripeHeight);
                     }else{
-                        lineList = mark.getLineList().subList(j*stripeQuantity,mark.getLineList().size()-1);
+                        lineList = mark.getLineList().subList(j * stripeHeight,mark.getLineList().size()-1);
                     }
                     Line maxGrayLine = lineList.get(0);
                     for (int k = 1; k < lineList.size(); k++) {

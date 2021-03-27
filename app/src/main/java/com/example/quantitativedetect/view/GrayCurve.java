@@ -96,6 +96,7 @@ public class GrayCurve extends BaseCoordinate {
 
     public void bigDraw(Canvas canvas){
         Paint paint = new Paint();
+        paint.setAntiAlias(true);
         paint.setStrokeWidth(2);
         paint.setColor(Color.BLACK);
         canvas.drawLine(pad,pad,wid-pad,pad,paint);//上X轴

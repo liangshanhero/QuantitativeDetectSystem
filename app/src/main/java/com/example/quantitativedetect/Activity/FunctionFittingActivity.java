@@ -46,27 +46,34 @@ public class FunctionFittingActivity extends MainActivity {
         Intent intent = getIntent();
         int markViewQuantity = intent.getIntExtra("length",0);
         linearLayout = findViewById(R.id.linear_fitting);
-        for(int i = 0;i < markViewQuantity;i++){
-            String str = "mark" + String.valueOf(i);
-//            把intent里对应str的数据转换成对象
-
-            Mark mark = (Mark) intent.getSerializableExtra(str);
-            firstPicMarkList.add(mark);
-        }
+//        for(int i = 0;i < markViewQuantity;i++){
+//            String str = "mark" + String.valueOf(i);
+////            把intent里对应str的数据转换成对象
+//
+//            Mark mark = (Mark) intent.getSerializableExtra(str);
+//            firstPicMarkList.add(mark);
+//        }
         checkPanel = (CheckPanel) intent.getSerializableExtra("checkPanel");
         initListener1();
         initListener2();
         checkPanel = getFeatures(checkPanel);
-
-
-        for(int i = 0; i< firstPicMarkList.size(); i++){
-            Mark mark = firstPicMarkList.get(i);
-            mark = getFeatures(mark);
-            mark.setDetectMethodPlusID(MARK_SWITCH_ID +i);
-            MarkSwitch tempMarkSwitch = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i,"mark "+String.valueOf(i+1),listener1);
+        for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
+            Mark mark = checkPanel.getMarkList().get(i);
+            mark.setDetectMethodPlusID(MARK_SWITCH_ID + i);
+            MarkSwitch tempMarkSwitch = createMarkGrayCurveSwitchView(mark,MARK_SWITCH_ID+i,"mark "+String.valueOf(i+1),listener1);
             markSwitchList1.add(tempMarkSwitch);
             linearLayout.addView(tempMarkSwitch.getLinearLayout());
         }
+
+
+//        for(int i = 0; i< firstPicMarkList.size(); i++){
+//            Mark mark = firstPicMarkList.get(i);
+//            mark = getFeatures(mark);
+//            mark.setDetectMethodPlusID(MARK_SWITCH_ID +i);
+//            MarkSwitch tempMarkSwitch = createMarkGrayCurveSwitchView(mark, MARK_SWITCH_ID +i,"mark "+String.valueOf(i+1),listener1);
+//            markSwitchList1.add(tempMarkSwitch);
+//            linearLayout.addView(tempMarkSwitch.getLinearLayout());
+//        }
     }
 
     public MarkSwitch createMarkGrayCurveSwitchView(Mark mark, int ID, String name, View.OnClickListener listener){
@@ -270,7 +277,8 @@ public class FunctionFittingActivity extends MainActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FunctionFittingActivity.this,FunctionInputDataActivity.class);
-                intent.putExtra("Mark", firstPicMarkList.get(v.getId()- MARK_SWITCH_ID));
+                intent.putExtra("Mark", checkPanel.getMarkList().get(v.getId() - MARK_SWITCH_ID));
+//                intent.putExtra("Mark", firstPicMarkList.get(v.getId()- MARK_SWITCH_ID));
                 intent.putExtra("length", length);
                 intent.putExtra("function","data");
                 startActivityForResult(intent,REQUEST_CODE_DATA);
