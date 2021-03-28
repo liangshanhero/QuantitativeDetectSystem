@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class LinearRegressionModel extends DataSupport implements Serializable {
 
     private double slope=0,offset=0;//斜率，偏移
-    private double bias = 1;//
+    private double bias = 1;//以前是B0
     private String name;
     public LinearRegressionModel(){
 

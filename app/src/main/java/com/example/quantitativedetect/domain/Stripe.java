@@ -124,4 +124,19 @@ public class Stripe implements Serializable {
         this.featureLineList = featureLineList;
     }
 
+    public int getGray() {
+        return gray;
+    }
+
+    public void setGray(int gray) {
+        this.gray = gray;
+    }
+
+    public float getConcentration() {
+        return concentration;
+    }
+
+    public void setConcentration(float concentration) {
+        this.concentration = concentration;
+    }
 }

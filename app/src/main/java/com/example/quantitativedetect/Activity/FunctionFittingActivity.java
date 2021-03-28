@@ -154,6 +154,17 @@ public class FunctionFittingActivity extends MainActivity {
             }
         }
         else {
+            //            重构
+            for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
+                Mark mark = checkPanel.getMarkList().get(i);
+                for (int j = 0; j < checkPanel.getStripeQuantity(); j++) {
+                    int gray = mark.getFeatureLineList().get(j).getGray();
+                    float concencration = mark.getFeatureLineList().get(j).getConcentration();
+//                    按markQutantity进行切割即可
+                    checkPanel.getStripeList().add(new Stripe(gray,concencration));
+                }
+            }
+//            重构完,待测试
             //重构
 //            List<Line> firstMarkFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
 //            List<Line> validFeatureLineList = new ArrayList<>();
@@ -206,16 +217,6 @@ public class FunctionFittingActivity extends MainActivity {
 //            firstPicStripes.addAll(stripeList);
 //            重构完,待测试
 
-//            重构
-            for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
-                Mark mark = checkPanel.getMarkList().get(i);
-                for (int j = 0; j < checkPanel.getStripeQuantity(); j++) {
-                    int gray = mark.getFeatureLineList().get(j).getGray();
-                    float concencration = mark.getFeatureLineList().get(j).getConcentration();
-                    checkPanel.getStripeList().add(new Stripe(gray,concencration));
-                }
-            }
-//            重构完,待测试
 
 /*
 //            List<Line> lineList = checkPanel.getMarkList().get(0).getLineList();
@@ -354,18 +355,20 @@ public class FunctionFittingActivity extends MainActivity {
         if(!createStripes())
             return;
         Intent intent = new Intent(this,FunctionFormulaActivity.class);
-        intent.putExtra("length", firstPicStripes.size());
+        intent.putExtra("checkPanel",checkPanel);
+//        intent.putExtra("length",checkPanel.getStripeList().size()/checkPanel.getMarkList().size());
+//        intent.putExtra("length", firstPicStripes.size());
         intent.putExtra("function","Formula");
-        for(int i = 0; i < firstPicStripes.size(); i++){
+//        for(int i = 0; i < firstPicStripes.size(); i++){
+//            Stripe stripe1 = firstPicStripes.get(i);
+//            Stripe stripe2 = secondPicStripes.get(i);
+//            String str1 = "Archive"+"1"+String.valueOf(i);
+//            String str2 = "Archive"+"2"+String.valueOf(i);
+////TODO            stripe中的line为null,找到如何降line即特征点放入到stripe中,否则在FunctionFormulaActivity中无法获取到数据
 
-            Stripe stripe1 = firstPicStripes.get(i);
-            Stripe stripe2 = secondPicStripes.get(i);
-            String str1 = "Archive"+"1"+String.valueOf(i);
-            String str2 = "Archive"+"2"+String.valueOf(i);
-//TODO            stripe中的line为null,找到如何降line即特征点放入到stripe中,否则在FunctionFormulaActivity中无法获取到数据
-            intent.putExtra(str1, stripe1);
-            intent.putExtra(str2, stripe2);
-        }
+//            intent.putExtra(str1, stripe1);
+//            intent.putExtra(str2, stripe2);
+//        }
 
 
         if(secondPicMarkList.size() <= 0)

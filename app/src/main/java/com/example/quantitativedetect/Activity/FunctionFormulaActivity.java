@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
+import com.example.quantitativedetect.domain.CheckPanel;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.domain.Line;
@@ -30,6 +31,7 @@ public class FunctionFormulaActivity extends Activity {
     public static int ONE_TWO = 2;
     public static final int ONE = 1;
     public static final int TWO = 2;
+    private CheckPanel checkPanel;
     private List<Stripe> firstPicStripes = new ArrayList<>();
     private List<Stripe> secondPicStripes = new ArrayList<>();
     private List<Result> resultList = new ArrayList<>();
@@ -37,7 +39,7 @@ public class FunctionFormulaActivity extends Activity {
     private RelativeLayout relativeLayout;
     private String function;
     private float[] strips;
-    private int length;
+    private int stripeQuantityInOneMark;
     private int now = 0;
     private LinearRegressionCurve linearRegressionCurve;
     private List<LinearRegressionModel> linearRegressionModelList = new ArrayList<>();
@@ -50,7 +52,9 @@ public class FunctionFormulaActivity extends Activity {
     }
     public void init(){
         Intent intent = getIntent();
-        length = intent.getIntExtra("length",0);
+        checkPanel = (CheckPanel) intent.getSerializableExtra("checkPanel");
+        stripeQuantityInOneMark = checkPanel.getStripeList().size()/checkPanel.getMarkList().size();
+//        stripeQuantityInOneMark = intent.getIntExtra("length",0);
         function = intent.getStringExtra("function");
         //  TODO firstPicArchive没有传递过来，为空，暂时自定义一个archive对象，
 //        Archive tempFirstPicArchive = new Archive(1);
@@ -61,7 +65,7 @@ public class FunctionFormulaActivity extends Activity {
 
         if(function.equals("Formula")){
 
-            for(int i = 0;i < length;i++){
+            for(int i = 0; i < stripeQuantityInOneMark; i++){
                 String str = "Archive";
                 Stripe firstPicStripe = (Stripe) intent.getSerializableExtra(str+"1"+String.valueOf(i));
                 Stripe secondPicStripe = (Stripe) intent.getSerializableExtra(str+"2"+String.valueOf(i));
@@ -81,7 +85,7 @@ public class FunctionFormulaActivity extends Activity {
         }
         else if(function.equals("Result")){
             strips = intent.getFloatArrayExtra("strips");
-            for(int i = 0;i < length;i++){
+            for(int i = 0; i < stripeQuantityInOneMark; i++){
                 String str = "Function"+String.valueOf(i);
                 LinearRegressionModel linearRegressionModel = (LinearRegressionModel) intent.getSerializableExtra(str);
                 linearRegressionModelList.add(linearRegressionModel);
@@ -100,7 +104,50 @@ public class FunctionFormulaActivity extends Activity {
     public void fitRule(){
 //        float[] concrations = new float[firstPicStripes.size()];
 //        float[] grays = new float[firstPicStripes.size()];
-        for(int i = 0; i < firstPicStripes.size(); i++){
+        float[] concrations = new float[checkPanel.getStripeQuantity()];
+        float[] grays = new float[checkPanel.getStripeQuantity()];
+        float[] concrations2 = new float[checkPanel.getStripeQuantity()];
+        float[] grays2 = new float[checkPanel.getStripeQuantity()];
+        for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
+
+            if(ONE_TWO == TWO){
+//                TODO 此分支待重构
+                for(int j = 0; j < firstPicStripes.get(i).length(); j++){
+                    Line firstPicLine = firstPicStripes.get(i).getLine(j);
+                    Line secondPicLine = secondPicStripes.get(i).getLine(j);
+                    grays[j] = (firstPicLine.getGray()+ secondPicLine.getGray())/2;
+                    concrations[j] = (firstPicLine.getConcentration()+ secondPicLine.getConcentration())/2;
+                }
+                LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
+                linearRegressionModel.setBias((firstPicStripes.get(i).gettLineAndeCLineGrayRatio()+ secondPicStripes.get(i).gettLineAndeCLineGrayRatio())/2);
+                linearRegressionModelList.add(linearRegressionModel);
+            }else{
+//                测试
+                int[][] testGray = new int[checkPanel.getStripeQuantity()][checkPanel.getMarkList().size()];
+                float[][] testConc = new float[checkPanel.getStripeQuantity()][checkPanel.getMarkList().size()];
+                int index= 0;
+                for (int j = 0; j < checkPanel.getStripeQuantity(); j++) {
+                    for (int k = 0; k < checkPanel.getMarkList().size(); k++) {
+                        testConc[j][k] = checkPanel.getStripeList().get(index).getConcentration();
+                        testGray[j][k] = checkPanel.getStripeList().get(index++).getGray();
+                    }
+
+                }
+
+                int markQuantity = checkPanel.getMarkList().size();
+                for (int j = 0; j < markQuantity; j++) {
+                    for (int k = 0; k < checkPanel.getStripeQuantity(); k++) {
+                        grays2[k] = checkPanel.getStripeList().get(k*markQuantity+j).getGray();
+                        concrations2[k] = checkPanel.getStripeList().get(k*markQuantity+j).getConcentration();
+                    }
+                    LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
+                    linearRegressionModel.setBias(checkPanel.getBias(j));
+                    linearRegressionModelList.add(linearRegressionModel);
+                }
+
+            }
+
+        }
 
 //                2021-01-31 firstPicArchives.size()对应的是featureLineList.size()，
 //                即一个archive，就是一种物质在不同的试纸（mark）上的灰度值的集合
@@ -116,6 +163,8 @@ public class FunctionFormulaActivity extends Activity {
          |archive2|     fL     |     fL     |     fL     |
          -------------------------------------------------
              */
+        /*
+        for(int i = 0; i < firstPicStripes.size(); i++){
             // 2021-02-18 concrations似乎应该定义在循环外,否则无法多次赋值,但定义在循环外后后续的fit将不正常
             float[] concrations = new float[firstPicStripes.size()];
             float[] grays = new float[firstPicStripes.size()];
@@ -156,6 +205,7 @@ public class FunctionFormulaActivity extends Activity {
                 linearRegressionModelList.add(linearRegressionModel);
             }
         }
+        */
     }
 
     public void computing(){
@@ -183,8 +233,8 @@ public class FunctionFormulaActivity extends Activity {
     }
 
     public void next(View view){
-        if(now >= length-1){
-            now = length-1;
+        if(now >= stripeQuantityInOneMark -1){
+            now = stripeQuantityInOneMark -1;
             Toast.makeText(this,"后面没有了",Toast.LENGTH_SHORT).show();
             return;
         }
