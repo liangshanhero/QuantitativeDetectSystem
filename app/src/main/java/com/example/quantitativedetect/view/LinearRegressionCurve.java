@@ -16,6 +16,7 @@ public class LinearRegressionCurve extends BaseCoordinate {
     private float conc, gray;
     private Stripe stripe1, stripe2;
     double max,min;
+
     public LinearRegressionCurve(Context context, LinearRegressionModel linearRegressionModel, int width){
         super(context);
         this.linearRegressionModel = linearRegressionModel;
@@ -45,10 +46,27 @@ public class LinearRegressionCurve extends BaseCoordinate {
         invalidate();
     }
 
+    public void setArchive(LinearRegressionModel linearRegressionModel,int totalLineNumber) {
+//        this.stripe1 = stripe1;
+//        this.stripe2 = stripe2;
+        this.linearRegressionModel = linearRegressionModel;
+        if(linearRegressionModel.getSlope() > 0){
+            max = FunctionService.calculateConcentration(linearRegressionModel,1);
+            min = FunctionService.calculateConcentration(linearRegressionModel,0);
+        }
+        else {
+            max = FunctionService.calculateConcentration(linearRegressionModel,0);
+            min = FunctionService.calculateConcentration(linearRegressionModel,1);
+        }
+        this.flag = 2;
+        invalidate();
+    }
+
     public void formula(Canvas canvas){
         Paint paint = new Paint();
         //画点
         for(int i = 0; i < stripe1.length(); i++){
+//        for(int i = 0; i < stripe1.length(); i++){
             paint.setStrokeWidth(10);
 
             float x1 = (float)(stripe1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
@@ -164,5 +182,6 @@ public class LinearRegressionCurve extends BaseCoordinate {
         else if(flag == 3)
             drawResult(canvas);
     }
+
 
 }

@@ -65,13 +65,13 @@ public class FunctionFormulaActivity extends Activity {
 
         if(function.equals("Formula")){
 
-            for(int i = 0; i < stripeQuantityInOneMark; i++){
-                String str = "Archive";
-                Stripe firstPicStripe = (Stripe) intent.getSerializableExtra(str+"1"+String.valueOf(i));
-                Stripe secondPicStripe = (Stripe) intent.getSerializableExtra(str+"2"+String.valueOf(i));
-                firstPicStripes.add(firstPicStripe);
-                secondPicStripes.add(secondPicStripe);
-            }
+//            for(int i = 0; i < stripeQuantityInOneMark; i++){
+//                String str = "Archive";
+//                Stripe firstPicStripe = (Stripe) intent.getSerializableExtra(str+"1"+String.valueOf(i));
+//                Stripe secondPicStripe = (Stripe) intent.getSerializableExtra(str+"2"+String.valueOf(i));
+//                firstPicStripes.add(firstPicStripe);
+//                secondPicStripes.add(secondPicStripe);
+//            }
             fitRule();
 //  TODO 规则从哪里来？？？
 //  TODO 2020-0209,根据前端传来的数据构建Rule,而不是使用空的Rule(temRule)代替
@@ -80,8 +80,8 @@ public class FunctionFormulaActivity extends Activity {
 //            ruleList.add(temRule);
 //            ruleList.get(0);
             linearRegressionCurve = new LinearRegressionCurve(this, linearRegressionModelList.get(0),MainActivity.getScreenWidth());
-
-            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
+            linearRegressionCurve.setArchive(linearRegressionModelList.get(now),checkPanel.getStripeQuantity()-1);
+//            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
         }
         else if(function.equals("Result")){
             strips = intent.getFloatArrayExtra("strips");
@@ -106,8 +106,6 @@ public class FunctionFormulaActivity extends Activity {
 //        float[] grays = new float[firstPicStripes.size()];
         float[] concrations = new float[checkPanel.getStripeQuantity()];
         float[] grays = new float[checkPanel.getStripeQuantity()];
-        float[] concrations2 = new float[checkPanel.getStripeQuantity()];
-        float[] grays2 = new float[checkPanel.getStripeQuantity()];
         for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
 
             if(ONE_TWO == TWO){
@@ -131,14 +129,13 @@ public class FunctionFormulaActivity extends Activity {
                         testConc[j][k] = checkPanel.getStripeList().get(index).getConcentration();
                         testGray[j][k] = checkPanel.getStripeList().get(index++).getGray();
                     }
-
                 }
 
                 int markQuantity = checkPanel.getMarkList().size();
                 for (int j = 0; j < markQuantity; j++) {
                     for (int k = 0; k < checkPanel.getStripeQuantity(); k++) {
-                        grays2[k] = checkPanel.getStripeList().get(k*markQuantity+j).getGray();
-                        concrations2[k] = checkPanel.getStripeList().get(k*markQuantity+j).getConcentration();
+                        grays[k] = checkPanel.getStripeList().get(k*markQuantity+j).getGray();
+                        concrations[k] = checkPanel.getStripeList().get(k*markQuantity+j).getConcentration();
                     }
                     LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
                     linearRegressionModel.setBias(checkPanel.getBias(j));
@@ -240,7 +237,8 @@ public class FunctionFormulaActivity extends Activity {
         }
         now++;
         if(function.equals("Formula")){
-            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
+            linearRegressionCurve.setArchive(linearRegressionModelList.get(now),checkPanel.getStripeQuantity()-1);
+//            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
         }
         else if(function.equals("Result")){
             linearRegressionCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], linearRegressionModelList.get(now));
@@ -256,7 +254,8 @@ public class FunctionFormulaActivity extends Activity {
         }
         now--;
         if(function.equals("Formula")){
-            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
+            linearRegressionCurve.setArchive(linearRegressionModelList.get(now),checkPanel.getStripeQuantity()-1);
+//            linearRegressionCurve.setArchive(firstPicStripes.get(now), secondPicStripes.get(now), linearRegressionModelList.get(now));
         }
         else if(function.equals("Result")){
             linearRegressionCurve.setPoint((float) resultList.get(now).getConcentration(),strips[now], linearRegressionModelList.get(now));

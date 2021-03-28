@@ -38,6 +38,6 @@ public class CheckPanel implements Serializable {
     public double getBias(int number) {
         int gray0 = this.stripeList.get(0).getGray();
         int gray = this.stripeList.get(number).getGray();
-        return gray/gray0;
+        return (double)gray/gray0;
     }
 }
