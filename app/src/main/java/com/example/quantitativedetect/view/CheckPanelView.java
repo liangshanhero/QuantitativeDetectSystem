@@ -102,6 +102,7 @@ public class CheckPanelView extends View {
 
     public void setMarkGap(int markGap) {
         this.markGap = markGap;
+        invalidate();
     }
 
     public int getMarkQuantity() {

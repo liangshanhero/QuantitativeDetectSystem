@@ -30,7 +30,6 @@ import com.example.quantitativedetect.view.CheckPanelView;
 import com.example.quantitativedetect.view.MarkView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.example.quantitativedetect.service.PictureService.FROM_ALBUM;
 import static com.example.quantitativedetect.service.PictureService.FROM_CAMERA;
@@ -56,7 +55,7 @@ public class FunctionSampleActivity extends MainActivity {
     private MoveOnTouchListener moveOnTouchListener;
     private ArrayList<MarkView> markViews = new ArrayList<MarkView>();
     private CheckPanelView checkPanelView;
-    private SeekBar seekBarWidth, seekBarHeight;
+    private SeekBar widthSeekBar, heightSeekBar, markGapSeekBar;
     private int selectingID = 0;
     private Button takePicture;
     private int imageDisplayAreaWidth;
@@ -118,8 +117,8 @@ public class FunctionSampleActivity extends MainActivity {
 //        greyInRed(bitmap);
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
-        seekBarWidth.setProgress(96);
-        seekBarHeight.setProgress(40);
+        widthSeekBar.setProgress(96);
+        heightSeekBar.setProgress(40);
 //        addMarkView(new View(this));
         addCheckPanelView(new View(this));
 //        似乎没有什么用，暂时屏蔽
@@ -127,12 +126,15 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     private void seekBarInit(){
-        seekBarHeight = findViewById(R.id.seekBar_h);
-        seekBarWidth = findViewById(R.id.seekBar_w);
-        seekBarWidth.setProgress(0);
-        seekBarHeight.setProgress(0);
+        markGapSeekBar = findViewById(R.id.gap_seekBar);
+        heightSeekBar = findViewById(R.id.height_seekBar);
+        widthSeekBar = findViewById(R.id.width_seekBar);
+        markGapSeekBar.setProgress(0);
+        widthSeekBar.setProgress(0);
+        heightSeekBar.setProgress(0);
 
-        seekBarWidth.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+        widthSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private int unit = imageDisplayAreaWidth / 100;//原来是/150
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -164,7 +166,7 @@ public class FunctionSampleActivity extends MainActivity {
 
             }
         });
-        seekBarHeight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        heightSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 //            private int unit = imageDisplayAreaHeight / 150;
             private int unit = imageDisplayAreaHeight / 100;
             @Override
@@ -181,6 +183,41 @@ public class FunctionSampleActivity extends MainActivity {
                     layoutParams.leftMargin = checkPanelView.getLeft();
                     layoutParams.topMargin = checkPanelView.getTop();
                     checkPanelView.setLayoutParams(layoutParams);
+                    //markView.setHeight(progress*unit);
+                }
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        markGapSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            private int unit = imageDisplayAreaHeight / 150;
+            private int unit = imageDisplayAreaHeight / 100;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(selectingID !=0 ){
+//                    MarkView markView = relativeLayout.findViewById(selectingID);
+                    CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
+                    int rectWidth = checkPanelView.getWidth();
+                    int markQuantity = checkPanelView.getMarkQuantity();
+                    int maxGapWidth = (checkPanelView.getWidth()-checkPanelView.getMarkQuantity()*10)/(checkPanelView.getMarkQuantity()-1);//假设10为mark的最小宽度
+                    checkPanelView.setMarkGap(maxGapWidth*progress/100);
+
+
+                    //设置宽度最小值为10
+//                    if(progress*imageDisplayAreaHeight / 100 <=10)
+//                        return;
+//                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                    layoutParams.width = checkPanelView.getWidth();  //设置宽高
+//                    layoutParams.height = checkPanelView.getHeight();
+//                    layoutParams.leftMargin = checkPanelView.getLeft();
+//                    layoutParams.topMargin = checkPanelView.getTop();
+//                    checkPanelView.setLayoutParams(layoutParams);
                     //markView.setHeight(progress*unit);
                 }
             }
@@ -229,8 +266,8 @@ public class FunctionSampleActivity extends MainActivity {
 //        MarkView markView = relativeLayout.findViewById(ID);
 //        markView.onSelected();
 
-        seekBarWidth.setProgress(checkPanelView.getLayoutParams().width*100/imageDisplayAreaWidth);
-        seekBarHeight.setProgress(checkPanelView.getLayoutParams().height*100/imageDisplayAreaHeight);
+        widthSeekBar.setProgress(checkPanelView.getLayoutParams().width*100/imageDisplayAreaWidth);
+        heightSeekBar.setProgress(checkPanelView.getLayoutParams().height*100/imageDisplayAreaHeight);
 //        seekBarWidth.setProgress(markView.getLayoutParams().width/(imageDisplayAreaWidth/100));
 //        seekBarHeight.setProgress(markView.getLayoutParams().height/(imageDisplayAreaHeight/100));
 
@@ -262,8 +299,8 @@ public class FunctionSampleActivity extends MainActivity {
         tempCheckPanelView.setId(checkPanelViewId);
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.width = (seekBarWidth.getProgress()*imageDisplayAreaWidth)/100;
-        layoutParams.height = (seekBarHeight.getProgress()*imageDisplayAreaHeight)/100;
+        layoutParams.width = (widthSeekBar.getProgress()*imageDisplayAreaWidth)/100;
+        layoutParams.height = (heightSeekBar.getProgress()*imageDisplayAreaHeight)/100;
         layoutParams.leftMargin = 10;
         layoutParams.topMargin = 100;
 
@@ -305,8 +342,8 @@ public class FunctionSampleActivity extends MainActivity {
 
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         //通过获取当前seekBar的比例来设置markView的宽高
-        layoutParams.width = seekBarWidth.getProgress()*(imageDisplayAreaWidth / 100);
-        layoutParams.height = seekBarHeight.getProgress()*(imageDisplayAreaHeight / 100);
+        layoutParams.width = widthSeekBar.getProgress()*(imageDisplayAreaWidth / 100);
+        layoutParams.height = heightSeekBar.getProgress()*(imageDisplayAreaHeight / 100);
         layoutParams.leftMargin = 100;
         layoutParams.topMargin = 100;
 
