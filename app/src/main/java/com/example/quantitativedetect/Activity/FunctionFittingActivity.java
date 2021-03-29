@@ -35,6 +35,7 @@ public class FunctionFittingActivity extends MainActivity {
     private LinearLayout linearLayout;
     private View.OnClickListener listener1,listener2;
     private int length = 5;
+    private int stripeQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +55,10 @@ public class FunctionFittingActivity extends MainActivity {
 //            firstPicMarkList.add(mark);
 //        }
         checkPanel = (CheckPanel) intent.getSerializableExtra("checkPanel");
+        stripeQuantity = intent.getIntExtra("stripeQuantity",0);
         initListener1();
         initListener2();
-        checkPanel = getFeatures(checkPanel);
+        checkPanel = getFeatures(checkPanel,stripeQuantity);
         for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
             Mark mark = checkPanel.getMarkList().get(i);
             mark.setDetectMethodPlusID(MARK_SWITCH_ID + i);
@@ -155,13 +157,15 @@ public class FunctionFittingActivity extends MainActivity {
         }
         else {
             //            重构
+
             for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
                 Mark mark = checkPanel.getMarkList().get(i);
-                for (int j = 0; j < checkPanel.getStripeQuantity(); j++) {
+                for (int j = 0; j < stripeQuantity; j++) {
                     int gray = mark.getFeatureLineList().get(j).getGray();
                     float concencration = mark.getFeatureLineList().get(j).getConcentration();
 //                    按markQutantity进行切割即可
-                    checkPanel.getStripeList().add(new Stripe(gray,concencration));
+//                    mark.getStripeList().add(new Stripe(gray,concencration));
+                    mark.getStripeList().add(new Line(concencration,gray));
                 }
             }
 //            重构完,待测试

@@ -175,10 +175,9 @@ public class PictureService {
 
 
 
-    public static CheckPanel getFeatures(CheckPanel checkPanel) {
+    public static CheckPanel getFeatures(CheckPanel checkPanel,int stripeQuantity) {
         if(FunctionSampleActivity.CHECK_MODE == FunctionSampleActivity.FLUORESCENT_MICROSPHERE){
 
-            int stripeQuantity = checkPanel.getStripeQuantity();
 
 
             for (int i = 0; i < checkPanel.getMarkList().size(); i++) {

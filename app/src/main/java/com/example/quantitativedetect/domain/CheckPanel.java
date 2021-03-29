@@ -6,9 +6,9 @@ import java.util.List;
 
 public class CheckPanel implements Serializable {
     private List<Mark> markList = new ArrayList<>();
-    private List<Stripe> stripeList = new ArrayList<>();
+//    private List<Stripe> stripeList = new ArrayList<>();
 //    private int markGap;
-    private int stripeQuantity;
+//    private int stripeQuantity;
 //    private int markQuantity;
 
     public List<Mark> getMarkList() {
@@ -19,25 +19,25 @@ public class CheckPanel implements Serializable {
         this.markList = markList;
     }
 
-    public List<Stripe> getStripeList() {
-        return stripeList;
-    }
-
-    public void setStripeList(List<Stripe> stripeList) {
-        this.stripeList = stripeList;
-    }
-
-    public int getStripeQuantity() {
-        return stripeQuantity;
-    }
-
-    public void setStripeQuantity(int stripeQuantity) {
-        this.stripeQuantity = stripeQuantity;
-    }
+//    public List<Stripe> getStripeList() {
+//        return stripeList;
+//    }
+//
+//    public void setStripeList(List<Stripe> stripeList) {
+//        this.stripeList = stripeList;
+//    }
+//
+//    public int getStripeQuantity() {
+//        return stripeQuantity;
+//    }
+//
+//    public void setStripeQuantity(int stripeQuantity) {
+//        this.stripeQuantity = stripeQuantity;
+//    }
 
     public double getBias(int number) {
-        int gray0 = this.stripeList.get(0).getGray();
-        int gray = this.stripeList.get(number).getGray();
+        int gray0 = this.markList.get(0).getStripeList().get(0).getGray();
+        int gray = this.markList.get(0).getStripeList().get(number).getGray();
         return (double)gray/gray0;
     }
 }

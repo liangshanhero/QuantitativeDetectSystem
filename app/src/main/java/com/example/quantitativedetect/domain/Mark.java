@@ -14,7 +14,12 @@ public class Mark implements Serializable {
     private int detectMethodPlusID;//原来是ID，表示胶体金或者荧光啥的？？？   检测方式
 
     private List<Line> lineList = new ArrayList<>();//所有的行对象列表
+    private List<Line> stripeList = new ArrayList<>();
+    int stripeQuantity;
+
     private List<Line> featureLineList = new ArrayList<>();//所有的特征行对象列表    存峰值的行 的数组
+
+
 
 
     //  TODO 2021-0130 暂时固定设置5个，似乎没用上
@@ -76,6 +81,22 @@ public class Mark implements Serializable {
     }
 
     public void setFlag(int flag) {
+    }
+
+    public List<Line> getStripeList() {
+        return stripeList;
+    }
+
+    public void setStripeList(List<Line> stripeList) {
+        this.stripeList = stripeList;
+    }
+
+    public void setStripeQuantity(int stripeQuantity) {
+        this.stripeQuantity = stripeQuantity;
+    }
+
+    public int getStripeQuantity() {
+        return stripeQuantity;
     }
 
 

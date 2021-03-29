@@ -416,7 +416,10 @@ public class FunctionSampleActivity extends MainActivity {
 //        CheckPanelView checkPanelView = findViewById(checkPanelViewId);
 //        checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
 //        CheckPanel checkPanel = checkPanelView.cutPanelToMark();
-        checkPanel.setStripeQuantity(checkPanelView.getStripeQuantity());
+        for (int i = 0; i < checkPanelView.getMarkQuantity(); i++) {
+            checkPanel.getMarkList().get(i).setStripeQuantity(checkPanelView.getStripeQuantity());
+        }
+
 
 
 //        List<Mark> markList = new ArrayList<>();
@@ -436,6 +439,7 @@ public class FunctionSampleActivity extends MainActivity {
 //            intent.putExtra(str, markList.get(i));
 //        }
         intent.putExtra("checkPanel", checkPanel);
+        intent.putExtra("stripeQuantity",checkPanelView.getStripeQuantity());
         startActivity(intent);
     }
 

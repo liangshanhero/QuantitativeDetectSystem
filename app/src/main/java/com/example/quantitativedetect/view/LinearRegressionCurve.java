@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.example.quantitativedetect.Activity.FunctionFormulaActivity;
+import com.example.quantitativedetect.domain.Line;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.service.FunctionService;
@@ -48,7 +49,7 @@ public class LinearRegressionCurve extends BaseCoordinate {
         invalidate();
     }
 
-    public void setArchive(LinearRegressionModel linearRegressionModel,int totalLineNumber) {
+    public void setArchive(LinearRegressionModel linearRegressionModel) {
 //        this.stripe1 = stripe1;
 //        this.stripe2 = stripe2;
         this.linearRegressionModel = linearRegressionModel;
@@ -67,7 +68,7 @@ public class LinearRegressionCurve extends BaseCoordinate {
     public void formula(Canvas canvas){
         Paint paint = new Paint();
         //画点
-        List<Stripe> stripeList = linearRegressionModel.getStripeList();
+        List<Line> stripeList = linearRegressionModel.getStripeList();
         for(int i = 0; i < stripeList.size(); i++){
 //        for(int i = 0; i < stripe1.length(); i++){
             paint.setStrokeWidth(10);
