@@ -10,6 +10,8 @@ import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.service.FunctionService;
 
+import java.util.List;
+
 public class LinearRegressionCurve extends BaseCoordinate {
     private LinearRegressionModel linearRegressionModel;
     private int flag = 1;
@@ -65,13 +67,16 @@ public class LinearRegressionCurve extends BaseCoordinate {
     public void formula(Canvas canvas){
         Paint paint = new Paint();
         //画点
-        for(int i = 0; i < stripe1.length(); i++){
+        List<Stripe> stripeList = linearRegressionModel.getStripeList();
+        for(int i = 0; i < stripeList.size(); i++){
 //        for(int i = 0; i < stripe1.length(); i++){
             paint.setStrokeWidth(10);
 
-            float x1 = (float)(stripe1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+            float x1 = (float)(stripeList.get(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+//            float x1 = (float)(stripe1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
 
-            float y1 = hei-pad- stripe1.getLine(i).getGray()*(hei-2*pad);
+            float y1 = hei-pad- stripeList.get(i).getGray()*(hei-2*pad);
+//            float y1 = hei-pad- stripe1.getLine(i).getGray()*(hei-2*pad);
 
             paint.setColor(Color.RED);
             canvas.drawPoint(x1+pad,y1,paint);

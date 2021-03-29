@@ -104,47 +104,62 @@ public class FunctionFormulaActivity extends Activity {
     public void fitRule(){
 //        float[] concrations = new float[firstPicStripes.size()];
 //        float[] grays = new float[firstPicStripes.size()];
-        float[] concrations = new float[checkPanel.getStripeQuantity()];
-        float[] grays = new float[checkPanel.getStripeQuantity()];
-        for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
+        int markQuantity = checkPanel.getMarkList().size();
+        float[] concrations = new float[markQuantity];
+        float[] grays = new float[markQuantity];
+//        for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
 
             if(ONE_TWO == TWO){
 //                TODO 此分支待重构
-                for(int j = 0; j < firstPicStripes.get(i).length(); j++){
-                    Line firstPicLine = firstPicStripes.get(i).getLine(j);
-                    Line secondPicLine = secondPicStripes.get(i).getLine(j);
-                    grays[j] = (firstPicLine.getGray()+ secondPicLine.getGray())/2;
-                    concrations[j] = (firstPicLine.getConcentration()+ secondPicLine.getConcentration())/2;
-                }
-                LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
-                linearRegressionModel.setBias((firstPicStripes.get(i).gettLineAndeCLineGrayRatio()+ secondPicStripes.get(i).gettLineAndeCLineGrayRatio())/2);
-                linearRegressionModelList.add(linearRegressionModel);
+//                for(int j = 0; j < firstPicStripes.get(i).length(); j++){
+//                    Line firstPicLine = firstPicStripes.get(i).getLine(j);
+//                    Line secondPicLine = secondPicStripes.get(i).getLine(j);
+//                    grays[j] = (firstPicLine.getGray()+ secondPicLine.getGray())/2;
+//                    concrations[j] = (firstPicLine.getConcentration()+ secondPicLine.getConcentration())/2;
+//                }
+//                LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
+//                linearRegressionModel.setBias((firstPicStripes.get(i).gettLineAndeCLineGrayRatio()+ secondPicStripes.get(i).gettLineAndeCLineGrayRatio())/2);
+//                linearRegressionModelList.add(linearRegressionModel);
             }else{
 //                测试
                 int[][] testGray = new int[checkPanel.getStripeQuantity()][checkPanel.getMarkList().size()];
                 float[][] testConc = new float[checkPanel.getStripeQuantity()][checkPanel.getMarkList().size()];
                 int index= 0;
-                for (int j = 0; j < checkPanel.getStripeQuantity(); j++) {
-                    for (int k = 0; k < checkPanel.getMarkList().size(); k++) {
-                        testConc[j][k] = checkPanel.getStripeList().get(index).getConcentration();
-                        testGray[j][k] = checkPanel.getStripeList().get(index++).getGray();
+                for (int i = 0; i < checkPanel.getStripeQuantity(); i++) {
+                    for (int j = 0; j < checkPanel.getMarkList().size(); j++) {
+                        testConc[i][j] = checkPanel.getStripeList().get(index).getConcentration();
+                        testGray[i][j] = checkPanel.getStripeList().get(index++).getGray();
                     }
                 }
+// TODO
+//                int stripeQuantity = checkPanel.getStripeQuantity();
+//                for (int i = 0; i < stripeQuantity; i++) {
+//                    List<Stripe> tempStripeList = new ArrayList<>();
+//                    for (int j = 0; j < markQuantity; j++) {
+//                        grays[j]=checkPanel.getStripeList().get(i+ ).getGray();
+//                        concrations[j]=checkPanel.getStripeList().get(j).getConcentration();
+//                        tempStripeList.add(checkPanel.getStripeList().get(j));
+//                    }
+//                }
 
-                int markQuantity = checkPanel.getMarkList().size();
-                for (int j = 0; j < markQuantity; j++) {
-                    for (int k = 0; k < checkPanel.getStripeQuantity(); k++) {
-                        grays[k] = checkPanel.getStripeList().get(k*markQuantity+j).getGray();
-                        concrations[k] = checkPanel.getStripeList().get(k*markQuantity+j).getConcentration();
+
+
+                for (int i = 0; i < markQuantity; i++) {
+                    List<Stripe> tempStripeList = new ArrayList<>();
+                    for (int j = 0; j < checkPanel.getStripeQuantity(); j++) {
+                        grays[j] = checkPanel.getStripeList().get(j*markQuantity+i).getGray();
+                        concrations[j] = checkPanel.getStripeList().get(j*markQuantity+i).getConcentration();
+                        tempStripeList.add(checkPanel.getStripeList().get(j*markQuantity+i));
                     }
                     LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
-                    linearRegressionModel.setBias(checkPanel.getBias(j));
+                    linearRegressionModel.setBias(checkPanel.getBias(i));
+                    linearRegressionModel.setStripeList(tempStripeList);
                     linearRegressionModelList.add(linearRegressionModel);
                 }
 
             }
 
-        }
+//        }
 
 //                2021-01-31 firstPicArchives.size()对应的是featureLineList.size()，
 //                即一个archive，就是一种物质在不同的试纸（mark）上的灰度值的集合
@@ -207,8 +222,8 @@ public class FunctionFormulaActivity extends Activity {
 
     public void computing(){
         for(int i = 0;i < strips.length;i++){
-            double grey = strips[i]/ linearRegressionModelList.get(i).getBias();
-            double conc = FunctionService.calculateConcentration(linearRegressionModelList.get(i),grey);
+            double gray = strips[i]/ linearRegressionModelList.get(i).getBias();
+            double conc = FunctionService.calculateConcentration(linearRegressionModelList.get(i),gray);
             Result result = new Result();
             result.setConcentration(conc);
             resultList.add(result);

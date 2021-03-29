@@ -3,6 +3,7 @@ package com.example.quantitativedetect.domain;
 import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
+import java.util.List;
 
 //原来的名字是Formula，公式
 public class LinearRegressionModel extends DataSupport implements Serializable {
@@ -10,6 +11,9 @@ public class LinearRegressionModel extends DataSupport implements Serializable {
     private double slope=0,offset=0;//斜率，偏移
     private double bias = 1;//以前是B0
     private String name;
+
+    private List<Stripe> stripeList;
+
     public LinearRegressionModel(){
 
     }
@@ -49,5 +53,13 @@ public class LinearRegressionModel extends DataSupport implements Serializable {
 
     public double getBias() {
         return bias;
+    }
+
+    public List<Stripe> getStripeList() {
+        return stripeList;
+    }
+
+    public void setStripeList(List<Stripe> stripeList) {
+        this.stripeList = stripeList;
     }
 }
