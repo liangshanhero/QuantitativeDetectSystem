@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.example.quantitativedetect.Activity.FunctionFormulaActivity;
+import com.example.quantitativedetect.domain.Feature;
 import com.example.quantitativedetect.domain.Line;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Stripe;
@@ -17,7 +18,6 @@ public class LinearRegressionCurve extends BaseCoordinate {
     private LinearRegressionModel linearRegressionModel;
     private int flag = 1;
     private float conc, gray;
-    private Stripe stripe1, stripe2;
     double max,min;
 
     public LinearRegressionCurve(Context context, LinearRegressionModel linearRegressionModel, int width){
@@ -34,8 +34,8 @@ public class LinearRegressionCurve extends BaseCoordinate {
         }
     }
     public void setArchive(Stripe stripe1, Stripe stripe2, LinearRegressionModel linearRegressionModel){
-        this.stripe1 = stripe1;
-        this.stripe2 = stripe2;
+//        this.stripe1 = stripe1;
+//        this.stripe2 = stripe2;
         this.linearRegressionModel = linearRegressionModel;
         if(linearRegressionModel.getSlope() > 0){
             max = FunctionService.calculateConcentration(linearRegressionModel,1);

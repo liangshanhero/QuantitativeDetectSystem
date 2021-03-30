@@ -109,7 +109,7 @@ public class PictureService {
                     lineAvegGray += (tmpGray - lineAvegGray) / length++ ;
                 }
                 line.setGray(lineAvegGray);
-                line.setAdaptedY(adaptedY+i);
+//                line.setAdaptedY(adaptedY+i);
                 tempLineList.add(line);
         }
         int heightIndex = 0;

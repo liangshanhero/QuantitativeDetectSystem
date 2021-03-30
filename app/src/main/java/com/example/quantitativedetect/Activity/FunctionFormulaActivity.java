@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.CheckPanel;
+import com.example.quantitativedetect.domain.Feature;
 import com.example.quantitativedetect.domain.Line;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Mark;
@@ -125,15 +126,24 @@ public class FunctionFormulaActivity extends Activity {
 //                linearRegressionModelList.add(linearRegressionModel);
             }else{
 //                测试
-                int[][] testGray = new int[stripeQuantity][checkPanel.getMarkList().size()];
-                float[][] testConc = new float[stripeQuantity][checkPanel.getMarkList().size()];
-                int index= 0;
-                for (int i = 0; i < stripeQuantity; i++) {
-                    for (int j = 0; j < checkPanel.getMarkList().size(); j++) {
-                        testConc[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getConcentration();
-                        testGray[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getGray();
-                    }
-                }
+//                int[][] testGray = new int[stripeQuantity][checkPanel.getMarkList().size()];
+//                float[][] testConc = new float[stripeQuantity][checkPanel.getMarkList().size()];
+//                int index= 0;
+//                for (int i = 0; i < stripeQuantity; i++) {
+//                    for (int j = 0; j < checkPanel.getMarkList().size(); j++) {
+//                        testConc[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getConcentration();
+//                        testGray[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getGray();
+//                    }
+//                }
+//                int[][] testGray2 = new int[stripeQuantity][checkPanel.getMarkList().size()];
+//                float[][] testConc2 = new float[stripeQuantity][checkPanel.getMarkList().size()];
+//                int index2= 0;
+//                for (int i = 0; i < stripeQuantity; i++) {
+//                    for (int j = 0; j < markQuantity; j++) {
+//                        testConc2[i][j] = checkPanel.getFeatureList().get(i).getStripeList().get(j).getMaxGrayLine().getConcentration();
+//                        testGray2[i][j] = checkPanel.getFeatureList().get(i).getStripeList().get(j).getMaxGrayLine().getGray();
+//                    }
+//                }
 // TODO
 //                int stripeQuantity = checkPanel.getStripeQuantity();
 //                for (int i = 0; i < stripeQuantity; i++) {
@@ -145,19 +155,31 @@ public class FunctionFormulaActivity extends Activity {
 //                    }
 //                }
 
-                for (int i = 0; i < stripeQuantity; i++) {
-//                    List<Stripe> tempStripeList = new ArrayList<>();
-                    List<Stripe> tempStripeList = new ArrayList<>();
-                    for (int j = 0; j < checkPanel.getMarkList().size(); j++) {
-                        concrations[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getConcentration();
-                        grays[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getGray();
-                        tempStripeList.add(checkPanel.getMarkList().get(j).getStripeList().get(i));
+
+                for (int i = 0; i < checkPanel.getFeatureList().size(); i++) {
+                    Feature feature = checkPanel.getFeatureList().get(i);
+                    for (int j = 0; j < feature.getStripeList().size(); j++) {
+                        concrations[j] = feature.getStripeList().get(j).getMaxGrayLine().getConcentration();
+                        grays[j] = feature.getStripeList().get(j).getMaxGrayLine().getGray();
                     }
                     LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
                     linearRegressionModel.setBias(checkPanel.getBias(i));
-                    linearRegressionModel.setStripeList(tempStripeList);
+                    linearRegressionModel.setStripeList(feature.getStripeList());
                     linearRegressionModelList.add(linearRegressionModel);
                 }
+//                for (int i = 0; i < stripeQuantity; i++) {
+////                    List<Stripe> tempStripeList = new ArrayList<>();
+//                    List<Stripe> tempStripeList = new ArrayList<>();
+//                    for (int j = 0; j < checkPanel.getMarkList().size(); j++) {
+//                        concrations[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getConcentration();
+//                        grays[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getGray();
+//                        tempStripeList.add(checkPanel.getMarkList().get(j).getStripeList().get(i));
+//                    }
+//                    LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
+//                    linearRegressionModel.setBias(checkPanel.getBias(i));
+//                    linearRegressionModel.setStripeList(tempStripeList);
+//                    linearRegressionModelList.add(linearRegressionModel);
+//                }
 
             }
 
