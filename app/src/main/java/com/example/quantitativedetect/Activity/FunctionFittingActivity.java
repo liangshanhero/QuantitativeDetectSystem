@@ -2,7 +2,6 @@ package com.example.quantitativedetect.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -10,6 +9,7 @@ import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.CheckPanel;
+import com.example.quantitativedetect.domain.Feature;
 import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.domain.Line;
 
@@ -27,6 +27,9 @@ import static com.example.quantitativedetect.view.MarkSwitch.MARK_SWITCH_ID;
 public class FunctionFittingActivity extends MainActivity {
     private List<Mark> firstPicMarkList = new ArrayList<>();
     private List<Mark> secondPicMarkList = new ArrayList<>();
+
+    private List<Feature> firstPicFeatureList = new ArrayList<>();
+    private List<Feature> secondPicFeatureList = new ArrayList<>();
     private List<MarkSwitch> markSwitchList1 = new ArrayList<>();
     private List<MarkSwitch> markSwitchList2 = new ArrayList<>();
     private List<Stripe> firstPicStripes = new ArrayList<>();
@@ -45,7 +48,6 @@ public class FunctionFittingActivity extends MainActivity {
     }
     private void init(){
         Intent intent = getIntent();
-        int markViewQuantity = intent.getIntExtra("length",0);
         linearLayout = findViewById(R.id.linear_fitting);
 //        for(int i = 0;i < markViewQuantity;i++){
 //            String str = "mark" + String.valueOf(i);
@@ -55,7 +57,7 @@ public class FunctionFittingActivity extends MainActivity {
 //            firstPicMarkList.add(mark);
 //        }
         checkPanel = (CheckPanel) intent.getSerializableExtra("checkPanel");
-        stripeQuantity = intent.getIntExtra("stripeQuantity",0);
+        stripeQuantity = checkPanel.getMarkList().get(0).getStripeQuantity();
         initListener1();
         initListener2();
         checkPanel = getFeatures(checkPanel,stripeQuantity);
@@ -97,7 +99,7 @@ public class FunctionFittingActivity extends MainActivity {
         return markSwitch;
     }
 
-    public boolean createStripes(){
+    public boolean createFeatures(){
         firstPicStripes.clear();
         secondPicStripes.clear();
 
@@ -106,22 +108,22 @@ public class FunctionFittingActivity extends MainActivity {
                 Toast.makeText(this,"请正确输入所有样本的浓度值（数量不对称）",Toast.LENGTH_SHORT).show();
                 return false;
             }
-            List<Line> firstPicMarkFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();//.getFeatureIndex();
-            List<Line> secondPicMarkFeatureLineList = secondPicMarkList.get(0).getFeatureLineList();
-            for(int i = 0;i < firstPicMarkFeatureLineList.size();i++){
+            List<Stripe> firstPicMarkStripeList = firstPicMarkList.get(0).getStripeList();//.getFeatureIndex();
+            List<Stripe> secondPicMarkStripeList = secondPicMarkList.get(0).getStripeList();
+            for(int i = 0;i < firstPicMarkStripeList.size();i++){
                 Stripe stripe1 = new Stripe(i);
                 Stripe stripe2 = new Stripe(i);
                 firstPicStripes.add(stripe1);
                 secondPicStripes.add(stripe2);
             }
             //为每个标曲输入B0
-            for(int i = 0;i < firstPicMarkFeatureLineList.size();i++){
+            for(int i = 0;i < firstPicMarkStripeList.size();i++){
                 Mark firstPicMark = firstPicMarkList.get(0);
                 Mark secondPicMark = secondPicMarkList.get(0);
-                Line line = firstPicMarkFeatureLineList.get(i);
+                Line line = firstPicMarkStripeList.get(i).getMaxGrayLine();
                 float g1,g2;
-                g1 = firstPicMarkFeatureLineList.get(i).getGray();//对应位置的灰度/C的值
-                g2 = secondPicMarkFeatureLineList.get(i).getGray();
+                g1 = firstPicMarkStripeList.get(i).getMaxGrayLine().getGray();//对应位置的灰度/C的值
+                g2 = secondPicMarkStripeList.get(i).getMaxGrayLine().getGray();
                 Stripe stripe1 = firstPicStripes.get(i);
                 Stripe stripe2 = secondPicStripes.get(i);
                 stripe1.settLineAndeCLineGrayRatio(g1);
@@ -137,12 +139,12 @@ public class FunctionFittingActivity extends MainActivity {
                     continue;
                 Mark firstPicMark = firstPicMarkList.get(i);
                 Mark secondPicMark = secondPicMarkList.get(i);
-                for(int j = 0; j < firstPicMarkFeatureLineList.size(); j++){
-                    Line firstPicMarkFeatureLine = firstPicMarkFeatureLineList.get(j);
-                    Line secondPicMarkFeatureLine = secondPicMarkFeatureLineList.get(j);
+                for(int j = 0; j < firstPicMarkStripeList.size(); j++){
+                    Line firstPicMarkFeatureLine = firstPicMarkStripeList.get(j).getMaxGrayLine();
+                    Line secondPicMarkFeatureLine = secondPicMarkStripeList.get(j).getMaxGrayLine();
                     float g1,g2,c1,c2;
-                    c1 = firstPicMark.getFeatureLineList().get(j).getConcentration();
-                    c2 = secondPicMark.getFeatureLineList().get(j).getConcentration();
+                    c1 = firstPicMark.getStripeList().get(j).getMaxGrayLine().getConcentration();
+                    c2 = secondPicMark.getStripeList().get(j).getMaxGrayLine().getConcentration();
 
                     g1 = firstPicMarkFeatureLine.getGray();
                     g2 = secondPicMarkFeatureLine.getGray();
@@ -150,24 +152,25 @@ public class FunctionFittingActivity extends MainActivity {
                     Stripe stripe2 = secondPicStripes.get(j);
                     Line line1 = new Line(c1, (int)(g1/ stripe1.gettLineAndeCLineGrayRatio()));
                     Line line2 = new Line(c2,(int)(g2/ stripe2.gettLineAndeCLineGrayRatio()));
-                    stripe1.addLine(line1);
-                    stripe2.addLine(line2);
+//                    stripe1.addLine(line1);
+//                    stripe2.addLine(line2);
                 }
             }
         }
         else {
             //            重构
 
+            List<Feature> featureList = new ArrayList<>();
+            for (int i = 0; i < stripeQuantity; i++) {
+                featureList.add(i,new Feature());
+            }
             for (int i = 0; i < checkPanel.getMarkList().size(); i++) {
                 Mark mark = checkPanel.getMarkList().get(i);
                 for (int j = 0; j < stripeQuantity; j++) {
-                    int gray = mark.getFeatureLineList().get(j).getGray();
-                    float concencration = mark.getFeatureLineList().get(j).getConcentration();
-//                    按markQutantity进行切割即可
-//                    mark.getStripeList().add(new Stripe(gray,concencration));
-                    mark.getStripeList().add(new Line(concencration,gray));
+                    featureList.get(j).getStripeList().add(mark.getStripeList().get(j));
                 }
             }
+            checkPanel.setFeatureList(featureList);
 //            重构完,待测试
             //重构
 //            List<Line> firstMarkFeatureLineList = firstPicMarkList.get(0).getFeatureLineList();
@@ -280,7 +283,7 @@ public class FunctionFittingActivity extends MainActivity {
     }
 
     public boolean isSame(int index){
-        if(firstPicMarkList.get(index).getFeatureLineList().size() == secondPicMarkList.get(index).getFeatureLineList().size())
+        if(firstPicMarkList.get(index).getStripeList().size() == secondPicMarkList.get(index).getStripeList().size())
             return true;
         else
             return false;
@@ -356,7 +359,7 @@ public class FunctionFittingActivity extends MainActivity {
 
 //    首先计算拟合，并跳转到结果界面FunctionFormulaActivity
     public void onFitting(View view){
-        if(!createStripes())
+        if(!createFeatures())
             return;
         Intent intent = new Intent(this,FunctionFormulaActivity.class);
         intent.putExtra("checkPanel",checkPanel);
@@ -399,7 +402,7 @@ public class FunctionFittingActivity extends MainActivity {
 //                    for(Mark mark: firstPicMarkList){
                         if(ID == mark.getDetectMethodPlusID()){
 //                            TODO 2021-0319
-                            mark.setConcentrations(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
+//                            mark.setConcentrations(intent.getIntArrayExtra("ids"),intent.getFloatArrayExtra("conc"));
                             mark.setFlag(intent.getIntExtra("FLAG",1));
                         }
                     }
@@ -429,4 +432,19 @@ public class FunctionFittingActivity extends MainActivity {
             }
     }
 
+    public List<Feature> getFirstPicFeatureList() {
+        return firstPicFeatureList;
+    }
+
+    public void setFirstPicFeatureList(List<Feature> firstPicFeatureList) {
+        this.firstPicFeatureList = firstPicFeatureList;
+    }
+
+    public List<Feature> getSecondPicFeatureList() {
+        return secondPicFeatureList;
+    }
+
+    public void setSecondPicFeatureList(List<Feature> secondPicFeatureList) {
+        this.secondPicFeatureList = secondPicFeatureList;
+    }
 }

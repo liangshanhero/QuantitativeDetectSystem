@@ -210,8 +210,8 @@ public class CheckPanelView extends View {
             float stopX = startX + markWidth;
             float startY = adaptedY;
             float stopY = adaptedY + adaptedHeight;
-                bitmap.getPixels(pixels,0,markWidth,(int) startX,(int)startY,markWidth,adaptedHeight);
-            checkPanel.getMarkList().add(PictureService.analyse(pixels,markWidth, (int) startY));
+            bitmap.getPixels(pixels,0,markWidth,(int) startX,(int)startY,markWidth,adaptedHeight);
+            checkPanel.getMarkList().add(PictureService.analyse(pixels,markWidth, (int) startY,stripeQuantity));
         }
 //        return checkPanel;
     }

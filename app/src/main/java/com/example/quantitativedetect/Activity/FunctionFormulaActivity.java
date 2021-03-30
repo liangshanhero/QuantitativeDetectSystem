@@ -54,7 +54,7 @@ public class FunctionFormulaActivity extends Activity {
     public void init(){
         Intent intent = getIntent();
         checkPanel = (CheckPanel) intent.getSerializableExtra("checkPanel");
-        stripeQuantity = checkPanel.getMarkList().get(0).getStripeQuantity();
+        stripeQuantity = checkPanel.getStripeQuantity();
 //        stripeQuantityInOneMark = intent.getIntExtra("length",0);
         function = intent.getStringExtra("function");
         //  TODO firstPicArchive没有传递过来，为空，暂时自定义一个archive对象，
@@ -130,8 +130,8 @@ public class FunctionFormulaActivity extends Activity {
                 int index= 0;
                 for (int i = 0; i < stripeQuantity; i++) {
                     for (int j = 0; j < checkPanel.getMarkList().size(); j++) {
-                        testConc[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getConcentration();
-                        testGray[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getGray();
+                        testConc[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getConcentration();
+                        testGray[i][j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getGray();
                     }
                 }
 // TODO
@@ -147,10 +147,10 @@ public class FunctionFormulaActivity extends Activity {
 
                 for (int i = 0; i < stripeQuantity; i++) {
 //                    List<Stripe> tempStripeList = new ArrayList<>();
-                    List<Line> tempStripeList = new ArrayList<>();
+                    List<Stripe> tempStripeList = new ArrayList<>();
                     for (int j = 0; j < checkPanel.getMarkList().size(); j++) {
-                        concrations[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getConcentration();
-                        grays[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getGray();
+                        concrations[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getConcentration();
+                        grays[j] = checkPanel.getMarkList().get(j).getStripeList().get(i).getMaxGrayLine().getGray();
                         tempStripeList.add(checkPanel.getMarkList().get(j).getStripeList().get(i));
                     }
                     LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);

@@ -68,30 +68,30 @@ public class LinearRegressionCurve extends BaseCoordinate {
     public void formula(Canvas canvas){
         Paint paint = new Paint();
         //画点
-        List<Line> stripeList = linearRegressionModel.getStripeList();
+        List<Stripe> stripeList = linearRegressionModel.getStripeList();
         for(int i = 0; i < stripeList.size(); i++){
 //        for(int i = 0; i < stripe1.length(); i++){
             paint.setStrokeWidth(10);
 
-            float x1 = (float)(stripeList.get(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+            float x1 = (float)(stripeList.get(i).getMaxGrayLine().getConcentration()-min)/(float)(max-min)*(wid-2*pad);
 //            float x1 = (float)(stripe1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
 
-            float y1 = hei-pad- stripeList.get(i).getGray()*(hei-2*pad);
+            float y1 = hei-pad- stripeList.get(i).getMaxGrayLine().getGray()*(hei-2*pad);
 //            float y1 = hei-pad- stripe1.getLine(i).getGray()*(hei-2*pad);
 
             paint.setColor(Color.RED);
             canvas.drawPoint(x1+pad,y1,paint);
-
+//            TODO 待重构
             if(FunctionFormulaActivity.ONE_TWO == FunctionFormulaActivity.TWO){
-                float x2 = (float)(stripe2.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
-                float y2 = hei-pad- stripe2.getLine(i).getGray()*(hei-2*pad);
+//                float x2 = (float)(stripe2.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+//                float y2 = hei-pad- stripe2.getLine(i).getGray()*(hei-2*pad);
                 paint.setColor(Color.GREEN);
-                canvas.drawPoint(x2+pad,y2,paint);
+//                canvas.drawPoint(x2+pad,y2,paint);
 
                 paint.setStrokeWidth(1);
                 paint.setColor(Color.BLACK);
 
-                canvas.drawLine(x1+pad,y1,x2+pad,y2,paint);
+//                canvas.drawLine(x1+pad,y1,x2+pad,y2,paint);
             }
         }
     }

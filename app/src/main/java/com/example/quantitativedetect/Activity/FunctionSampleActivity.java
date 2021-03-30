@@ -339,7 +339,6 @@ public class FunctionSampleActivity extends MainActivity {
         MarkView markView = new MarkView(this);
         markView.setId(markId++);
         markView.setMark(new Mark());
-        markView.setBitmap(bitmap);
 //        TODO 2021-0316 markView的adapted* 属性放到这里来添加
 
 
@@ -412,6 +411,8 @@ public class FunctionSampleActivity extends MainActivity {
         checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
         CheckPanel checkPanel = new CheckPanel();
         checkPanelView.setCheckPanel(checkPanel);
+        checkPanel.setStripeQuantity(checkPanelView.getStripeQuantity());
+        checkPanel.setMarkQuantity(checkPanelView.getMarkQuantity());
         checkPanelView.cutPanelToMark();
 //        CheckPanelView checkPanelView = findViewById(checkPanelViewId);
 //        checkPanelView.setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
@@ -433,22 +434,18 @@ public class FunctionSampleActivity extends MainActivity {
 //        }
 //        跳转到fit界面
         Intent intent = new Intent(this,FunctionFittingActivity.class);
-        intent.putExtra("length",checkPanel.getMarkList().size());
-//        for (int i = 0;i < markViews.size();i++){
-//            String str = "mark" + String.valueOf(i);
-//            intent.putExtra(str, markList.get(i));
-//        }
         intent.putExtra("checkPanel", checkPanel);
-        intent.putExtra("stripeQuantity",checkPanelView.getStripeQuantity());
         startActivity(intent);
     }
 
     public void secondSample(){
         Mark mark =null;
-
+//        TODO 待重构
         for(int i = 0;i < markViews.size();i++){
-            markViews.get(i).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
-            mark = PictureService.analyse(markViews.get(i));
+            markViews.get(i).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight,bitmap);
+//            mark = PictureService.analyse(markViews.get(i));
+
+
 //            MarkView markView = getAdaptedMark(markViews.get(i));
 ////            mark = PictureService.analyse(bitmap, markView);
 //            mark = PictureService.analyse(markView);
@@ -464,13 +461,16 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     public void detect(){
-        markViews.get(0).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight);
-        Mark mark = PictureService.analyse(markViews.get(0));
+//        TODO 待重构
+        markViews.get(0).setAdapted(imageDisplayAreaWidth,imageDisplayAreaHeight,bitmap);
+        Mark mark = new Mark();
+//        Mark mark = PictureService.analyse(markViews.get(0));
+
 //        Mark mark = PictureService.analyse(bitmap, getMark(markViews.get(0)));
 
-/*TODO 2021-0129 mark的特征需要封装，*/
+/*TODO 2021-0330 待重构，*/
         //对mark中的featureList进行封装
-        mark = getFeatures(mark);
+//        mark = getFeatures(mark);
 
         //mark.setFeatureIndexOnDotrowIndex(getFeatures(points));
         Intent intent = new Intent(this,FunctionInputDataActivity.class);

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.example.quantitativedetect.domain.Mark;
+import com.example.quantitativedetect.domain.Stripe;
 
 
 public class GrayCurve extends BaseCoordinate {
@@ -14,7 +15,7 @@ public class GrayCurve extends BaseCoordinate {
 
     private float[] points;//所有点的trc值
 //    private int[] points;//所有的点的灰度值
-    private int[] featureIndex;//特征点在points这个数组里面的位置
+    private int[] maxGrayIndexInPoints;//特征点在points这个数组里面的位置
     private int cLineIndex;//第一个特征点
     private int selectedPointIndex;//目前选中的输入框对应的点
 //    private int focusPoint = -1;//上一次选中的点,初始为-1,即没有点被选中
@@ -39,23 +40,42 @@ public class GrayCurve extends BaseCoordinate {
     public GrayCurve(Context context, int width, Mark mark, float zoom, int curveType){
         super(context);
         super.init(width,width/2,40);
-        points = new float[mark.getLineList().size()];
+        int lineQuantity = 0;
+        for (int i = 0; i < mark.getStripeList().size(); i++) {
+            lineQuantity+=mark.getStripeList().get(i).getLineList().size();
+        }
+        points = new float[lineQuantity];
 //        points = new int[mark.getLineList().size()];
-        featureIndex = new int[mark.getFeatureLineList().size()];
-        for (int i=0; i<mark.getLineList().size();i++){
-//            points[i]=mark.getLineList().get(i).getGray();
-            points[i] = mark.getTrC(i);
+        maxGrayIndexInPoints = new int[mark.getStripeList().size()];
+        int pointsIndex = 0;
+        for (int i = 0; i < mark.getStripeList().size(); i++) {
+            Stripe stripe = mark.getStripeList().get(i);
+            for (int j = 0; j < stripe.getLineList().size(); j++) {
+                points[pointsIndex++]=mark.getNormalLineTrC(i,j);
+            }
         }
+//        for (int i=0; i<lineQuantity;i++){
+////            points[i]=mark.getLineList().get(i).getGray();
+//            points[i] = mark.getTrC(i);
+//        }
         this.zoom = zoom*(width/2-2*pad);//width/3为View的高度，而width/3-2*pad才是Y轴的长度
-        for (int i=0; i<mark.getFeatureLineList().size();i++){
-            featureIndex[i]=mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
+        int maxGrayIndex = 0;
+        for (int i = 0; i < mark.getStripeList().size(); i++) {
+            Stripe stripe = mark.getStripeList().get(i);
+            maxGrayIndexInPoints[i] = maxGrayIndex + stripe.getLineList().indexOf(stripe.getMaxGrayLine());
+            maxGrayIndex += stripe.getLineList().size();
+
         }
-        this.cLineIndex=featureIndex[0];
+
+//        for (int i=0; i<mark.getStripeList().size();i++){
+//            maxGrayIndexInPoints[i]=mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
+//        }
+        this.cLineIndex= maxGrayIndexInPoints[0];
 //        this.points = points;
 //        this.features = features;
         //TODO CL是偏移量，但不知道具体含义，CL值增大能使得缩略图（grayCurve）位置降低
         // （或者说是使整个Y轴的范围（0~maxValue）更大，导致曲线的上下边界被压缩至可见，即使曲线的振幅变小？）
-        this.CL = points[featureIndex[0]];
+        this.CL = points[maxGrayIndexInPoints[0]];
 //        this.CL = points[featureIndex[0]];
         this.curveType = curveType;
         if(curveType == 0){
@@ -65,16 +85,16 @@ public class GrayCurve extends BaseCoordinate {
     }
 
 
-    public int[] getFeatureIndex() {
-        return featureIndex;
+    public int[] getMaxGrayIndexInPoints() {
+        return maxGrayIndexInPoints;
     }
 
-    public void setFeatureIndex(int[] featureIndex){
-        this.featureIndex = featureIndex;
+    public void setMaxGrayIndexInPoints(int[] maxGrayIndexInPoints){
+        this.maxGrayIndexInPoints = maxGrayIndexInPoints;
         boolean isFirstPositive = false;
-        for (int i = 0; i < featureIndex.length && !isFirstPositive; i++) {
-            if (featureIndex[i]>=0){
-                this.cLineIndex = featureIndex[i];
+        for (int i = 0; i < maxGrayIndexInPoints.length && !isFirstPositive; i++) {
+            if (maxGrayIndexInPoints[i]>=0){
+                this.cLineIndex = maxGrayIndexInPoints[i];
                 isFirstPositive = true;
             }
         }
@@ -126,21 +146,21 @@ public class GrayCurve extends BaseCoordinate {
         }
         paint.setColor(Color.RED);
         paint.setStrokeWidth(9);
-        for(int i = 0; i < featureIndex.length; i++){
-            if (featureIndex[i]<=-1){
+        for(int i = 0; i < maxGrayIndexInPoints.length; i++){
+            if (maxGrayIndexInPoints[i]<=-1){
                 continue;
             }
             paint.setColor(Color.RED);
             paint.setStrokeWidth(9);
-            if(featureIndex[i] == cLineIndex) {
+            if(maxGrayIndexInPoints[i] == cLineIndex) {
                 paint.setColor(Color.GREEN);
             }
-            if(featureIndex[i] == selectedPointIndex){
+            if(maxGrayIndexInPoints[i] == selectedPointIndex){
                 paint.setColor(Color.BLUE);
                 paint.setStrokeWidth(18);
             }
-            float x = (float) featureIndex[i]/points.length * (wid - 2*pad) + pad;
-            float y = hei - pad - (float)points[featureIndex[i]]/CL * zoom;
+            float x = (float) maxGrayIndexInPoints[i]/points.length * (wid - 2*pad) + pad;
+            float y = hei - pad - (float)points[maxGrayIndexInPoints[i]]/CL * zoom;
             canvas.drawPoint(x,y,paint);
         }
     }
@@ -162,9 +182,9 @@ public class GrayCurve extends BaseCoordinate {
             }
             paint.setColor(Color.RED);
             paint.setStrokeWidth(4);
-            for(int i = 1; i < featureIndex.length; i++){
-                float x = (float) featureIndex[i]/points.length * (wid - 2*pad) + pad;
-                float y = hei - pad - (float)points[featureIndex[i]]/CL * zoom;
+            for(int i = 1; i < maxGrayIndexInPoints.length; i++){
+                float x = (float) maxGrayIndexInPoints[i]/points.length * (wid - 2*pad) + pad;
+                float y = hei - pad - (float)points[maxGrayIndexInPoints[i]]/CL * zoom;
                 canvas.drawPoint(x,y,paint);
             }
         }

@@ -12,7 +12,7 @@ public class LinearRegressionModel extends DataSupport implements Serializable {
     private double bias = 1;//以前是B0
     private String name;
 
-    private List<Line> stripeList;
+    private List<Stripe> stripeList;
 
     public LinearRegressionModel(){
 
@@ -55,11 +55,11 @@ public class LinearRegressionModel extends DataSupport implements Serializable {
         return bias;
     }
 
-    public List<Line> getStripeList() {
+    public List<Stripe> getStripeList() {
         return stripeList;
     }
 
-    public void setStripeList(List<Line> stripeList) {
+    public void setStripeList(List<Stripe> stripeList) {
         this.stripeList = stripeList;
     }
 }

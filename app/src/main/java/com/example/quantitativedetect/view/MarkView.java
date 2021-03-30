@@ -12,7 +12,7 @@ import com.example.quantitativedetect.domain.Mark;
 
 public class MarkView extends View implements Comparable<MarkView>{
     private Mark mark;
-    private Bitmap bitmap ;// 后期添加：表示该markView在哪个bitmap。
+//    private Bitmap bitmap ;// 后期添加：表示该markView在哪个bitmap。
 
     RectF rectF;//表示本markView
     private int adaptedWidth;
@@ -49,14 +49,6 @@ public class MarkView extends View implements Comparable<MarkView>{
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
         canvas.drawRect(rectF,paint);
-    }
-
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
     }
 
     public Mark getMark() {
@@ -99,7 +91,7 @@ public class MarkView extends View implements Comparable<MarkView>{
         this.adaptedX = adaptedX;
     }
 
-    public void setAdapted(int imageDisplayAreaWidth,int imageDisplayAreaHeight){
+    public void setAdapted(int imageDisplayAreaWidth,int imageDisplayAreaHeight,Bitmap bitmap){
         float rateX = getX()/ imageDisplayAreaWidth;
         int adaptedX = (int)(bitmap.getWidth()*rateX);
         float rateWidth = (float) getWidth()/ imageDisplayAreaWidth;

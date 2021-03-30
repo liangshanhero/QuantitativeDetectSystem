@@ -13,11 +13,11 @@ public class Mark implements Serializable {
     private int isConcentrationInputted =0;
     private int detectMethodPlusID;//原来是ID，表示胶体金或者荧光啥的？？？   检测方式
 
-    private List<Line> lineList = new ArrayList<>();//所有的行对象列表
-    private List<Line> stripeList = new ArrayList<>();
+//    private List<Line> lineList = new ArrayList<>();//所有的行对象列表
+    private List<Stripe> stripeList = new ArrayList<>();
     int stripeQuantity;
 
-    private List<Line> featureLineList = new ArrayList<>();//所有的特征行对象列表    存峰值的行 的数组
+//    private List<Line> featureLineList = new ArrayList<>();//所有的特征行对象列表    存峰值的行 的数组
 
 
 
@@ -45,21 +45,21 @@ public class Mark implements Serializable {
         this.detectMethodPlusID = detectMethodPlusID;
     }
 
-    public List<Line> getLineList() {
-        return lineList;
-    }
-
-    public void setLineList(List<Line> lineList) {
-        this.lineList = lineList;
-    }
-
-    public List<Line> getFeatureLineList() {
-        return featureLineList;
-    }
-
-    public void setFeatureLineList(List<Line> featureLineList) {
-        this.featureLineList = featureLineList;
-    }
+//    public List<Line> getLineList() {
+//        return lineList;
+//    }
+//
+//    public void setLineList(List<Line> lineList) {
+//        this.lineList = lineList;
+//    }
+//
+//    public List<Line> getFeatureLineList() {
+//        return featureLineList;
+//    }
+//
+//    public void setFeatureLineList(List<Line> featureLineList) {
+//        this.featureLineList = featureLineList;
+//    }
 
     public int getIsConcentrationInputted() {
         return isConcentrationInputted;
@@ -72,22 +72,25 @@ public class Mark implements Serializable {
 //  2021-0130  不知道是什么字段，暂时放在这里，弄清楚后去除
 //    TrC：T/C：T 线的灰度与 C 线的灰度之比，       线：feature line，C线：第一条feature line
     private float trc;
-    public float getTrC(int i) {
-        return (float)this.getLineList().get(i).getGray()/(float)this.getFeatureLineList().get(0).getGray();
+    public float getMaxGrayLineTrC(int i) {
+        return (float)this.getStripeList().get(i).getMaxGrayLine().getGray()/(float)this.getStripeList().get(0).getMaxGrayLine().getGray();
 //        return (float)this.getFeatureLineList().get(i).getGray()/(float)this.getFeatureLineList().get(0).getGray();
     }
-
-    public void setConcentrations(int[] ids, float[] concs) {
+    public float getNormalLineTrC(int stripeIndex, int lineIndexInStripe){
+     return (float)this.getStripeList().get(stripeIndex).getLineList().get(lineIndexInStripe).getGray()/(float)this.getStripeList().get(0).getMaxGrayLine().getGray();
     }
 
+//    public void setConcentrations(int[] ids, float[] concs) {
+//    }
+//
     public void setFlag(int flag) {
     }
 
-    public List<Line> getStripeList() {
+    public List<Stripe> getStripeList() {
         return stripeList;
     }
 
-    public void setStripeList(List<Line> stripeList) {
+    public void setStripeList(List<Stripe> stripeList) {
         this.stripeList = stripeList;
     }
 

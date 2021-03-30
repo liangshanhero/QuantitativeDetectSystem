@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import com.example.quantitativedetect.R;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
 import com.example.quantitativedetect.domain.Mark;
+import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.view.GrayConcentrationSwitchView;
 import com.example.quantitativedetect.view.GrayCurve;
 import com.example.quantitativedetect.view.MarkSwitch;
@@ -69,7 +70,7 @@ public class FunctionInputDataActivity extends Activity {
             initGrayConcentrationSwitchViews();
 //          将焦点放在第一个启用的特征点的editView上
             boolean isFirstPositive=false;
-            int[] tempFeatureIndex = grayCurve.getFeatureIndex();
+            int[] tempFeatureIndex = grayCurve.getMaxGrayIndexInPoints();
             for (int i = 0; i < tempFeatureIndex.length && !isFirstPositive; i++) {
                 if(tempFeatureIndex[i]>-1){
                     grayConcentrationSwitchViewList.get(i).getEditText().requestFocus();
@@ -92,7 +93,7 @@ public class FunctionInputDataActivity extends Activity {
         for(int i = 0;i < length;i++){
 //            TODO getTrc已注释,trc值暂为0,需要修改
 //             T/C：T 线的颜色/荧光强度与 C 线的颜色/荧光强度之比，T线：feature line，C线：第一条feature line
-            String name = "B"+String.valueOf(i)+" = T"+String.valueOf(i)+"/C = "+String.format("%.2f", mark.getTrC(i));
+            String name = "B"+String.valueOf(i)+" = T"+String.valueOf(i)+"/C = "+String.format("%.2f", mark.getMaxGrayLineTrC(i));
             Spinner spinner = new Spinner(this);
             spinner.setId(SPINNER_ID+i);
             spinner.setAdapter(arrayAdapter);
@@ -126,12 +127,12 @@ public class FunctionInputDataActivity extends Activity {
     private void initGrayConcentrationSwitchViews(){
 //        TODO 2021-03-15 length 表示特征线的数量,但是只有最左侧的Mark会有所有的特征线,而右侧的Mark不一定有全部的特征线,
 //         想办法不把length写死
-        for(int i = 0;i < length || i<mark.getFeatureLineList().size();i++){
+        for(int i = 0;i < length || i<mark.getStripeList().size();i++){
 //            原代码:
 //            for(int i = 0;i < length;i++){
 //          TODO 2020-0130，取值方法待解决，暂时使用固定值代替
 //          mark.getLineWidthPixelQuantity()=5(似乎一直不变),mark.getFeatureLineList().get(i+1).getGray()=44/64(会变)
-            String trGray = String.format("%.2f",(float)mark.getTrC(i));
+            String trGray = String.format("%.2f",(float)mark.getMaxGrayLineTrC(i));
 //            String trGray = String.format("%.2f",(float) mark.getFeatureLineList().get(i).getGray()/mark.getLineWidthPixelQuantity());
 //          String value = String.format("%.2f",(float) mark.getDotrowAvgGrays()[mark.getFeatureIndexOnDotrowIndex()[i+1]]/ mark.getLineWidthPixelQuantity());
 //            String value = "1234123412341234.1234123412341243";
@@ -150,16 +151,16 @@ public class FunctionInputDataActivity extends Activity {
                 }
             };
 
-            int[] tempFeatureIndex = grayCurve.getFeatureIndex();
-            if (!mark.getFeatureLineList().get(i).isValid()){
+            int[] tempFeatureIndex = grayCurve.getMaxGrayIndexInPoints();
+            if (!mark.getStripeList().get(i).getMaxGrayLine().isValid()){
                 grayConcentrationSwitchView.getEditText().setText("");
                 grayConcentrationSwitchView.getEditText().setEnabled(false);
                 grayConcentrationSwitchView.getValidSwitch().setChecked(false);
                 tempFeatureIndex[i] = -1 - tempFeatureIndex[i];
-                grayCurve.setFeatureIndex(tempFeatureIndex);
+                grayCurve.setMaxGrayIndexInPoints(tempFeatureIndex);
             }
-            if(mark.getFeatureLineList().get(i).getConcentration()!=0){
-                grayConcentrationSwitchView.getEditText().setText(Float.toString(mark.getFeatureLineList().get(i).getConcentration()));
+            if(mark.getStripeList().get(i).getMaxGrayLine().getConcentration()!=0){
+                grayConcentrationSwitchView.getEditText().setText(Float.toString(mark.getStripeList().get(i).getMaxGrayLine().getConcentration()));
             }
             grayConcentrationSwitchView.setCheckedChangeListener(checkedChangeListener);
             grayConcentrationSwitchView.setFocusChangeListener(focusChangeListener);
@@ -170,15 +171,28 @@ public class FunctionInputDataActivity extends Activity {
     }
 
     public void onFocus(int finalI) {
-        grayCurve.setSelectedPointIndex(mark.getLineList().indexOf(mark.getFeatureLineList().get(finalI)));
+
+        int lineIndexInPoints = 0;
+        for (int i = 0; i <= finalI; i++) {
+            if (i!=finalI){
+                lineIndexInPoints += mark.getStripeList().get(i).getLineList().size();
+            }else{
+                lineIndexInPoints += mark.getStripeList().get(i).getLineList().indexOf(mark.getStripeList().get(i).getMaxGrayLine());
+            }
+        }
+        grayCurve.setSelectedPointIndex(lineIndexInPoints);
         grayCurve.invalidate();
     }
 
     public void onChanged(int switchType){
-        int[] featureIndex = new int[mark.getFeatureLineList().size()];
-        for (int i = 0; i < featureIndex.length; i++) {
-            featureIndex[i] = mark.getLineList().indexOf(mark.getFeatureLineList().get(i));
+        int[] maxGrayIndexInPoints = new int[mark.getStripeList().size()];
+        int maxGrayIndex = 0;
+        for (int i = 0; i < mark.getStripeList().size(); i++) {
+            Stripe stripe = mark.getStripeList().get(i);
+            maxGrayIndexInPoints[i] = maxGrayIndex + stripe.getLineList().indexOf(stripe.getMaxGrayLine());
+            maxGrayIndex += stripe.getLineList().size();
         }
+
         /*switchType的值有0,1
         // 0表示变化的switch的type是TEXT_SPINNER_SWITCH
         // 1表示变化的switch的type是GRAY_CONCENTRATION_SWITCH
@@ -187,7 +201,7 @@ public class FunctionInputDataActivity extends Activity {
             for(int i = 0; i < textSpinnerSwitchViewList.size(); i++){
                 TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
                 if(!textSpinnerSwitchView.getaSwitch().isChecked()){
-                    featureIndex[i+1] = featureIndex[0];
+                    maxGrayIndexInPoints[i+1] = maxGrayIndexInPoints[0];
                 }
             }
         }
@@ -195,19 +209,19 @@ public class FunctionInputDataActivity extends Activity {
             for(int i = 0; i < grayConcentrationSwitchViewList.size(); i++){
                 GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
                 if(!grayConcentrationSwitchView.getValidSwitch().isChecked()){
-                    featureIndex[i] = -1 - featureIndex[i];
+                    maxGrayIndexInPoints[i] = -1 - maxGrayIndexInPoints[i];
                     grayConcentrationSwitchView.getEditText().setText("");
                     grayConcentrationSwitchView.getEditText().setEnabled(false);
-                    mark.getFeatureLineList().get(i).setValid(false);
+                    mark.getStripeList().get(i).getMaxGrayLine().setValid(false);
                 }else{
 //                    grayConcentrationSwitchView.getEditText().setId(i);
                     grayConcentrationSwitchView.getEditText().setEnabled(true);
-                    mark.getFeatureLineList().get(i).setValid(true);
+                    mark.getStripeList().get(i).getMaxGrayLine().setValid(true);
 //                    grayConcentrationSwitchView.getEditText().setNextFocusDownId(i+1);
                 }
             }
         }
-        grayCurve.setFeatureIndex(featureIndex);
+        grayCurve.setMaxGrayIndexInPoints(maxGrayIndexInPoints);
     }
 
 
@@ -262,12 +276,12 @@ public class FunctionInputDataActivity extends Activity {
 //      TODO 2021-0319
 
         index = 0;
-        for (int i = 0; i < mark.getFeatureLineList().size(); i++) {
-            if (mark.getFeatureLineList().get(i).isValid() && cLineIndex!=i){
-                mark.getFeatureLineList().get(i).setConcentration(conc[index++]);
+        for (int i = 0; i < mark.getStripeList().size(); i++) {
+            if (mark.getStripeList().get(i).getMaxGrayLine().isValid() && cLineIndex!=i){
+                mark.getStripeList().get(i).getMaxGrayLine().setConcentration(conc[index++]);
             }
             if (i==cLineIndex){
-                mark.getFeatureLineList().get(i).setConcentration(-1);
+                mark.getStripeList().get(i).getMaxGrayLine().setConcentration(1);
             }
         }
         getIntent().putExtra("Mark",mark);
@@ -296,7 +310,7 @@ public class FunctionInputDataActivity extends Activity {
             TextSpinnerSwitchView textSpinnerSwitchView = textSpinnerSwitchViewList.get(i);
             if(textSpinnerSwitchView.getaSwitch().isChecked()){
                 //TODO 2021-0218 getTrc已注释,trc值暂为0,需要修改
-                strips[index] = mark.getTrC(i);
+                strips[index] = mark.getMaxGrayLineTrC(i);
                 String str = "Function"+String.valueOf(index++);
                 intent.putExtra(str, linearRegressionModelList.get(functions[i]));
             }
