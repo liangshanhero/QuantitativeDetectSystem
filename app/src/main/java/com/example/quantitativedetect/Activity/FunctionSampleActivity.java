@@ -11,14 +11,18 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.example.quantitativedetect.R;
 
@@ -33,7 +37,6 @@ import java.util.ArrayList;
 
 import static com.example.quantitativedetect.service.PictureService.FROM_ALBUM;
 import static com.example.quantitativedetect.service.PictureService.FROM_CAMERA;
-import static com.example.quantitativedetect.service.PictureService.getFeatures;
 import static com.example.quantitativedetect.service.PictureService.getAdaptedScreenBitmap;
 
 public class FunctionSampleActivity extends MainActivity {
@@ -56,6 +59,9 @@ public class FunctionSampleActivity extends MainActivity {
     private ArrayList<MarkView> markViews = new ArrayList<MarkView>();
     private CheckPanelView checkPanelView;
     private SeekBar widthSeekBar, heightSeekBar, markGapSeekBar;
+    private EditText markQuantityText;
+    private Button buttonMinus,buttonPlus;
+    private int beforeChangedMarkQuantity;
     private int selectingID = 0;
     private Button takePicture;
     private int imageDisplayAreaWidth;
@@ -83,6 +89,7 @@ public class FunctionSampleActivity extends MainActivity {
         moveOnTouchListener = new MoveOnTouchListener(this);
         imageViewInit();
         seekBarInit();
+        editTextAndButtonsInit();
         if(function.equals(FUNCTION_CHECK)){
             Button buttona = findViewById(R.id.button_add);
             Button buttond = findViewById(R.id.button_det);
@@ -94,6 +101,64 @@ public class FunctionSampleActivity extends MainActivity {
 //        imageView.setImageBitmap(bitmap);
 //        addMark(300,500,70,350);//测试用特征框
     }
+
+    private void editTextAndButtonsInit() {
+        markQuantityText = findViewById(R.id.mark_quantity_editText);
+        buttonMinus = findViewById(R.id.button_minus);
+        buttonPlus = findViewById(R.id.button_plus);
+        markQuantityText.setText("");
+        markQuantityText.setEnabled(false);
+        buttonMinus.setEnabled(false);
+        buttonPlus.setEnabled(false);
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String changedStr = markQuantityText.getText().toString();
+                if (!"".equals(changedStr)){
+                    beforeChangedMarkQuantity = Integer.parseInt(changedStr);
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String changedStr = markQuantityText.getText().toString();
+                if (!"".equals(changedStr)){
+                    int newMarkQuantity = Integer.parseInt(changedStr);
+                    if (newMarkQuantity<3){
+                        markQuantityText.setText(String.valueOf(beforeChangedMarkQuantity));
+                        markQuantityText.setSelection(markQuantityText.getText().length());
+                        Toast.makeText(getApplicationContext(),"The mark quantity should be greater than or equal to three.\n If there are more than 9 marks, please input 9 then press the plus button.",Toast.LENGTH_LONG).show();
+                    }else if (newMarkQuantity>14){
+                        markQuantityText.setText(String.valueOf(beforeChangedMarkQuantity));
+                        markQuantityText.setSelection(markQuantityText.getText().length());
+                        Toast.makeText(getApplicationContext(),"The mark quantity should be less than or equal to 14.",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        if (newMarkQuantity!=beforeChangedMarkQuantity){
+                            checkPanelView.setMarkQuantity(newMarkQuantity);
+                            markQuantityText.setSelection(markQuantityText.getText().length());
+                            int markGapProgress = checkPanelView.getMarkGap()*(checkPanelView.getMarkQuantity()-1)*100/checkPanelView.getLayoutParams().width;
+                            markGapSeekBar.setProgress(markGapProgress);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        };
+        markQuantityText.addTextChangedListener(textWatcher);
+        markQuantityText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b){
+                    markQuantityText.setCursorVisible(false);
+                }
+            }
+        });
+    }
+
     private void imageViewInit(){
         imageView = findViewById(R.id.show_sample);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -263,12 +328,19 @@ public class FunctionSampleActivity extends MainActivity {
     public void onSelected(int ID){
         CheckPanelView checkPanelView = relativeLayout.findViewById(ID);
         checkPanelView.onSelecet();
-//        MarkView markView = relativeLayout.findViewById(ID);
-//        markView.onSelected();
         int widthProgress = checkPanelView.getLayoutParams().width*100/imageDisplayAreaWidth;
         int heightProgress = checkPanelView.getLayoutParams().height*100/imageDisplayAreaHeight;
+        int markGapProgress = checkPanelView.getMarkGap()*(checkPanelView.getMarkQuantity()-1)/checkPanelView.getLayoutParams().width;
         widthSeekBar.setProgress(widthProgress);
         heightSeekBar.setProgress(heightProgress);
+        markGapSeekBar.setProgress(markGapProgress);
+
+        markQuantityText.setEnabled(true);
+        markQuantityText.setText(String.valueOf(checkPanelView.getMarkQuantity()));
+        markQuantityText.setSelection(markQuantityText.getText().length());
+
+        buttonMinus.setEnabled(true);
+        buttonPlus.setEnabled(true);
 //        seekBarWidth.setProgress(markView.getLayoutParams().width/(imageDisplayAreaWidth/100));
 //        seekBarHeight.setProgress(markView.getLayoutParams().height/(imageDisplayAreaHeight/100));
 
@@ -276,10 +348,8 @@ public class FunctionSampleActivity extends MainActivity {
 //        seekBarW.setProgress(markView.getWidth()/screenWidth*150);
     }
     public void offSelected(int ID){
-//        MarkView markView = (MarkView)relativeLayout.findViewById(ID);
         CheckPanelView checkPanelView = (CheckPanelView) relativeLayout.findViewById(ID);
         checkPanelView.offSelected();
-//        markView.offSelected();
     }
 
     public RelativeLayout getRelativeLayout(){
@@ -294,7 +364,6 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     private void addCheckPanelView(View view) {
-//        View tempView = new View(this);
         CheckPanelView tempCheckPanelView = new CheckPanelView(this);
         tempCheckPanelView.setBitmap(bitmap);
         tempCheckPanelView.setId(checkPanelViewId);
@@ -549,8 +618,38 @@ public class FunctionSampleActivity extends MainActivity {
     }
 
     public void reduceMarkQuantity(View view) {
+        String nowTextStr = markQuantityText.getText().toString();
+        if (!"".equals(nowTextStr)){
+            int nowMarkQuantity = Integer.parseInt(nowTextStr);
+//            =4时,屏蔽减号键,防止再次点击后markQuantity少于3,=14时,恢复加号的功能
+            if (nowMarkQuantity == 4){
+                buttonMinus.setEnabled(false);
+            }else if (nowMarkQuantity == 14){
+                buttonPlus.setEnabled(true);
+            }
+            beforeChangedMarkQuantity = nowMarkQuantity;
+            markQuantityText.setCursorVisible(false);
+            markQuantityText.setText(String.valueOf(nowMarkQuantity-1));
+        }else {
+            Toast.makeText(this,"Please input the mark quantity first.",Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void addMarkQuantity(View view) {
+        String nowTextStr = markQuantityText.getText().toString();
+        if (!"".equals(nowTextStr)){
+            int nowMarkQuantity = Integer.parseInt(nowTextStr);
+//            =13时,屏蔽加号键,防止再次点击后markQuantity超过14,=3时,恢复加号的功能
+            if (nowMarkQuantity == 13){
+                buttonPlus.setEnabled(false);
+            }else if (nowMarkQuantity == 3){
+                buttonMinus.setEnabled(true);
+            }
+            beforeChangedMarkQuantity = nowMarkQuantity;
+            markQuantityText.setCursorVisible(false);
+            markQuantityText.setText(String.valueOf(nowMarkQuantity+1));
+        }else {
+            Toast.makeText(this,"Please input the mark quantity first.",Toast.LENGTH_SHORT).show();
+        }
     }
 }

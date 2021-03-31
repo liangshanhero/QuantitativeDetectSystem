@@ -111,6 +111,7 @@ public class CheckPanelView extends View {
 
     public void setMarkQuantity(int markQuantity) {
         this.markQuantity = markQuantity;
+        invalidate();
     }
 
     public int getStripeQuantity() {
