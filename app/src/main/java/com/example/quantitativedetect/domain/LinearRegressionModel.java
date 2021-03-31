@@ -11,8 +11,7 @@ public class LinearRegressionModel extends DataSupport implements Serializable {
     private double slope=0,offset=0;//斜率，偏移
     private double bias = 1;//以前是B0
     private String name;
-
-    private List<Stripe> stripeList;
+    private Feature feature;
 
     public LinearRegressionModel(){
 
@@ -55,11 +54,11 @@ public class LinearRegressionModel extends DataSupport implements Serializable {
         return bias;
     }
 
-    public List<Stripe> getStripeList() {
-        return stripeList;
+    public Feature getFeature() {
+        return feature;
     }
 
-    public void setStripeList(List<Stripe> stripeList) {
-        this.stripeList = stripeList;
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 }

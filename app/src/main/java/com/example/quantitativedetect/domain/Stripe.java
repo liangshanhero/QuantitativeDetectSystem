@@ -10,6 +10,9 @@ public class Stripe implements Serializable {
 
     private List<Line> lineList;
     private Line maxGrayLine;
+//    B:本stripe的maxGrayLine的Gray值与本stripe所在Mark的CLine的maxGrayLine的Gray值之比
+    private float B = 0;
+
 
     private float tLineAndeCLineGrayRatio = 1;//用于存放对应的特征点在所在的Mark中的T/C的值
     private int indexOfFeatureLineList;//ID: index of featureLine
@@ -46,5 +49,13 @@ public class Stripe implements Serializable {
 
     public void setMaxGrayLine(Line maxGrayLine) {
         this.maxGrayLine = maxGrayLine;
+    }
+
+    public float getB() {
+        return B;
+    }
+
+    public void setB(float b) {
+        B = b;
     }
 }

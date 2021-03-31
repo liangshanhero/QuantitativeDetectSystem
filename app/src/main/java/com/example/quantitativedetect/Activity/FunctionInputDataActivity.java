@@ -244,7 +244,7 @@ public class FunctionInputDataActivity extends Activity {
         float[] conc = new float[n];
         int index = 0;
 //        TODO concTemp临时变量,这样就不用填浓度数据了,测试完成后删除
-        float[] tempConc = new float[]{(float) 0.75, (float) 1.43, (float) 1.54, (float) 0.23, (float) 2.56,(float)3.5,(float)4.9};
+        float[] tempConc = new float[]{(float)1,(float) 0.05, (float) 1, (float) 0.05, (float) 0.01, (float) 0.25};
         boolean isClinePassed = false;
         for(int i = 0;i < grayConcentrationSwitchViewList.size();i++){
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);

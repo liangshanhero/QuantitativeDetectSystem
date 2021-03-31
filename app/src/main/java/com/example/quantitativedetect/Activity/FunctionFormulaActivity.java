@@ -106,7 +106,7 @@ public class FunctionFormulaActivity extends Activity {
     public void fitRule(){
 //        float[] concrations = new float[firstPicStripes.size()];
 //        float[] grays = new float[firstPicStripes.size()];
-        int markQuantity = checkPanel.getMarkList().size();
+        int markQuantity = checkPanel.getMarkQuantity();
 //        float[] concrations = new float[checkPanel.getStripeList().size()];
 //        float[] grays = new float[checkPanel.getStripeList().size()];
         float[] concrations = new float[markQuantity];
@@ -145,6 +145,7 @@ public class FunctionFormulaActivity extends Activity {
 //                    }
 //                }
 // TODO
+
 //                int stripeQuantity = checkPanel.getStripeQuantity();
 //                for (int i = 0; i < stripeQuantity; i++) {
 //                    List<Stripe> tempStripeList = new ArrayList<>();
@@ -158,13 +159,15 @@ public class FunctionFormulaActivity extends Activity {
 
                 for (int i = 0; i < checkPanel.getFeatureList().size(); i++) {
                     Feature feature = checkPanel.getFeatureList().get(i);
-                    for (int j = 0; j < feature.getStripeList().size(); j++) {
-                        concrations[j] = feature.getStripeList().get(j).getMaxGrayLine().getConcentration();
-                        grays[j] = feature.getStripeList().get(j).getMaxGrayLine().getGray();
-                    }
-                    LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
-                    linearRegressionModel.setBias(checkPanel.getBias(i));
-                    linearRegressionModel.setStripeList(feature.getStripeList());
+//                    for (int j = 0; j < feature.getStripeList().size(); j++) {
+//                        concrations[j] = feature.getStripeList().get(j).getMaxGrayLine().getConcentration();
+//                        grays[j] = feature.getStripeList().get(j).getMaxGrayLine().getGray();
+//                    }
+                    LinearRegressionModel linearRegressionModel = FunctionService.fluorescentMicrosphereFit(checkPanel.getFeatureList().get(i));
+                    linearRegressionModel.setBias(feature.getB0());
+//                    LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
+//                    linearRegressionModel.setBias(checkPanel.getBias(i));
+                    linearRegressionModel.setFeature(feature);
                     linearRegressionModelList.add(linearRegressionModel);
                 }
 //                for (int i = 0; i < stripeQuantity; i++) {

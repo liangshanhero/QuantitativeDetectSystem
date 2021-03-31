@@ -118,7 +118,7 @@ public class FunctionSampleActivity extends MainActivity {
         imageView.setImageBitmap(bitmap);
 //        seekBar与MarkView的宽高对应
         widthSeekBar.setProgress(96);
-        heightSeekBar.setProgress(40);
+        heightSeekBar.setProgress(80);
         markGapSeekBar.setProgress(1);
 
 //        addMarkView(new View(this));
@@ -129,8 +129,8 @@ public class FunctionSampleActivity extends MainActivity {
 
     private void seekBarInit() {
         markGapSeekBar = findViewById(R.id.gap_seekBar);
-        heightSeekBar = findViewById(R.id.height_seekBar);
         widthSeekBar = findViewById(R.id.width_seekBar);
+        heightSeekBar = findViewById(R.id.height_seekBar);
         markGapSeekBar.setProgress(0);
         widthSeekBar.setProgress(0);
         heightSeekBar.setProgress(0);
@@ -174,7 +174,7 @@ public class FunctionSampleActivity extends MainActivity {
                         return;
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     layoutParams.width = progress * imageDisplayAreaWidth / 100;  //设置宽高
-                    layoutParams.height = checkPanelView.getHeight();
+                    layoutParams.height = checkPanelView.getLayoutParams().height;
                     layoutParams.leftMargin = checkPanelView.getLeft();
                     layoutParams.topMargin = checkPanelView.getTop();
                     checkPanelView.setLayoutParams(layoutParams);
@@ -210,7 +210,7 @@ public class FunctionSampleActivity extends MainActivity {
                     if (progress * imageDisplayAreaHeight / 100 <= 10)
                         return;
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.width = checkPanelView.getWidth();  //设置宽高
+                    layoutParams.width = checkPanelView.getLayoutParams().width;  //设置宽高
                     layoutParams.height = progress * imageDisplayAreaHeight / 100;
                     layoutParams.leftMargin = checkPanelView.getLeft();
                     layoutParams.topMargin = checkPanelView.getTop();
@@ -265,9 +265,10 @@ public class FunctionSampleActivity extends MainActivity {
         checkPanelView.onSelecet();
 //        MarkView markView = relativeLayout.findViewById(ID);
 //        markView.onSelected();
-
-        widthSeekBar.setProgress(checkPanelView.getLayoutParams().width*100/imageDisplayAreaWidth);
-        heightSeekBar.setProgress(checkPanelView.getLayoutParams().height*100/imageDisplayAreaHeight);
+        int widthProgress = checkPanelView.getLayoutParams().width*100/imageDisplayAreaWidth;
+        int heightProgress = checkPanelView.getLayoutParams().height*100/imageDisplayAreaHeight;
+        widthSeekBar.setProgress(widthProgress);
+        heightSeekBar.setProgress(heightProgress);
 //        seekBarWidth.setProgress(markView.getLayoutParams().width/(imageDisplayAreaWidth/100));
 //        seekBarHeight.setProgress(markView.getLayoutParams().height/(imageDisplayAreaHeight/100));
 
@@ -309,12 +310,10 @@ public class FunctionSampleActivity extends MainActivity {
         int maxGapWidth = (tempCheckPanelView.getWidth()-tempCheckPanelView.getMarkQuantity()*10)/(tempCheckPanelView.getMarkQuantity()-1);
         tempCheckPanelView.setMarkGap(maxGapWidth*markGapSeekBar.getProgress()/100);
         tempCheckPanelView.setOnTouchListener(moveOnTouchListener);
-        relativeLayout.addView(tempCheckPanelView);
+        this.checkPanelView = tempCheckPanelView;
+        relativeLayout.addView(checkPanelView);
 //        view.setLayoutParams(layoutParams);
 //        relativeLayout.addView(view);
-
-        this.checkPanelView = tempCheckPanelView;
-
         setSelectingID(checkPanelView.getId());
     }
     public void deleteCheckPanelView(View view){
@@ -547,5 +546,11 @@ public class FunctionSampleActivity extends MainActivity {
 
     public static void setCheckMode(int mode){
         CHECK_MODE = mode;
+    }
+
+    public void reduceMarkQuantity(View view) {
+    }
+
+    public void addMarkQuantity(View view) {
     }
 }

@@ -9,6 +9,7 @@ import com.example.quantitativedetect.Activity.FunctionFormulaActivity;
 import com.example.quantitativedetect.domain.Feature;
 import com.example.quantitativedetect.domain.Line;
 import com.example.quantitativedetect.domain.LinearRegressionModel;
+import com.example.quantitativedetect.domain.Mark;
 import com.example.quantitativedetect.domain.Stripe;
 import com.example.quantitativedetect.service.FunctionService;
 
@@ -68,14 +69,16 @@ public class LinearRegressionCurve extends BaseCoordinate {
     public void formula(Canvas canvas){
         Paint paint = new Paint();
         //画点
-        List<Stripe> stripeList = linearRegressionModel.getStripeList();
+        List<Stripe> stripeList = linearRegressionModel.getFeature().getStripeList();
         for(int i = 0; i < stripeList.size(); i++){
 //        for(int i = 0; i < stripe1.length(); i++){
             paint.setStrokeWidth(10);
 
-            float x1 = (float)(stripeList.get(i).getMaxGrayLine().getConcentration()-min)/(float)(max-min)*(wid-2*pad);
-//            float x1 = (float)(stripe1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
 
+            float x1 = (float) ((Math.log10(stripeList.get(i).getMaxGrayLine().getConcentration())-min)/(float)(max-min)*(wid-2*pad));
+//            float x1 = (float)(stripeList.get(i).getMaxGrayLine().getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+//            float x1 = (float)(stripe1.getLine(i).getConcentration()-min)/(float)(max-min)*(wid-2*pad);
+//            float y1 = hei-pad-
             float y1 = hei-pad- stripeList.get(i).getMaxGrayLine().getGray()*(hei-2*pad);
 //            float y1 = hei-pad- stripe1.getLine(i).getGray()*(hei-2*pad);
 
