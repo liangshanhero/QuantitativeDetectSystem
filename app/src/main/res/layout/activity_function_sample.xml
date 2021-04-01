@@ -37,7 +37,10 @@
                     android:layout_width="210dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/b_take"
+                    android:background="@drawable/button_peach"
+                    android:text="Take Picture"
+                    android:textSize="28dp"
+                    android:textAllCaps="false"
                     android:onClick="loadPicture" />
             </LinearLayout>
 
@@ -160,35 +163,37 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:orientation="vertical"
                 android:layout_marginBottom="5dp">
 
-                <Button
-                    android:id="@+id/button_add"
-                    android:background="@drawable/b_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:onClick="addMarkView" />
+<!--                <Button-->
+<!--                    android:id="@+id/button_add"-->
+<!--                    android:background="@drawable/b_add"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="60dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:onClick="addMarkView" />-->
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dp"
                     android:layout_height="60dp"
-                    android:background="@drawable/b_next"
-                    android:layout_weight="1"
+                    android:background="@drawable/buttom_cyan"
                     android:layout_gravity="center"
+                    android:text="Next"
+                    android:textSize="28dp"
+                    android:textAllCaps="false"
                     android:onClick="next" />
 
-                <Button
-                    android:id="@+id/button_det"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:background="@drawable/b_delete"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:onClick="deleteMarkView" />
+<!--                <Button-->
+<!--                    android:id="@+id/button_det"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="60dp"-->
+<!--                    android:background="@drawable/b_delete"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:onClick="deleteMarkView" />-->
             </LinearLayout>
         </LinearLayout>
 

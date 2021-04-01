@@ -37,11 +37,14 @@
 
             <Button
                 android:id="@+id/button6"
-                android:background="@drawable/b_save"
-                android:layout_width="wrap_content"
+                android:background="@drawable/buttom_cyan"
+                android:layout_width="150dp"
                 android:layout_height="70dp"
                 android:layout_gravity="center"
                 android:layout_margin="20dp"
+                android:text="Save"
+                android:textSize="28dp"
+                android:textAllCaps="false"
                 android:onClick="rename" />
 
             <LinearLayout
@@ -51,20 +54,26 @@
 
                 <Button
                     android:id="@+id/button7"
-                    android:background="@drawable/b_pre"
+                    android:background="@drawable/button_darkblue"
                     android:layout_width="wrap_content"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
                     android:layout_margin="20dp"
                     android:layout_weight="1"
+                    android:text="previous"
+                    android:textSize="28dp"
+                    android:textAllCaps="false"
                     android:onClick="previous" />
 
                 <Button
                     android:id="@+id/button8"
-                    android:background="@drawable/b_next"
+                    android:background="@drawable/button_peach"
                     android:layout_width="wrap_content"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
+                    android:text="Next"
+                    android:textSize="28dp"
+                    android:textAllCaps="false"
                     android:layout_margin="20dp"
                     android:layout_weight="1"
                     android:onClick="next" />

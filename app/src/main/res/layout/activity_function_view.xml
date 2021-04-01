@@ -42,8 +42,11 @@
 
                 <Button
                     android:id="@+id/button7"
-                    android:background="@drawable/b_back"
+                    android:background="@drawable/buttom_cyan"
                     android:layout_width="0dp"
+                    android:text="Back"
+                    android:textSize="28dp"
+                    android:textAllCaps="false"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
                     android:layout_margin="20dp"
@@ -52,12 +55,15 @@
 
                 <Button
                     android:id="@+id/button8"
-                    android:background="@drawable/b_delete"
+                    android:background="@drawable/button_darkblue"
                     android:layout_width="0dp"
                     android:layout_height="70dp"
                     android:layout_gravity="center"
                     android:layout_margin="20dp"
                     android:layout_weight="1"
+                    android:text="Delete"
+                    android:textSize="28dp"
+                    android:textAllCaps="false"
                     android:onClick="delete" />
             </LinearLayout>
         </LinearLayout>

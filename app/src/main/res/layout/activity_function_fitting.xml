@@ -41,22 +41,28 @@
 
                 <Button
                     android:id="@+id/button4"
-                    android:background="@drawable/b_another"
-                    android:layout_width="210dp"
+                    android:background="@drawable/button_darkblue"
+                    android:layout_width="260dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:layout_margin="30dp"
                     android:layout_weight="1"
+                    android:text="Another Image"
+                    android:textSize="22dp"
+                    android:textAllCaps="false"
                     android:onClick="secondSample" />
 
                 <Button
                     android:id="@+id/button5"
-                    android:background="@drawable/b_fit"
-                    android:layout_width="210dp"
+                    android:background="@drawable/buttom_cyan"
+                    android:layout_width="260dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center"
                     android:layout_margin="30dp"
                     android:layout_weight="1"
+                    android:text="Linear Fit"
+                    android:textSize="28dp"
+                    android:textAllCaps="false"
                     android:onClick="onFitting" />
             </LinearLayout>
         </LinearLayout>

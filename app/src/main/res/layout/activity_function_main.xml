@@ -15,16 +15,22 @@
             android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_marginTop="100dp"
-            android:background="@drawable/b_detec"
+            android:background="@drawable/button_peach"
+            android:text="Detection"
+            android:textSize="28dp"
+            android:textAllCaps="false"
             android:onClick="detect" />
 
         <Button
             android:id="@+id/button_standard_curve"
-            android:layout_width="210dp"
+            android:layout_width="260dp"
             android:layout_height="70dp"
-            android:background="@drawable/b_standard"
+            android:background="@drawable/buttom_cyan"
             android:layout_gravity="center"
             android:layout_marginTop="200dp"
+            android:text="Standard Curve"
+            android:textSize="28dp"
+            android:textAllCaps="false"
             android:onClick="standardCurve" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

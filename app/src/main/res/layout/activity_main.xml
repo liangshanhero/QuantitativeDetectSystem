@@ -19,7 +19,10 @@
             android:layout_gravity="center"
             android:layout_marginTop="80dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/b_gnps"
+            android:background="@drawable/button_peach"
+            android:text="GNPs-LFIA"
+            android:textSize="28dp"
+            android:textAllCaps="false"
             android:onClick="colloidalGold" />
 
         <Button
@@ -28,7 +31,10 @@
             android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:background="@drawable/b_trfm"
+            android:background="@drawable/buttom_cyan"
+            android:text="TRFMs-LFIA"
+            android:textSize="28dp"
+            android:textAllCaps="false"
             android:onClick="fluorescentMicrosphere" />
 
         <Button
@@ -37,7 +43,10 @@
             android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:background="@drawable/b_history"
+            android:background="@drawable/button_pink"
+            android:text="History"
+            android:textSize="28dp"
+            android:textAllCaps="false"
             android:onClick="record" />
 
         <Button
@@ -46,7 +55,10 @@
             android:layout_height="70dp"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:background="@drawable/b_intro"
+            android:background="@drawable/button_darkblue"
+            android:text="Introduction"
+            android:textSize="28dp"
+            android:textAllCaps="false"
             android:onClick="introduction" />
 
     </LinearLayout>
