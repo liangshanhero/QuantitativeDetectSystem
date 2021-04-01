@@ -370,6 +370,23 @@ public class FunctionFittingActivity extends MainActivity {
 
 //    首先计算拟合，并跳转到结果界面FunctionFormulaActivity
     public void onFitting(View view){
+
+//        TODO 测试,待删除
+        float[][] tempConc = new float[][]{{(float)0,(float)0,(float) 0, (float) 0, (float) 0, (float) 0},
+                {(float)0,(float)0.05,(float) 1, (float) 0.05, (float) 0.01, (float) 0.25},
+                {(float)0,(float)0.1,(float) 2, (float) 0.1, (float) 0.05, (float) 0.5},
+                {(float)0,(float)0.2,(float) 4, (float) 0.2, (float) 0.1, (float) 1},
+                {(float)0,(float)0.3,(float) 6, (float) 0.3, (float) 0.25, (float) 2},
+                {(float)0,(float)0.4,(float) 8, (float) 0.4, (float) 0.5, (float) 4}};
+        for (int i = 0; i < checkPanel.getMarkQuantity(); i++) {
+            Mark mark = checkPanel.getMarkList().get(i);
+            for (int j = 0; j < mark.getStripeQuantity(); j++) {
+                mark.getStripeList().get(j).getMaxGrayLine().setConcentration(tempConc[i][j]);
+            }
+        }
+
+
+
         if(!createFeatures())
             return;
         Intent intent = new Intent(this,FunctionFormulaActivity.class);

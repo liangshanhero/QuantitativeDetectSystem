@@ -163,7 +163,7 @@ public class FunctionFormulaActivity extends Activity {
 //                        concrations[j] = feature.getStripeList().get(j).getMaxGrayLine().getConcentration();
 //                        grays[j] = feature.getStripeList().get(j).getMaxGrayLine().getGray();
 //                    }
-                    LinearRegressionModel linearRegressionModel = FunctionService.fluorescentMicrosphereFit(checkPanel.getFeatureList().get(i));
+                    LinearRegressionModel linearRegressionModel = FunctionService.fluorescentMicrosphereFit(feature);
                     linearRegressionModel.setBias(feature.getB0());
 //                    LinearRegressionModel linearRegressionModel = FunctionService.fit(concrations,grays);
 //                    linearRegressionModel.setBias(checkPanel.getBias(i));
@@ -263,7 +263,9 @@ public class FunctionFormulaActivity extends Activity {
             char c = '+';
             if(linearRegressionModelList.get(index).getOffset() < 0)
                 c = '-';
-            str = "Concentration = "+String.format("%.2f", linearRegressionModelList.get(index).getSlope())+" * Bn/B0 "+c+" " + String.format("%.2f",Math.abs(linearRegressionModelList.get(index).getOffset()))+"\n"+"B0 = "+String.format("%.2f", linearRegressionModelList.get(index).getBias());
+            int gray0 = linearRegressionModelList.get(index).getFeature().getStripeList().get(0).getMaxGrayLine().getGray();
+//            str = "Concentration = 10^("+" * " +" ( ( ( Gray / "+ gray0 + " ) / B0 ) "+c+" " + String.format("%.2f",Math.abs(linearRegressionModelList.get(index).getOffset()))+" ) / " + String.format("%.2f", linearRegressionModelList.get(index).getSlope())+ " )\n"+"B0 = "+String.format("%.2f", linearRegressionModelList.get(index).getBias());
+            str = "Concentration = "+" ( ( ( Gray / "+ gray0 + " ) / B0 ) "+c+" " + String.format("%.2f",Math.abs(linearRegressionModelList.get(index).getOffset()))+" ) / " +" ( " + String.format("%.2f", linearRegressionModelList.get(index).getSlope()) +" )\n"+"B0 = "+String.format("%.2f", linearRegressionModelList.get(index).getBias());
         }
         else if(function.equals("Result")){
             str = "Concentration = "+String.format("%.2f",resultList.get(index).getConcentration())+" "+UNIT;
@@ -274,7 +276,7 @@ public class FunctionFormulaActivity extends Activity {
     public void next(View view){
         if(now >= stripeQuantity -2){
             now = stripeQuantity -2;
-            Toast.makeText(this,"后面没有了",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"This is the last one.",Toast.LENGTH_SHORT).show();
             return;
         }
         now++;
@@ -291,7 +293,7 @@ public class FunctionFormulaActivity extends Activity {
     public void previous(View view){
         if(now <= 0){
             now = 0;
-            Toast.makeText(this,"前面没有了",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"This is the first one.",Toast.LENGTH_SHORT).show();
             return;
         }
         now--;

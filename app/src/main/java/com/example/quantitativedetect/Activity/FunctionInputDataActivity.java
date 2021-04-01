@@ -244,8 +244,15 @@ public class FunctionInputDataActivity extends Activity {
         float[] conc = new float[n];
         int index = 0;
 //        TODO concTemp临时变量,这样就不用填浓度数据了,测试完成后删除
-        float[] tempConc = new float[]{(float)1,(float) 0.05, (float) 1, (float) 0.05, (float) 0.01, (float) 0.25};
+        int markNumber = mark.getDetectMethodPlusID()-10086;
+        float[][] tempConc = new float[][]{{(float)0,(float)0,(float) 0, (float) 0, (float) 0, (float) 0},
+                {(float)0,(float)0.05,(float) 1, (float) 0.05, (float) 0.01, (float) 0.25},
+                {(float)0,(float)0.1,(float) 2, (float) 0.1, (float) 0.05, (float) 0.5},
+                {(float)0,(float)0.2,(float) 4, (float) 0.2, (float) 0.1, (float) 1},
+                {(float)0,(float)0.3,(float) 6, (float) 0.3, (float) 0.25, (float) 2},
+                {(float)0,(float)0.4,(float) 8, (float) 0.4, (float) 0.5, (float) 4}};
         boolean isClinePassed = false;
+//        第0个grayConcentrationSwitchView不应该输入浓度(Control Line)
         for(int i = 0;i < grayConcentrationSwitchViewList.size();i++){
             GrayConcentrationSwitchView grayConcentrationSwitchView = grayConcentrationSwitchViewList.get(i);
             if(grayConcentrationSwitchView.getValidSwitch().isChecked()){
@@ -257,12 +264,12 @@ public class FunctionInputDataActivity extends Activity {
 //                String str = String.valueOf(grayConcentrationSwitchView.getEditText().getText());
 //                float cc = Float.parseFloat(str);
 
-                if (i==cLineIndex){
-                    continue;
-                }
+//                if (i==cLineIndex){
+//                    continue;
+//                }
                 IDs[index] = i;
 //                conc[index++] = cc;
-                conc[index] = tempConc[index];
+                conc[index] = tempConc[markNumber][index];
                 index++;
             }
         }
@@ -275,13 +282,14 @@ public class FunctionInputDataActivity extends Activity {
 //      TODO 2021-0319
 
         index = 0;
+//        第0个grayConcentrationSwitchView不应该输入浓度(Control Line),故i从1开始
         for (int i = 0; i < mark.getStripeList().size(); i++) {
-            if (mark.getStripeList().get(i).getMaxGrayLine().isValid() && cLineIndex!=i){
+            if (mark.getStripeList().get(i).getMaxGrayLine().isValid()/* && cLineIndex!=i*/){
                 mark.getStripeList().get(i).getMaxGrayLine().setConcentration(conc[index++]);
             }
-            if (i==cLineIndex){
-                mark.getStripeList().get(i).getMaxGrayLine().setConcentration(1);
-            }
+//            if (i==cLineIndex){
+//                mark.getStripeList().get(i).getMaxGrayLine().setConcentration(1);
+//            }
         }
         getIntent().putExtra("Mark",mark);
         intent.putExtra("ids",IDs);

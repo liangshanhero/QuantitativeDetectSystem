@@ -7,16 +7,16 @@ import android.graphics.Paint;
 import android.view.View;
 
 public class BaseCoordinate extends View {
-    int wid = 0,hei = 0,pad = 0;
+    int coordinateWidth = 0, coordinateHeight = 0, coordinatePad = 0;
     public BaseCoordinate(Context context){
         super(context);
         setWillNotDraw(false);
     }
 
     public void init(int width,int height,int pad){
-        this.wid = width;
-        this.hei = height;
-        this.pad = pad;
+        this.coordinateWidth = width;
+        this.coordinateHeight = height;
+        this.coordinatePad = pad;
         invalidate();
     }
     @Override
@@ -30,7 +30,7 @@ public class BaseCoordinate extends View {
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(3);
         //绘制坐标系
-        canvas.drawLine(pad,hei-pad,pad,pad,paint);//Y轴
-        canvas.drawLine(pad,hei-pad,wid-pad,hei-pad,paint);//X轴
+        canvas.drawLine(coordinatePad, coordinateHeight - coordinatePad, coordinatePad, coordinatePad,paint);//Y轴
+        canvas.drawLine(coordinatePad, coordinateHeight - coordinatePad, coordinateWidth - coordinatePad, coordinateHeight - coordinatePad,paint);//X轴
     }
 }

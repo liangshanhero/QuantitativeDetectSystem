@@ -42,25 +42,51 @@ public class FunctionService {
         double offset = 0;
         float slope = 0;
         float averageBDividedB0;
+//           TODO 2021-0402  不知道选哪个
+
 //        x轴的坐标值数组
         double[] logOfConcentrations = new double[feature.getStripeList().size()-1];
 //        y轴的坐标值数组
         double[] ratiosByGrays = new double[feature.getStripeList().size()-1];
+//        浓度值数组(排除CLine)
+        float[] concentrations = new float[feature.getStripeList().size()-1];
+//        灰度值数组(排除CLine)
+        float[] grays = new float[feature.getStripeList().size()-1];
         for (int i = 1; i < feature.getStripeList().size(); i++) {
+//           TODO 2021-0402  不知道选哪个
+            concentrations[i-1] = feature.getStripeList().get(i).getMaxGrayLine().getConcentration();
+            grays[i-1] = feature.getStripeList().get(i).getMaxGrayLine().getGray();
+
             logOfConcentrations[i-1] = Math.log10(feature.getStripeList().get(i).getMaxGrayLine().getConcentration());
             ratiosByGrays[i-1] = (feature.getStripeList().get(i).getB())/feature.getB0();
+
         }
-
-
+//       TODO 2021-0402     不知道选哪个
+        float averageConc = getAver(concentrations);
+        float averageGray = getAver(grays);
         double averageX = getAver(logOfConcentrations);
         double averageY = getAver(ratiosByGrays);
+
+
         float numerator = 0;
         float denominator = 0;
 //        int i = 0;
 //        int num = 1;
         for(int i = 0;i < logOfConcentrations.length;i++){
-            numerator += (logOfConcentrations[i] - averageX)*(ratiosByGrays[i] - averageY);
-            denominator += (ratiosByGrays[i] - averageY)*(ratiosByGrays[i] - averageY);
+//           TODO 2021-0402  不知道选哪个
+
+//            numerator += (concentrations[i] - averageConc)*(grays[i] - averageGray);
+//            denominator += (grays[i] - averageGray)*(grays[i] - averageGray);
+            denominator += (concentrations[i] - averageConc)*(grays[i] - averageGray);
+            numerator += (grays[i] - averageGray)*(grays[i] - averageGray);
+
+//            numerator += (logOfConcentrations[i] - averageX)*(ratiosByGrays[i] - averageY);
+//            denominator += (ratiosByGrays[i] - averageY)*(ratiosByGrays[i] - averageY);
+//            denominator += (logOfConcentrations[i] - averageX)*(ratiosByGrays[i] - averageY);
+//            numerator += (ratiosByGrays[i] - averageY)*(ratiosByGrays[i] - averageY);
+
+
+
 //            float slope,offset;
 //            if(logOfConcentrations[i] == logOfConcentrations[j])
 //                continue;
@@ -71,15 +97,32 @@ public class FunctionService {
 //            num++;
         }
         slope = numerator / denominator;
-        offset = averageX - slope*averageY;
+//        TODO 不知道选哪个
+
+        offset = averageGray - slope * averageConc;
+//        offset = averageConc - slope*averageGray;
+
+//        offset = averageY - slope*averageX;
+//        offset = averageX - slope*averageY;
+
         LinearRegressionModel linearRegressionModel = new LinearRegressionModel();
         linearRegressionModel.setSlope(slope);
         linearRegressionModel.setOffset(offset);
         return linearRegressionModel;
     }
 
-    public static double calculateConcentration(LinearRegressionModel linearRegressionModel, double grey){
-        return grey* linearRegressionModel.getSlope() + linearRegressionModel.getOffset();
+    public static double calculateConcentration(LinearRegressionModel linearRegressionModel, double gray){
+
+        double Bn = (double)gray / (double)linearRegressionModel.getFeature().getStripeList().get(0).getMaxGrayLine().getGray();
+        double offset = linearRegressionModel.getOffset();
+        double slope = linearRegressionModel.getSlope();
+//        TODO 不知道选哪个
+
+//        return gray * linearRegressionModel.getSlope() + linearRegressionModel.getOffset();
+        return ( gray - linearRegressionModel.getOffset()) / linearRegressionModel.getSlope();
+
+//        return Math.pow(10,(Bn/linearRegressionModel.getBias() - offset)/slope);
+//        return (Bn/linearRegressionModel.getBias() - offset)/slope;
     }
     public static double calGrey(LinearRegressionModel linearRegressionModel, double conc){
         return (conc - linearRegressionModel.getOffset())/ linearRegressionModel.getSlope();

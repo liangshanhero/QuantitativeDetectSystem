@@ -58,7 +58,7 @@ public class GrayCurve extends BaseCoordinate {
 ////            points[i]=mark.getLineList().get(i).getGray();
 //            points[i] = mark.getTrC(i);
 //        }
-        this.zoom = zoom*(width/2-2*pad);//width/3为View的高度，而width/3-2*pad才是Y轴的长度
+        this.zoom = zoom*(width/2-2* coordinatePad);//width/3为View的高度，而width/3-2*pad才是Y轴的长度
         int maxGrayIndex = 0;
         for (int i = 0; i < mark.getStripeList().size(); i++) {
             Stripe stripe = mark.getStripeList().get(i);
@@ -79,7 +79,7 @@ public class GrayCurve extends BaseCoordinate {
 //        this.CL = points[featureIndex[0]];
         this.curveType = curveType;
         if(curveType == 0){
-            this.zoom = zoom*(width/3-2*pad);
+            this.zoom = zoom*(width/3-2* coordinatePad);
             super.init(width,width/3,40);
         }
     }
@@ -119,29 +119,29 @@ public class GrayCurve extends BaseCoordinate {
         paint.setAntiAlias(true);
         paint.setStrokeWidth(2);
         paint.setColor(Color.BLACK);
-        canvas.drawLine(pad,pad,wid-pad,pad,paint);//上X轴
-        canvas.drawLine(wid-pad,pad,wid-pad,hei-pad,paint);//右Y轴
+        canvas.drawLine(coordinatePad, coordinatePad, coordinateWidth - coordinatePad, coordinatePad,paint);//上X轴
+        canvas.drawLine(coordinateWidth - coordinatePad, coordinatePad, coordinateWidth - coordinatePad, coordinateHeight - coordinatePad,paint);//右Y轴
         paint.setStrokeWidth(1);
-        int interval = ( hei - 2*pad )/5;
+        int interval = ( coordinateHeight - 2* coordinatePad)/5;
         for(int i = 1;i <= 5;i++){
             paint.setStrokeWidth(1);
-            canvas.drawLine(pad,pad+i*interval,wid-pad,pad+i*interval,paint);
+            canvas.drawLine(coordinatePad, coordinatePad +i*interval, coordinateWidth - coordinatePad, coordinatePad +i*interval,paint);
         }
         paint.setTextSize(20);
-        canvas.drawText("T/C",pad-30,pad,paint);
-        canvas.drawText(String.valueOf(0.8),pad-30,pad+interval,paint);
-        canvas.drawText(String.valueOf(0.6),pad-30,pad+2*interval,paint);
-        canvas.drawText(String.valueOf(0.4),pad-30,pad+3*interval,paint);
-        canvas.drawText(String.valueOf(0.2),pad-30,pad+4*interval,paint);
-        canvas.drawText(String.valueOf(0),pad-30,pad+5*interval,paint);
+        canvas.drawText("T/C", coordinatePad -30, coordinatePad,paint);
+        canvas.drawText(String.valueOf(0.8), coordinatePad -30, coordinatePad +interval,paint);
+        canvas.drawText(String.valueOf(0.6), coordinatePad -30, coordinatePad +2*interval,paint);
+        canvas.drawText(String.valueOf(0.4), coordinatePad -30, coordinatePad +3*interval,paint);
+        canvas.drawText(String.valueOf(0.2), coordinatePad -30, coordinatePad +4*interval,paint);
+        canvas.drawText(String.valueOf(0), coordinatePad -30, coordinatePad +5*interval,paint);
 
         paint.setStrokeWidth(3);
         for(int i = 0;i < points.length-1;i++){
             paint.setColor(Color.rgb(255,165,0));
-            float sx = (float)i/points.length * (wid-2*pad) + pad;
-            float sy = hei - pad - ((float)points[i])/CL*zoom;
-            float ex = (float)(i+1)/points.length * (wid-2*pad) + pad;
-            float ey = hei - pad - ((float)points[i+1])/CL*zoom;
+            float sx = (float)i/points.length * (coordinateWidth -2* coordinatePad) + coordinatePad;
+            float sy = coordinateHeight - coordinatePad - ((float)points[i])/CL*zoom;
+            float ex = (float)(i+1)/points.length * (coordinateWidth -2* coordinatePad) + coordinatePad;
+            float ey = coordinateHeight - coordinatePad - ((float)points[i+1])/CL*zoom;
             canvas.drawLine(sx,sy,ex,ey,paint);
         }
         paint.setColor(Color.RED);
@@ -159,8 +159,8 @@ public class GrayCurve extends BaseCoordinate {
                 paint.setColor(Color.BLUE);
                 paint.setStrokeWidth(18);
             }
-            float x = (float) maxGrayIndexInPoints[i]/points.length * (wid - 2*pad) + pad;
-            float y = hei - pad - (float)points[maxGrayIndexInPoints[i]]/CL * zoom;
+            float x = (float) maxGrayIndexInPoints[i]/points.length * (coordinateWidth - 2* coordinatePad) + coordinatePad;
+            float y = coordinateHeight - coordinatePad - (float)points[maxGrayIndexInPoints[i]]/CL * zoom;
             canvas.drawPoint(x,y,paint);
         }
     }
@@ -174,17 +174,17 @@ public class GrayCurve extends BaseCoordinate {
             paint.setStrokeWidth(2);
             //画曲线
             for(int i = 0;i < points.length-1;i++){
-                float sx = (float)i/points.length * (wid-2*pad) + pad;
-                float sy = hei - pad - ((float)points[i])/CL*zoom;
-                float ex = (float)(i+1)/points.length * (wid-2*pad) + pad;
-                float ey = hei - pad - ((float)points[i+1])/CL*zoom;
+                float sx = (float)i/points.length * (coordinateWidth -2* coordinatePad) + coordinatePad;
+                float sy = coordinateHeight - coordinatePad - ((float)points[i])/CL*zoom;
+                float ex = (float)(i+1)/points.length * (coordinateWidth -2* coordinatePad) + coordinatePad;
+                float ey = coordinateHeight - coordinatePad - ((float)points[i+1])/CL*zoom;
                 canvas.drawLine(sx,sy,ex,ey,paint);
             }
             paint.setColor(Color.RED);
             paint.setStrokeWidth(4);
             for(int i = 1; i < maxGrayIndexInPoints.length; i++){
-                float x = (float) maxGrayIndexInPoints[i]/points.length * (wid - 2*pad) + pad;
-                float y = hei - pad - (float)points[maxGrayIndexInPoints[i]]/CL * zoom;
+                float x = (float) maxGrayIndexInPoints[i]/points.length * (coordinateWidth - 2* coordinatePad) + coordinatePad;
+                float y = coordinateHeight - coordinatePad - (float)points[maxGrayIndexInPoints[i]]/CL * zoom;
                 canvas.drawPoint(x,y,paint);
             }
         }
