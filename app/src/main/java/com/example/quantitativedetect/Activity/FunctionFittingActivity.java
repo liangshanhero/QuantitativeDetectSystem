@@ -68,6 +68,7 @@ public class FunctionFittingActivity extends MainActivity {
             markSwitchList1.add(tempMarkSwitch);
             linearLayout.addView(tempMarkSwitch.getLinearLayout());
         }
+        Toast.makeText(this,"Please click the curve to input concentrations.",Toast.LENGTH_LONG).show();
 
 
 //        for(int i = 0; i< firstPicMarkList.size(); i++){

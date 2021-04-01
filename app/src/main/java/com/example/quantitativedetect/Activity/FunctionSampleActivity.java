@@ -209,9 +209,12 @@ public class FunctionSampleActivity extends MainActivity {
                 if (selectingID != 0) {
 //                    MarkView markView = relativeLayout.findViewById(selectingID);
                     CheckPanelView checkPanelView = relativeLayout.findViewById(selectingID);
-                    int maxGapWidth = (checkPanelView.getWidth() - checkPanelView.getMarkQuantity() * 10) / (checkPanelView.getMarkQuantity() - 1);//假设10为mark的最小宽度
-                    checkPanelView.setMarkGap(maxGapWidth * progress / 100);
-                    checkPanelView.setLayoutParams(checkPanelView.getLayoutParams());
+                    int maxGapWidth = (checkPanelView.getLayoutParams().width - checkPanelView.getMarkQuantity()) / (checkPanelView.getMarkQuantity() - 1);
+                    int temProgress = checkPanelView.getMarkGap()*100/maxGapWidth;//假设10为mark的最小宽度
+                    if (temProgress!=progress){
+                        checkPanelView.setMarkGap(maxGapWidth * progress / 100);
+                        checkPanelView.setLayoutParams(checkPanelView.getLayoutParams());
+                    }
                 }
             }
 
@@ -330,7 +333,7 @@ public class FunctionSampleActivity extends MainActivity {
         checkPanelView.onSelecet();
         int widthProgress = checkPanelView.getLayoutParams().width*100/imageDisplayAreaWidth;
         int heightProgress = checkPanelView.getLayoutParams().height*100/imageDisplayAreaHeight;
-        int markGapProgress = checkPanelView.getMarkGap()*(checkPanelView.getMarkQuantity()-1)/checkPanelView.getLayoutParams().width;
+        int markGapProgress = checkPanelView.getMarkGap()*(checkPanelView.getMarkQuantity()-1)*100/checkPanelView.getLayoutParams().width;
         widthSeekBar.setProgress(widthProgress);
         heightSeekBar.setProgress(heightProgress);
         markGapSeekBar.setProgress(markGapProgress);
