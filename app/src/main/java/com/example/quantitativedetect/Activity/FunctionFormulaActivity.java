@@ -156,8 +156,8 @@ public class FunctionFormulaActivity extends Activity {
 //                    }
 //                }
 
-
-                for (int i = 0; i < checkPanel.getFeatureList().size(); i++) {
+//                第一条feature是控制线，不需要
+                for (int i = 1; i < checkPanel.getFeatureList().size(); i++) {
                     Feature feature = checkPanel.getFeatureList().get(i);
 //                    for (int j = 0; j < feature.getStripeList().size(); j++) {
 //                        concrations[j] = feature.getStripeList().get(j).getMaxGrayLine().getConcentration();
@@ -272,8 +272,8 @@ public class FunctionFormulaActivity extends Activity {
     }
 
     public void next(View view){
-        if(now >= stripeQuantity -1){
-            now = stripeQuantity -1;
+        if(now >= stripeQuantity -2){
+            now = stripeQuantity -2;
             Toast.makeText(this,"后面没有了",Toast.LENGTH_SHORT).show();
             return;
         }

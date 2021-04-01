@@ -176,7 +176,7 @@ public class FunctionFittingActivity extends MainActivity {
 //            设置每条线所需点的控制线
             for (int i = 0; i < featureList.size(); i++) {
                 Feature feature = featureList.get(i);
-                feature.setB0(feature.getStripeList().get(0).getMaxGrayLine().getGray()/featureList.get(0).getStripeList().get(0).getMaxGrayLine().getGray());
+                feature.setB0((float)feature.getStripeList().get(0).getMaxGrayLine().getGray() / (float)featureList.get(0).getStripeList().get(0).getMaxGrayLine().getGray());
                 for (int j = 0; j < feature.getStripeList().size(); j++) {
                     feature.getStripeList().get(j).setB((float)feature.getStripeList().get(j).getMaxGrayLine().getGray() / (float)featureList.get(0).getStripeList().get(j).getMaxGrayLine().getGray());
                 }
