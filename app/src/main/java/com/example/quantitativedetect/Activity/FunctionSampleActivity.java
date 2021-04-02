@@ -91,10 +91,10 @@ public class FunctionSampleActivity extends MainActivity {
         seekBarInit();
         editTextAndButtonsInit();
         if(function.equals(FUNCTION_CHECK)){
-            Button buttona = findViewById(R.id.button_add);
-            Button buttond = findViewById(R.id.button_det);
-            buttona.setVisibility(View.INVISIBLE);
-            buttond.setVisibility(View.INVISIBLE);
+//            Button buttona = findViewById(R.id.button_add);
+//            Button buttond = findViewById(R.id.button_det);
+//            buttona.setVisibility(View.INVISIBLE);
+//            buttond.setVisibility(View.INVISIBLE);
         }
 //        bitmap = getSmallBitmap(testPath,imageWidth,imageHeight);
 //        greyInRed(bitmap);
